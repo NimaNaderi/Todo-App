@@ -1,0 +1,26 @@
+.container {
+  height: 100%;
+  background: #1d1d26;
+  display: grid;
+}
+.welcomeSection {
+  grid-column: 1 / 9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.accountSection {
+  position: relative;
+  grid-column: 9/11;
+}
+.contentContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  color: #fff;
+  margin-left: 300px;
+}
+.button {
+  width: 150px;
+}
