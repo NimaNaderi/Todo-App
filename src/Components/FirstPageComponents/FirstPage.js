@@ -1,11 +1,22 @@
 import { Button } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import ButtonGroup from "@mui/material/ButtonGroup";
 
 import styles from "./../../Styles/firstPage.module.css";
 import { flexbox } from "@mui/system";
+import { useSetModalShowingState } from "../../Context/Providers/ModalShowingState/ModalShowingStateProvider";
+import { useSetTypeOfAuthState } from "../../Context/Providers/TypeOfAuthState/TypeOfAuthProvider";
 
 export default function FirstPage() {
+  const setTypeOfAuthState = useSetTypeOfAuthState();
+  const setModalShowingState = useSetModalShowingState();
+
+  const openModalHandler = (typeOfAuth) => {
+    if (typeOfAuth === "Login") setTypeOfAuthState("Login");
+    else setTypeOfAuthState("Signup");
+    setModalShowingState(true);
+  };
+
   return (
     <div className={styles.container}>
       <section className={styles.welcomeSection}>
@@ -33,6 +44,7 @@ export default function FirstPage() {
             }}
           >
             <Button
+              onClick={() => openModalHandler("Login")}
               style={{ borderRadius: 10 }}
               className={styles.button}
               variant="contained"
@@ -59,10 +71,15 @@ export default function FirstPage() {
       </section>
       <section className={styles.accountSection}>
         <ButtonGroup sx={{ color: "black" }} style={{ marginTop: 40 }}>
-          <Button sx={{ color: "white" }} variant="text">
+          <Button
+            onClick={() => openModalHandler("Login")}
+            sx={{ color: "white" }}
+            variant="text"
+          >
             Log in
           </Button>
           <Button
+            onClick={() => openModalHandler("Signup")}
             sx={{ color: "white", borderColor: "#444550" }}
             variant="outlined"
             style={{ marginLeft: 15, borderRadius: 10, borderWidth: 3 }}

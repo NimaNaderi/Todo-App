@@ -4,7 +4,7 @@ import AppContainer from "./AppContainer";
 function App() {
   return (
     <div className={styles.app}>
-      <AppContainer />
+        <AppContainer />
     </div>
   );
 }
