@@ -57,7 +57,6 @@ export default function FirstPage() {
             </Button>
             <Button
               style={{
-                marginLeft: -90,
                 background: "#30303D",
                 borderRadius: 10,
               }}

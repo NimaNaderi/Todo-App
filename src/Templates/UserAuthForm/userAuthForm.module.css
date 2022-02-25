@@ -1,0 +1,38 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+p,
+button {
+  color: #fff;
+}
+button {
+  background-color: #ce4f4b;
+  width: 150px;
+  height: 50px;
+  border-radius: 10px !important;
+}
+h1 {
+  color: white;
+  font-size: 48px !important;
+}
+input {
+  width: 260px;
+  height: 45px;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 26px;
+  margin-top: 25px !important;
+  outline: none;
+  transition: all 0.2s ease-in;
+}
+input:focus {
+  border: 2px solid red;
+}
+p {
+  cursor: pointer;
+}
+p:hover {
+  color: #000;
+}
