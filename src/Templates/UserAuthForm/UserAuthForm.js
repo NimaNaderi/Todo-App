@@ -1,35 +1,33 @@
-import { Button, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import {
-  useModalShowingState,
-  useSetModalShowingState,
-} from "../../Context/Providers/ModalShowingState/ModalShowingStateProvider";
 import {
   useSetTypeOfAuthState,
   useTypeOfAuthState,
 } from "../../Context/Providers/TypeOfAuthState/TypeOfAuthProvider";
 
-import CancelIcon from "@mui/icons-material/Cancel";
+import Button from "../../Components/Actions/Button";
+import DeleteButton from "../../Components/DeleteButton/DeleteButton";
+import FormContentContainer from "../../Components/FormContentContainer/FormContentContainer";
 import Modal from "../Modal/Modal";
 import styles from "./userAuthForm.module.css";
+import { useFormFields } from "../../Hooks/useFormFields";
+import { useOpenAndCloseModal } from "../../Hooks/useOpenAndCloseModal";
 import { verifyForm } from "../../Utilities/verifyForm";
 
 const useRenderByAuthType = () => {
   const typeOfAuthState = useTypeOfAuthState();
   const setTypeOfAuthState = useSetTypeOfAuthState();
-  const setModalShowingState = useSetModalShowingState();
   const [readyToProcess, setReadyToProcess] = useState(true);
   const [error, setError] = useState(false);
-  const [userData, setUserData] = useState({ email: null, password: null });
-
-  const inputChangeHandler = (e) => {
-    const { value } = e.target;
-    setUserData({ ...userData, [e.target.name.toLowerCase()]: value });
-  };
+  const { processModal } = useOpenAndCloseModal();
+  const { fields, handleChange } = useFormFields({
+    email: null,
+    password: null,
+  });
 
   useEffect(() => {
-    if (userData && userData.password !== null && userData.email !== null) {
-      if (verifyForm(userData)) {
+    console.log(fields);
+    if (fields && fields.password !== null && fields.email !== null) {
+      if (verifyForm(fields)) {
         setError(true);
         setReadyToProcess(true);
       } else {
@@ -37,7 +35,7 @@ const useRenderByAuthType = () => {
         setReadyToProcess(false);
       }
     }
-  }, [userData]);
+  }, [fields]);
 
   const submitFormHandler = (e) => {
     e.preventDefault();
@@ -45,41 +43,27 @@ const useRenderByAuthType = () => {
 
   const renderData = () => {
     return (
-      <form onSubmit={submitFormHandler}>
+      <FormContentContainer onSubmit={submitFormHandler}>
         <div className={styles.container}>
-          <button
-            onClick={() => setModalShowingState(false)}
-            style={{
-              background: "#E60000",
-              borderRadius: "50%",
-              width: 50,
-              height: 50,
-            }}
-          >
-            <CancelIcon sx={{ width: 50, height: 50 }} />
-          </button>
+          <DeleteButton />
           <h1 style={{ marginTop: 20 }}>
             {typeOfAuthState === "Login" ? "Login" : "Signup"}
           </h1>
           <input
-            type={"email"}
-            onChange={inputChangeHandler}
+            onChange={(e) => handleChange(e)}
             name="Email"
             placeholder="Email"
-            required
-          ></input>
+            type={"email"}
+          />
           <input
-            onChange={inputChangeHandler}
+            onChange={(e) => handleChange(e)}
             name="Password"
             placeholder="Password"
-            required
-          ></input>
-          <button
-            disabled={readyToProcess}
-            style={{ marginTop: 40, opacity: readyToProcess && "50%" }}
-          >
+            type={"password"}
+          />
+          <Button disabledHandler={readyToProcess}>
             {typeOfAuthState === "Login" ? "Signin" : "Signup"}
-          </button>
+          </Button>
           <p
             onClick={() =>
               typeOfAuthState === "Login"
@@ -93,15 +77,21 @@ const useRenderByAuthType = () => {
               : "Already Have Account ? Sign In"}
           </p>
           {typeOfAuthState === "Login" && (
-            <p>Forgot Your Password ? Click Here</p>
+            <p onClick={() => processModal("ForgotPassword")}>
+              Forgot Your Password ? Click Here
+            </p>
           )}
         </div>
-      </form>
+      </FormContentContainer>
     );
   };
   return <>{renderData()}</>;
 };
 
 export default function UserAuthForm(props) {
-  return <Modal onClose={props.onClose}>{useRenderByAuthType()}</Modal>;
+  return (
+    <>
+      <Modal onClose={props.onClose}>{useRenderByAuthType()}</Modal>
+    </>
+  );
 }

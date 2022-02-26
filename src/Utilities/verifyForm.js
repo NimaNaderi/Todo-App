@@ -6,7 +6,8 @@ export const verifyForm = (userData) => {
     userData.password === "" ||
     !userData.email.endsWith(".com") ||
     userData.email.includes(" ") ||
-    userData.password.includes(" ")
+    userData.password.includes(" ") ||
+    !userData.email.includes("@")
   )
     return true;
 };

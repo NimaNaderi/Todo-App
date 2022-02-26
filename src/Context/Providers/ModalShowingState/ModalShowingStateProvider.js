@@ -5,22 +5,25 @@ const SetModalShowingStateContext = createContext();
 
 //! Custom Hooks To Make Using Easier !
 
-export const useModalShowingState = () => {
+export const useModalShowingStateAndType = () => {
   const context = useContext(ModalShowingStateContext);
   return context;
 };
 
-export const useSetModalShowingState = () => {
+export const useSetModalShowingStateAndType = () => {
   const context = useContext(SetModalShowingStateContext);
   return context;
 };
 
 export default function ModalShowingStateProvider({ children }) {
-  const [modalShowing, setIsModalShowing] = useState(false);
+  const [modalShowingStateAndType, setModalShowingStateAndType] = useState({
+    modalType: null,
+    isModalShowing: false,
+  });
 
   return (
-    <ModalShowingStateContext.Provider value={modalShowing}>
-      <SetModalShowingStateContext.Provider value={setIsModalShowing}>
+    <ModalShowingStateContext.Provider value={modalShowingStateAndType}>
+      <SetModalShowingStateContext.Provider value={setModalShowingStateAndType}>
         {children}
       </SetModalShowingStateContext.Provider>
     </ModalShowingStateContext.Provider>
