@@ -1,22 +1,21 @@
-import React, { useEffect } from "react";
-
 import Button from "../../Components/Actions/Button";
 import DeleteButton from "../../Components/DeleteButton/DeleteButton";
 import FormContentContainer from "../../Components/FormContentContainer/FormContentContainer";
 import Modal from "../Modal/Modal";
+import React from "react";
 import { useFormFields } from "../../Hooks/useFormFields";
+import { useVerifyForm } from "../../Utilities/verifyForm";
 
 export default function ForgotPasswordForm(props) {
-  const { fields, handleChange } = useFormFields("");
-  useEffect(() => {
-    console.log(fields);
-  }, [fields]);
+  const { fields, handleChange } = useFormFields({ email: "" });
+  const { error, readyToProcess } = useVerifyForm(fields);
+
   const submitFormHandler = (e) => {
     e.preventDefault();
   };
   return (
     <Modal onClose={props.onClose}>
-      <FormContentContainer>
+      <FormContentContainer onSubmit={submitFormHandler}>
         <DeleteButton />
         <input
           onChange={handleChange}
@@ -24,7 +23,7 @@ export default function ForgotPasswordForm(props) {
           name="Email"
           placeholder="Enter Your Email"
         ></input>
-        <Button>Reset My Password</Button>
+        <Button disabledHandler={readyToProcess}>Reset My Password</Button>
       </FormContentContainer>
     </Modal>
   );

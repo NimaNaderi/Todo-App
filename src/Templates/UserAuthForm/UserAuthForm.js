@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import {
   useSetTypeOfAuthState,
   useTypeOfAuthState,
@@ -8,34 +7,22 @@ import Button from "../../Components/Actions/Button";
 import DeleteButton from "../../Components/DeleteButton/DeleteButton";
 import FormContentContainer from "../../Components/FormContentContainer/FormContentContainer";
 import Modal from "../Modal/Modal";
+import React from "react";
 import styles from "./userAuthForm.module.css";
 import { useFormFields } from "../../Hooks/useFormFields";
 import { useOpenAndCloseModal } from "../../Hooks/useOpenAndCloseModal";
-import { verifyForm } from "../../Utilities/verifyForm";
+import { useVerifyForm } from "../../Utilities/verifyForm";
 
 const useRenderByAuthType = () => {
   const typeOfAuthState = useTypeOfAuthState();
   const setTypeOfAuthState = useSetTypeOfAuthState();
-  const [readyToProcess, setReadyToProcess] = useState(true);
-  const [error, setError] = useState(false);
   const { processModal } = useOpenAndCloseModal();
   const { fields, handleChange } = useFormFields({
-    email: null,
-    password: null,
+    email: "",
+    password: "",
   });
 
-  useEffect(() => {
-    console.log(fields);
-    if (fields && fields.password !== null && fields.email !== null) {
-      if (verifyForm(fields)) {
-        setError(true);
-        setReadyToProcess(true);
-      } else {
-        setError(false);
-        setReadyToProcess(false);
-      }
-    }
-  }, [fields]);
+  const { error, readyToProcess } = useVerifyForm(fields);
 
   const submitFormHandler = (e) => {
     e.preventDefault();
