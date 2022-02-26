@@ -11,8 +11,6 @@ import styles from "./../../Styles/firstPage.module.css";
 import { useOpenAndCloseModal } from "../../Hooks/useOpenAndCloseModal";
 
 export default function FirstPage() {
-  // const openAndCloseModalHandler = useOpenAndCloseModal();
-  const setTypeOfAuthState = useSetTypeOfAuthState();
   const { processModal } = useOpenAndCloseModal();
 
   return (

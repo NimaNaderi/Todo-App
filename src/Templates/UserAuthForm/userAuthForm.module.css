@@ -36,3 +36,17 @@ p {
 p:hover {
   color: #000;
 }
+.dataVerificationContainer {
+  border-radius: 10px;
+  width: 360px;
+  background-color: #eee;
+  margin-top: 15px;
+  margin-bottom: -5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.dataVerificationContainer * {
+  font-size: 18px;
+  color: red;
+}

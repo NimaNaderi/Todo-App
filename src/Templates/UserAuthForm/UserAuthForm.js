@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import {
   useSetTypeOfAuthState,
   useTypeOfAuthState,
@@ -7,11 +8,10 @@ import Button from "../../Components/Actions/Button";
 import DeleteButton from "../../Components/DeleteButton/DeleteButton";
 import FormContentContainer from "../../Components/FormContentContainer/FormContentContainer";
 import Modal from "../Modal/Modal";
-import React from "react";
 import styles from "./userAuthForm.module.css";
 import { useFormFields } from "../../Hooks/useFormFields";
 import { useOpenAndCloseModal } from "../../Hooks/useOpenAndCloseModal";
-import { useVerifyForm } from "../../Utilities/verifyForm";
+import { useVerifyAndHandleForm } from "../../Hooks/useVerifyAndHandleForm";
 
 const useRenderByAuthType = () => {
   const typeOfAuthState = useTypeOfAuthState();
@@ -22,12 +22,12 @@ const useRenderByAuthType = () => {
     password: "",
   });
 
-  const { error, readyToProcess } = useVerifyForm(fields);
+  const { error, readyToProcess, isEmailReady, isPasswordReady } =
+    useVerifyAndHandleForm(fields);
 
   const submitFormHandler = (e) => {
     e.preventDefault();
   };
-
   const renderData = () => {
     return (
       <FormContentContainer onSubmit={submitFormHandler}>
@@ -36,6 +36,25 @@ const useRenderByAuthType = () => {
           <h1 style={{ marginTop: 20 }}>
             {typeOfAuthState === "Login" ? "Login" : "Signup"}
           </h1>
+          {fields.email.length && (
+            <div className={styles.dataVerificationContainer}>
+              <p style={{ color: isEmailReady() ? "green" : "red" }}>
+                Please Provide A Valid Email !
+              </p>
+              <p
+                style={{
+                  color: isPasswordReady() ? "green" : "red",
+                }}
+              >
+                {isPasswordReady()
+                  ? "Valid Password Provided !"
+                  : `Password Must Be AtLeast 8 Charecters | ${fields.password.length} /
+              8`}
+                //Todo Fix The Length Bug And Add Show Box On Password Change
+                Feature With Multi Operator !
+              </p>
+            </div>
+          )}
           <input
             onChange={(e) => handleChange(e)}
             name="Email"
@@ -48,7 +67,7 @@ const useRenderByAuthType = () => {
             placeholder="Password"
             type={"password"}
           />
-          <Button disabledHandler={readyToProcess}>
+          <Button disabledHandler={!readyToProcess}>
             {typeOfAuthState === "Login" ? "Signin" : "Signup"}
           </Button>
           <p

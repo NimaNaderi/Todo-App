@@ -4,11 +4,11 @@ import FormContentContainer from "../../Components/FormContentContainer/FormCont
 import Modal from "../Modal/Modal";
 import React from "react";
 import { useFormFields } from "../../Hooks/useFormFields";
-import { useVerifyForm } from "../../Utilities/verifyForm";
+import { useVerifyAndHandleForm } from "../../Hooks/useVerifyAndHandleForm";
 
 export default function ForgotPasswordForm(props) {
   const { fields, handleChange } = useFormFields({ email: "" });
-  const { error, readyToProcess } = useVerifyForm(fields);
+  const { error, readyToProcess } = useVerifyAndHandleForm(fields);
 
   const submitFormHandler = (e) => {
     e.preventDefault();
@@ -23,7 +23,7 @@ export default function ForgotPasswordForm(props) {
           name="Email"
           placeholder="Enter Your Email"
         ></input>
-        <Button disabledHandler={readyToProcess}>Reset My Password</Button>
+        <Button disabledHandler={!readyToProcess}>Reset My Password</Button>
       </FormContentContainer>
     </Modal>
   );
