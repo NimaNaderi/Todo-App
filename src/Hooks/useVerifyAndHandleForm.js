@@ -1,8 +1,17 @@
 import { useEffect, useState } from "react";
 
+import { hasEspecialCharacters } from "../Utilities/hasSpecialCharacters";
+
 export const verifyForm = (userData) => {
   let { email, password } = userData;
   password === undefined && (password = "12345678");
+  //* RegExp !
+  const countOfAt = (email.match(/@/g) || []).length;
+  let formatSpecialChar = /[.@]/;
+  //* Space Are So Important In Regex !!!!!! It Has Not Contains Space At All
+  let acceptableProviders = /^(gmail|hotmail|yahoo|outlook)$/;
+  const [beforeAt, afterAt] = email.split("@");
+  const provider = afterAt?.split(".")[0];
 
   const isPasswordReady = () => {
     if (password.length < 8 || password === "" || password.includes(" "))
@@ -16,7 +25,12 @@ export const verifyForm = (userData) => {
       email === "" ||
       !email.endsWith(".com") ||
       email.includes(" ") ||
-      !email.includes("@")
+      !email.includes("@") ||
+      hasEspecialCharacters(email) ||
+      formatSpecialChar.test(email.charAt(0)) ||
+      beforeAt.includes("@") ||
+      countOfAt > 1 ||
+      !acceptableProviders.test(provider)
     )
       return false;
     else return true;
@@ -34,7 +48,6 @@ export const useVerifyAndHandleForm = (userData) => {
   const [error, setError] = useState(false);
   const verifyFormHandler = () => {
     if (userData || (userData.password !== null && userData.email !== null)) {
-      console.log(isEmailReady(), isPasswordReady());
       if (!isEmailReady() || !isPasswordReady()) {
         setError(true);
         setReadyToProcess(false);

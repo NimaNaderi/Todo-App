@@ -37,6 +37,7 @@ p:hover {
   color: #000;
 }
 .dataVerificationContainer {
+  padding: 10px 5px;
   border-radius: 10px;
   width: 360px;
   background-color: #eee;

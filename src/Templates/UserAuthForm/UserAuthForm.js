@@ -1,4 +1,3 @@
-import React, { useEffect } from "react";
 import {
   useSetTypeOfAuthState,
   useTypeOfAuthState,
@@ -8,6 +7,7 @@ import Button from "../../Components/Actions/Button";
 import DeleteButton from "../../Components/DeleteButton/DeleteButton";
 import FormContentContainer from "../../Components/FormContentContainer/FormContentContainer";
 import Modal from "../Modal/Modal";
+import React from "react";
 import styles from "./userAuthForm.module.css";
 import { useFormFields } from "../../Hooks/useFormFields";
 import { useOpenAndCloseModal } from "../../Hooks/useOpenAndCloseModal";
@@ -36,10 +36,12 @@ const useRenderByAuthType = () => {
           <h1 style={{ marginTop: 20 }}>
             {typeOfAuthState === "Login" ? "Login" : "Signup"}
           </h1>
-          {fields.email.length && (
+          {(fields.email.length > 0 || fields.password.length > 0) && (
             <div className={styles.dataVerificationContainer}>
               <p style={{ color: isEmailReady() ? "green" : "red" }}>
-                Please Provide A Valid Email !
+                {isEmailReady()
+                  ? "Valid Email Provided !"
+                  : "Please Provide A Valid Email !"}
               </p>
               <p
                 style={{
@@ -50,8 +52,6 @@ const useRenderByAuthType = () => {
                   ? "Valid Password Provided !"
                   : `Password Must Be AtLeast 8 Charecters | ${fields.password.length} /
               8`}
-                //Todo Fix The Length Bug And Add Show Box On Password Change
-                Feature With Multi Operator !
               </p>
             </div>
           )}
