@@ -5,3 +5,6 @@ export const localServiceActions = {
   getItem: (key) => JSON.parse(service.getItem(key)),
   removeItem: (key) => service.removeItem(key),
 };
+
+export const isUserAuthenticated =
+  localServiceActions.getItem("supabase.auth.token") !== null;

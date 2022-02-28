@@ -44,14 +44,11 @@ export const verifyForm = (userData) => {
 export const useVerifyAndHandleForm = (userData) => {
   const { isEmailReady, isPasswordReady } = verifyForm(userData);
   const [readyToProcess, setReadyToProcess] = useState(false);
-  const [error, setError] = useState(false);
   const verifyFormHandler = () => {
     if (userData || (userData.password !== null && userData.email !== null)) {
       if (!isEmailReady() || !isPasswordReady()) {
-        setError(true);
         setReadyToProcess(false);
       } else {
-        setError(false);
         setReadyToProcess(true);
       }
     }
@@ -62,7 +59,6 @@ export const useVerifyAndHandleForm = (userData) => {
   }, [userData]);
 
   return {
-    error,
     readyToProcess,
     isEmailReady: () => isEmailReady(),
     isPasswordReady: () => isPasswordReady(),

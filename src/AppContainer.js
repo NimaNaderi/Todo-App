@@ -14,8 +14,6 @@ export default function AppContainer() {
   const modalShowingStateAndType = useModalShowingStateAndType();
   const setModalShowingStateAndType = useSetModalShowingStateAndType();
 
-  //Todo Complete ForgotPassword And Have Some Refactor
-
   const renderValue = () => {
     if (
       modalShowingStateAndType.modalType === "Login" ||
