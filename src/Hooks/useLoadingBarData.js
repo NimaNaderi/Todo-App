@@ -10,6 +10,7 @@ export const useLoadingBarData = (marginRight) => {
   `;
 
   return {
+    loading,
     setLoading,
     loadingProps: { css: override, size: 20, color: "#fff", loading },
   };

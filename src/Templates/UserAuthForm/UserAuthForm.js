@@ -19,11 +19,8 @@ import { useVerifyAndHandleForm } from "../../Hooks/useVerifyAndHandleForm";
 
 const useRenderByAuthType = () => {
   //Todo Redirect User When Logged In Or SignedUp !
-  const { loadingProps, setLoading } = useLoadingBarData("110px");
-  const [serverErrorType, setServerErrorType] = useState({
-    type: null,
-    hasError: false,
-  });
+  const { loadingProps, setLoading, loading } = useLoadingBarData("110px");
+  const [serverErrorType, setServerErrorType] = useState(null);
   const typeOfAuthState = useTypeOfAuthState();
   const setTypeOfAuthState = useSetTypeOfAuthState();
   const { processModal } = useOpenAndCloseModal();
@@ -32,26 +29,56 @@ const useRenderByAuthType = () => {
     password: "",
   });
 
-  const handleSuccess = () => {
+  const handleAuth = () => {
     let renderValue;
-    if (serverErrorType === "NoError") {
-      if (typeOfAuthState === "Login") {
-        renderValue = (
-          <>
-            <p color="green">Successfully LoggedIn !</p>
-            <p>Redirecting To Main Page...</p>
-          </>
-        );
-      } else if (typeOfAuthState === "Signup") {
-        renderValue = (
-          <>
-            <p color="green">Account Created Successfully !</p>
-            <p>Redirecting To Main Page...</p>
-          </>
-        );
+    if (serverErrorType) {
+      if (serverErrorType === "NoError") {
+        if (typeOfAuthState === "Login") {
+          renderValue = (
+            <p style={{ color: "green" }}>Successfully LoggedIn !</p>
+          );
+        } else if (typeOfAuthState === "Signup") {
+          renderValue = (
+            <p style={{ color: "green" }}>Account Created Successfully !</p>
+          );
+        }
+      } else {
+        if (serverErrorType === "Login") {
+          renderValue = (
+            <p style={{ color: "red", margin: 0 }}>
+              Please Check Your Credentials !
+            </p>
+          );
+        } else if (serverErrorType === "Signup") {
+          renderValue = (
+            <p style={{ color: "red", margin: 0 }}>
+              This Account Is Already Registered !
+            </p>
+          );
+        }
       }
     }
-    return renderValue;
+
+    return (
+      <div
+        style={{
+          width: 250,
+          padding: 5,
+          borderRadius: 8,
+          background: "#fff",
+          marginBottom: -20,
+          marginTop: 20,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        {renderValue}
+        {serverErrorType === "NoError" && (
+          <p style={{ color: "green" }}>Redirecting To Main Page...</p>
+        )}
+      </div>
+    );
   };
 
   const { readyToProcess, isEmailReady, isPasswordReady } =
@@ -67,17 +94,11 @@ const useRenderByAuthType = () => {
           password: fields.password,
         });
 
-        console.log(error);
-
         error ? setServerErrorType("Login") : setServerErrorType("NoError");
 
         setTimeout(() => {
           setServerErrorType(null);
         }, 3000);
-
-        // error
-        //   ? console.log("Please Check Your Email Or Password !")
-        //   : console.log("Successfully LoggedIn !");
       } catch (error) {}
     } else if (typeOfAuthState === "Signup") {
       try {
@@ -86,11 +107,8 @@ const useRenderByAuthType = () => {
         error ? setServerErrorType("Signup") : setServerErrorType("NoError");
 
         setTimeout(() => {
-          setServerErrorType({ type: null });
+          setServerErrorType(null);
         }, 3000);
-        error
-          ? console.log("This Account Already Exists !")
-          : console.log("Your Account Created Successfully !");
       } catch (error) {}
     }
     setLoading(false);
@@ -118,7 +136,7 @@ const useRenderByAuthType = () => {
               >
                 {isPasswordReady()
                   ? "Valid Password Provided !"
-                  : `Password Must Be AtLeast 8 Charecters | ${fields.password.length} /
+                  : `Password Must Be AtLeast 8 Characters | ${fields.password.length} /
               8`}
               </p>
             </div>
@@ -135,16 +153,11 @@ const useRenderByAuthType = () => {
             placeholder="Password"
             type={"password"}
           />
-          {/* <p color="red">
-            {serverErrorType === "Login"
-              ? "Please Check Your Email Or Password !"
-              : serverErrorType === "Signup"
-              ? "This Account Already Exists !"
-              : null}
-          </p> */}
-          {handleSuccess()}
+          {serverErrorType !== null && handleAuth()}
           <Button
-            disabledHandler={!readyToProcess || serverErrorType === "NoError"}
+            disabledHandler={
+              !readyToProcess || serverErrorType === "NoError" || loading
+            }
           >
             <ClipLoader {...loadingProps} />
             {typeOfAuthState === "Login" ? "Signin" : "Signup"}
