@@ -8,7 +8,6 @@ export const verifyForm = (userData) => {
   //* RegExp !
   const countOfAt = (email.match(/@/g) || []).length;
   let formatSpecialChar = /[.@]/;
-  //* Space Are So Important In Regex !!!!!! It Has Not Contains Space At All
   let acceptableProviders = /^(gmail|hotmail|yahoo|outlook)$/;
   const [beforeAt, afterAt] = email.split("@");
   const provider = afterAt?.split(".")[0];

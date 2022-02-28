@@ -8,9 +8,16 @@ import { Button } from "@mui/material";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import { flexbox } from "@mui/system";
 import styles from "./../../Styles/firstPage.module.css";
+import { supabase } from "../../Services/RemoteService/Configuration/supabaseClient";
 import { useOpenAndCloseModal } from "../../Hooks/useOpenAndCloseModal";
 
 export default function FirstPage() {
+  useEffect(() => {
+    //! If Token Available => User Is Logged In (Currently In Account !)!
+    //! And User Will Not Be Null !
+    const user = supabase.auth.user();
+  }, []);
+
   const { processModal } = useOpenAndCloseModal();
 
   return (

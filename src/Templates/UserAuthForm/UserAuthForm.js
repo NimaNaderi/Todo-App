@@ -1,3 +1,8 @@
+import React, { useEffect } from "react";
+import {
+  useDispatchUserAuthState,
+  useUserAuthState,
+} from "../../Context/Providers/UserAuthState/UserAuthStateProvider";
 import {
   useSetTypeOfAuthState,
   useTypeOfAuthState,
@@ -7,8 +12,10 @@ import Button from "../../Components/Actions/Button";
 import DeleteButton from "../../Components/DeleteButton/DeleteButton";
 import FormContentContainer from "../../Components/FormContentContainer/FormContentContainer";
 import Modal from "../Modal/Modal";
-import React from "react";
+import { authStateActionTypes } from "../../Context/reducer";
+import { signUpUser } from "../../Services/RemoteService/Actions/signUpUser";
 import styles from "./userAuthForm.module.css";
+import { supabase } from "../../Services/RemoteService/Configuration/supabaseClient";
 import { useFormFields } from "../../Hooks/useFormFields";
 import { useOpenAndCloseModal } from "../../Hooks/useOpenAndCloseModal";
 import { useVerifyAndHandleForm } from "../../Hooks/useVerifyAndHandleForm";
@@ -17,17 +24,40 @@ const useRenderByAuthType = () => {
   const typeOfAuthState = useTypeOfAuthState();
   const setTypeOfAuthState = useSetTypeOfAuthState();
   const { processModal } = useOpenAndCloseModal();
+  const userAuthState = useUserAuthState();
   const { fields, handleChange } = useFormFields({
     email: "",
     password: "",
   });
 
+  useEffect(() => {
+    console.log(userAuthState);
+  }, [userAuthState]);
+
   const { error, readyToProcess, isEmailReady, isPasswordReady } =
     useVerifyAndHandleForm(fields);
 
-  const submitFormHandler = (e) => {
+  const submitFormHandler = async (e) => {
     e.preventDefault();
+    if (typeOfAuthState === "Login") {
+      try {
+        const { user, error, session } = await supabase.auth.signIn({
+          email: fields.email,
+          password: fields.password,
+        });
+      } catch (error) {}
+    } else if (typeOfAuthState === "Signup") {
+      try {
+        const { user, error, session } = await signUpUser(
+          fields.email,
+          fields.password
+        );
+      } catch (error) {}
+    } else {
+      await supabase.auth.signOut();
+    }
   };
+
   const renderData = () => {
     return (
       <FormContentContainer onSubmit={submitFormHandler}>
