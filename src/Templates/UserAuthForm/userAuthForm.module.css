@@ -7,7 +7,7 @@ p,
 button {
   color: #fff;
 }
-button {
+.actionBtn {
   background-color: #ce4f4b;
   width: 150px;
   height: 50px;

@@ -1,9 +1,13 @@
 import { createPortal } from "react-dom";
-// import { ToastContainer } from "react-toastify";
 import styles from "./Modal.module.css";
+import { useOpenAndCloseModal } from "../../Hooks/useOpenAndCloseModal";
 
 const Backdrop = (props) => {
-  return <div className={styles.backdrop} onClick={props.onClose}></div>;
+  const { processModal } = useOpenAndCloseModal();
+
+  return (
+    <div className={styles.backdrop} onClick={() => processModal(null)}></div>
+  );
 };
 
 const ModalOverlay = (props) => {

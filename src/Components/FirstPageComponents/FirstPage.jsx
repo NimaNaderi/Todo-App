@@ -1,27 +1,77 @@
-import React, { useEffect } from "react";
-import {
-  useSetTypeOfAuthState,
-  useTypeOfAuthState,
-} from "../../Context/Providers/TypeOfAuthState/TypeOfAuthProvider";
+import React, { useEffect, useRef, useState } from "react";
+import { borderBottom, flexbox } from "@mui/system";
 
 import { Button } from "@mui/material";
 import ButtonGroup from "@mui/material/ButtonGroup";
-import { flexbox } from "@mui/system";
+import { localServiceActions } from "../../Services/LocalService/localService";
 import styles from "./../../Styles/firstPage.module.css";
-import { supabase } from "../../Services/RemoteService/Configuration/supabaseClient";
 import { useOpenAndCloseModal } from "../../Hooks/useOpenAndCloseModal";
 
 export default function FirstPage() {
-  useEffect(() => {
-    //! If Token Available => User Is Logged In (Currently In Account !)!
-    //! And User Will Not Be Null !
-    const user = supabase.auth.user();
-  }, []);
-
   const { processModal } = useOpenAndCloseModal();
+
+  const [language, setLanguage] = useState("EN");
+  const [isMouseOver, setIsMouseOver] = useState(false);
+
+  useEffect(() => {
+    localServiceActions.setItem("Language", language);
+  }, [language]);
 
   return (
     <div className={styles.container}>
+      <Button
+        onMouseOver={() => setIsMouseOver(true)}
+        onMouseLeave={() => setIsMouseOver(false)}
+        sx={{
+          transition: "all .5s ease",
+          position: "absolute",
+          color: "white",
+          borderColor: "#444550",
+          borderRadius: 4,
+        }}
+        variant="outlined"
+        style={{
+          marginLeft: 50,
+          marginTop: 40,
+          borderWidth: 3,
+          width: 120,
+        }}
+      >
+        {!isMouseOver ? (
+          "Language"
+        ) : (
+          <section
+            style={{
+              fontSize: 18,
+              width: "100%",
+              display: "flex",
+              justifyContent: "space-around",
+              alignItems: "center",
+            }}
+          >
+            <div
+              style={
+                language === "EN"
+                  ? { pointerEvents: "none", opacity: 0.3 }
+                  : null
+              }
+              onClick={() => setLanguage("EN")}
+            >
+              EN
+            </div>
+            <div
+              style={
+                language === "FA"
+                  ? { pointerEvents: "none", opacity: 0.3 }
+                  : null
+              }
+              onClick={() => setLanguage("FA")}
+            >
+              FA
+            </div>
+          </section>
+        )}
+      </Button>
       <section className={styles.welcomeSection}>
         <div className={styles.contentContainer}>
           <h1 style={{ fontSize: 72 }}>Goals, Just Goals.</h1>

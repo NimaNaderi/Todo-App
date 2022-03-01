@@ -1,9 +1,9 @@
-const service = localStorage;
+const localService = localStorage;
 
 export const localServiceActions = {
-  setItem: (key, value) => service.setItem(key, JSON.stringify(value)),
-  getItem: (key) => JSON.parse(service.getItem(key)),
-  removeItem: (key) => service.removeItem(key),
+  setItem: (key, value) => localService.setItem(key, JSON.stringify(value)),
+  getItem: (key) => JSON.parse(localService.getItem(key)),
+  removeItem: (key) => localService.removeItem(key),
 };
 
 export const isUserAuthenticated =

@@ -13,7 +13,7 @@ const Button = styled.button`
 export default function DeleteButton() {
   const { processModal } = useOpenAndCloseModal();
   return (
-    <Button onClick={() => processModal(null)}>
+    <Button style={{ borderRadius: 10 }} onClick={() => processModal(null)}>
       <CancelIcon sx={{ width: 50, height: 50 }} />
     </Button>
   );
