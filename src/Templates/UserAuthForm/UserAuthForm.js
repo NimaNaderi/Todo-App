@@ -9,13 +9,27 @@ import ClipLoader from "react-spinners/ClipLoader";
 import DeleteButton from "../../Components/DeleteButton/DeleteButton";
 import FormContentContainer from "../../Components/FormContentContainer/FormContentContainer";
 import Modal from "../Modal/Modal";
-import { signUpUser } from "../../Services/RemoteService/Actions/signUpUser";
+import styled from "styled-components";
 import styles from "./userAuthForm.module.css";
-import { supabase } from "../../Services/RemoteService/Configuration/supabaseClient";
+import { useAuthUser } from "../../Hooks/useAuthUser";
 import { useFormFields } from "../../Hooks/useFormFields";
 import { useLoadingBarData } from "../../Hooks/useLoadingBarData";
 import { useOpenAndCloseModal } from "../../Hooks/useOpenAndCloseModal";
 import { useVerifyAndHandleForm } from "../../Hooks/useVerifyAndHandleForm";
+
+//! Todo Put All Styled Components In External File !
+
+const AuthDataContainer = styled.div`
+  width: 250px;
+  padding: 5px;
+  border-radius: 8px;
+  background: #fff;
+  margin-bottom: -20px;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
 
 const useRenderByAuthType = () => {
   //Todo Redirect User When Logged In Or SignedUp !
@@ -28,56 +42,49 @@ const useRenderByAuthType = () => {
     email: "",
     password: "",
   });
+  const authUser = useAuthUser(
+    setLoading,
+    typeOfAuthState,
+    fields,
+    setServerErrorType
+  );
 
   const handleAuth = () => {
     let renderValue;
     if (serverErrorType) {
       if (serverErrorType === "NoError") {
         if (typeOfAuthState === "Login") {
-          renderValue = (
-            <p style={{ color: "green" }}>Successfully LoggedIn !</p>
-          );
+          renderValue = "Successfully LoggedIn !";
         } else if (typeOfAuthState === "Signup") {
-          renderValue = (
-            <p style={{ color: "green" }}>Account Created Successfully !</p>
-          );
+          renderValue = "Account Created Successfully !";
         }
       } else {
         if (serverErrorType === "Login") {
-          renderValue = (
-            <p style={{ color: "red", margin: 0 }}>
-              Please Check Your Credentials !
-            </p>
-          );
+          renderValue = "Please Check Your Credentials !";
         } else if (serverErrorType === "Signup") {
-          renderValue = (
-            <p style={{ color: "red", margin: 0 }}>
-              This Account Is Already Registered !
-            </p>
-          );
+          renderValue = "This Account Is Already Registered !";
+        } else {
+          renderValue = "There's No Internet Connection !";
         }
       }
     }
 
     return (
-      <div
-        style={{
-          width: 250,
-          padding: 5,
-          borderRadius: 8,
-          background: "#fff",
-          marginBottom: -20,
-          marginTop: 20,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        {renderValue}
+      <AuthDataContainer>
+        <p
+          style={{
+            margin: 0,
+            color: serverErrorType === "NoError" ? "green" : "red",
+          }}
+        >
+          {renderValue}
+        </p>
         {serverErrorType === "NoError" && (
-          <p style={{ color: "green" }}>Redirecting To Main Page...</p>
+          <p style={{ marginTop: 10, color: "green" }}>
+            Redirecting To Main Page...
+          </p>
         )}
-      </div>
+      </AuthDataContainer>
     );
   };
 
@@ -86,32 +93,7 @@ const useRenderByAuthType = () => {
 
   const submitFormHandler = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    if (typeOfAuthState === "Login") {
-      try {
-        const { user, error } = await supabase.auth.signIn({
-          email: fields.email,
-          password: fields.password,
-        });
-
-        error ? setServerErrorType("Login") : setServerErrorType("NoError");
-
-        setTimeout(() => {
-          setServerErrorType(null);
-        }, 3000);
-      } catch (error) {}
-    } else if (typeOfAuthState === "Signup") {
-      try {
-        const { user, error } = await signUpUser(fields.email, fields.password);
-
-        error ? setServerErrorType("Signup") : setServerErrorType("NoError");
-
-        setTimeout(() => {
-          setServerErrorType(null);
-        }, 3000);
-      } catch (error) {}
-    }
-    setLoading(false);
+    authUser();
   };
 
   const renderData = () => {
