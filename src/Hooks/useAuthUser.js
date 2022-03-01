@@ -1,5 +1,11 @@
+import {
+  isUserAuthenticated,
+  localServiceActions,
+} from "../Services/LocalService/localService";
+
 import { signInUser } from "../Services/RemoteService/Actions/signInUser";
 import { signUpUser } from "../Services/RemoteService/Actions/signUpUser";
+import { useNavigate } from "react-router-dom";
 
 export const useAuthUser = (
   setLoading,
@@ -7,6 +13,7 @@ export const useAuthUser = (
   fields,
   setServerErrorType
 ) => {
+  const navigate = useNavigate();
   const handleAuth = async () => {
     setLoading(true);
 
@@ -14,8 +21,13 @@ export const useAuthUser = (
       try {
         const { user, error } = await signInUser(fields.email, fields.password);
 
-        user && setServerErrorType("NoError");
-
+        if (user) {
+          localServiceActions.setItem("userAccessType", "LoggedIn");
+          setServerErrorType("NoError");
+          setTimeout(() => {
+            navigate("/main");
+          }, 3000);
+        }
         error.status === 400
           ? setServerErrorType("Login")
           : setServerErrorType("Network");
@@ -23,12 +35,18 @@ export const useAuthUser = (
 
       setTimeout(() => {
         setServerErrorType(null);
-      }, 3000);
+      }, 2999);
     } else if (typeOfAuthState === "Signup") {
       try {
         const { user, error } = await signUpUser(fields.email, fields.password);
 
-        user && setServerErrorType("NoError");
+        if (user) {
+          localServiceActions.setItem("userAccessType", "LoggedIn");
+          setServerErrorType("NoError");
+          setTimeout(() => {
+            navigate("/main");
+          }, 3000);
+        }
 
         error.status === 400
           ? setServerErrorType("Signup")
@@ -38,7 +56,7 @@ export const useAuthUser = (
 
     setTimeout(() => {
       setServerErrorType(null);
-    }, 3000);
+    }, 2999);
 
     setLoading(false);
   };

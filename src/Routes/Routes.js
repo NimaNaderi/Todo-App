@@ -8,7 +8,7 @@ import { isUserAuthenticated } from "../Services/LocalService/localService";
 
 export default function Routes() {
   return useRoutes([
-    isUserAuthenticated && {
+    {
       path: "/main",
       element: <MainPageContainer />,
     },
@@ -21,6 +21,7 @@ export default function Routes() {
         <AppContainer />
       ),
     },
+    { path: "/notFound", element: <NotFound /> },
     { path: "*", element: <NotFound /> },
   ]);
 }
