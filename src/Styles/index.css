@@ -1,6 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@font-face {
+  font-family: IranSans;
+  src: url(../Assets/Fonts/IRANSans_Medium.woff);
+}
 * {
   font-family: Calibri;
   margin: 0;

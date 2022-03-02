@@ -1,9 +1,9 @@
 import "./Styles/index.css";
 import "bootstrap/dist/css/bootstrap.css";
+import "./i18n";
 
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
-import ModalShowingStateProvider from "./Context/Providers/ModalShowingState/ModalShowingStateProvider";
 import ProvidersContainer from "./Context/ProvidersContainer";
 import React from "react";
 import ReactDOM from "react-dom";
