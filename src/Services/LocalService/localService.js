@@ -7,4 +7,5 @@ export const localServiceActions = {
 };
 
 export const isUserAuthenticated =
-  localServiceActions.getItem("supabase.auth.token") !== null;
+  localServiceActions.getItem("supabase.auth.token") ||
+  localServiceActions.getItem("userAccessType") !== null;

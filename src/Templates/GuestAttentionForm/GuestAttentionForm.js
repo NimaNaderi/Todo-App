@@ -6,8 +6,11 @@ import FormContentContainer from "../../Components/FormContentContainer/FormCont
 import Modal from "../Modal/Modal";
 import { localServiceActions } from "../../Services/LocalService/localService";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function GuestAttentionForm({ onClose }) {
+  const { t, i18n } = useTranslation();
+
   const navigate = useNavigate();
 
   const [readyToProcess, setReadyToProcess] = useState(false);
@@ -28,20 +31,19 @@ export default function GuestAttentionForm({ onClose }) {
             borderRadius: 15,
           }}
         >
-          Attention
+          {t("bigAttention")}
         </h1>
 
         <h3
           style={{
+            textAlign: "justify",
             marginLeft: 15,
             color: "white",
             marginTop: 35,
             lineHeight: 2,
           }}
         >
-          When Logging In As Guest Your Todo List Content Will Not Be Save And
-          It Will Be Clear After Each Refresh So We Strongly Recommend You To
-          Login And Save Your Data Permanently !
+          {t("attention")}
         </h3>
         <section
           style={{
@@ -62,6 +64,7 @@ export default function GuestAttentionForm({ onClose }) {
             style={{
               marginBottom: 25,
               marginRight: 10,
+              marginLeft: 10,
               padding: 0,
               boxSizing: "border-box",
               width: 25,
@@ -69,7 +72,7 @@ export default function GuestAttentionForm({ onClose }) {
             }}
           />
           <label style={{ fontSize: 24 }} htmlFor="attentionCheckBox">
-            I Have Read The Section And I Accept The Consequences !
+            {t("section")}
           </label>
         </section>
         <Button
@@ -78,10 +81,10 @@ export default function GuestAttentionForm({ onClose }) {
             localServiceActions.setItem("userAccessType", "Guest");
           }}
           disabled={!readyToProcess}
-          sx={{ color: "#fff", borderRadius: 2, marginTop: 3 }}
+          sx={{ color: "#fff", borderRadius: 2, marginTop: 3, width: 100 }}
           variant="contained"
         >
-          Continue
+          {t("continue")}
         </Button>
       </FormContentContainer>
     </Modal>

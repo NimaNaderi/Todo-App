@@ -5,5 +5,9 @@
   "getStarted": "Get Started",
   "continueGuest": "Continue As Guest",
   "login": "Login",
-  "signUp": "Sign Up"
+  "signUp": "Sign Up",
+  "attention": "When Logging In As Guest Your Todo List Content Will Not Be Save And It Will Be Clear After Each Refresh So We Strongly Recommend You To Login And Save Your Data Permanently !",
+  "section": "I Have Read The Section And I Accept The Consequences !",
+  "bigAttention": "Attention",
+  "continue": "Continue"
 }

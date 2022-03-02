@@ -10,6 +10,7 @@ export default function MainPageContainer() {
   const navigate = useNavigate();
   const regex = /^(LoggedIn|Guest)$/;
   useEffect(() => {
+    console.log(regex.test(localServiceActions.getItem("userAccessType")));
     if (!regex.test(localServiceActions.getItem("userAccessType")))
       !isUserAuthenticated ? navigate("/notFound") : navigate("/main");
   }, []);
