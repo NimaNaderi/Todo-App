@@ -109,6 +109,7 @@ export default function FirstPage() {
               Get Started
             </Button>
             <Button
+              onClick={() => processModal("Guest")}
               style={{
                 background: "#30303D",
                 borderRadius: 10,

@@ -7,6 +7,7 @@ import {
 
 import FirstPage from "./Components/FirstPageComponents/FirstPage";
 import ForgotPasswordForm from "./Templates/ForgotPasswordForm/ForgotPasswordForm";
+import GuestAttentionForm from "./Templates/GuestAttentionForm/GuestAttentionForm";
 import UserAuthForm from "./Templates/UserAuthForm/UserAuthForm";
 import styles from "./Styles/appContainer.module.css";
 
@@ -39,6 +40,17 @@ export default function AppContainer() {
             })
           }
         ></ForgotPasswordForm>
+      );
+    } else if (modalShowingStateAndType.modalType === "Guest") {
+      return (
+        <GuestAttentionForm
+          onClose={() =>
+            setModalShowingStateAndType({
+              modalType: null,
+              isModalShowing: false,
+            })
+          }
+        />
       );
     }
   };

@@ -15,6 +15,7 @@ export const useOpenAndCloseModal = (typeOfAuth) => {
     if (authType !== null) {
       if (authType === "Login") setTypeOfAuthState("Login");
       else if (authType === "Signup") setTypeOfAuthState("Signup");
+      else if (authType === "Guest") setTypeOfAuthState("Guest");
       else setTypeOfAuthState("ForgotPassword");
     } else {
       setTypeOfAuthState(null);

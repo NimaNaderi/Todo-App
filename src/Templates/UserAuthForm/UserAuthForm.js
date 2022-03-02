@@ -32,7 +32,6 @@ const AuthDataContainer = styled.div`
 `;
 
 const useRenderByAuthType = () => {
-  //Todo Redirect User When Logged In Or SignedUp !
   const { loadingProps, setLoading, loading } = useLoadingBarData("110px");
   const [serverErrorType, setServerErrorType] = useState(null);
   const typeOfAuthState = useTypeOfAuthState();
