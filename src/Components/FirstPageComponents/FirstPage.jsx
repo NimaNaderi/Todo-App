@@ -129,7 +129,7 @@ export default function FirstPage() {
         <ButtonGroup sx={{ color: "black" }} style={{ marginTop: 40 }}>
           <Button
             onClick={() => processModal("Login")}
-            sx={{ color: "white" }}
+            sx={{ color: "white", width: 90 }}
             variant="text"
           >
             {t("login")}

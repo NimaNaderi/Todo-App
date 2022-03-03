@@ -5,6 +5,7 @@ import FormContentContainer from "../../Components/FormContentContainer/FormCont
 import Modal from "../Modal/Modal";
 import React from "react";
 import { supabase } from "../../Services/RemoteService/Configuration/supabaseClient";
+import { t } from "i18next";
 import { useFormFields } from "../../Hooks/useFormFields";
 import { useLoadingBarData } from "../../Hooks/useLoadingBarData";
 import { useVerifyAndHandleForm } from "../../Hooks/useVerifyAndHandleForm";
@@ -30,11 +31,11 @@ export default function ForgotPasswordForm(props) {
           onChange={handleChange}
           type={"email"}
           name="Email"
-          placeholder="Enter Your Email"
+          placeholder={t("enterEmail")}
         ></input>
         <Button width={230} disabledHandler={!readyToProcess}>
           <ClipLoader {...loadingProps} />
-          Reset My Password
+          {t("resetPassword")}
         </Button>
       </FormContentContainer>
     </Modal>

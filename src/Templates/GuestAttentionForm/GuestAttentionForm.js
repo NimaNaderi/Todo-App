@@ -5,14 +5,11 @@ import DeleteButton from "../../Components/DeleteButton/DeleteButton";
 import FormContentContainer from "../../Components/FormContentContainer/FormContentContainer";
 import Modal from "../Modal/Modal";
 import { localServiceActions } from "../../Services/LocalService/localService";
+import { t } from "i18next";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 
 export default function GuestAttentionForm({ onClose }) {
-  const { t, i18n } = useTranslation();
-
   const navigate = useNavigate();
-
   const [readyToProcess, setReadyToProcess] = useState(false);
   return (
     <Modal onClose={onClose}>

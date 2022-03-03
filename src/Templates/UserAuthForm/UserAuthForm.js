@@ -9,8 +9,10 @@ import ClipLoader from "react-spinners/ClipLoader";
 import DeleteButton from "../../Components/DeleteButton/DeleteButton";
 import FormContentContainer from "../../Components/FormContentContainer/FormContentContainer";
 import Modal from "../Modal/Modal";
+import { getCurrentLanguage } from "../../Utilities/getCurrentLanguage";
 import styled from "styled-components";
 import styles from "./userAuthForm.module.css";
+import { t } from "i18next";
 import { useAuthUser } from "../../Hooks/useAuthUser";
 import { useFormFields } from "../../Hooks/useFormFields";
 import { useLoadingBarData } from "../../Hooks/useLoadingBarData";
@@ -35,6 +37,7 @@ const useRenderByAuthType = () => {
   const { loadingProps, setLoading, loading } = useLoadingBarData("110px");
   const [serverErrorType, setServerErrorType] = useState(null);
   const typeOfAuthState = useTypeOfAuthState();
+  const currentLanguage = getCurrentLanguage();
   const setTypeOfAuthState = useSetTypeOfAuthState();
   const { processModal } = useOpenAndCloseModal();
   const { fields, handleChange } = useFormFields({
@@ -53,17 +56,17 @@ const useRenderByAuthType = () => {
     if (serverErrorType) {
       if (serverErrorType === "NoError") {
         if (typeOfAuthState === "Login") {
-          renderValue = "Successfully LoggedIn !";
+          renderValue = t("successfulLogin");
         } else if (typeOfAuthState === "Signup") {
-          renderValue = "Account Created Successfully !";
+          renderValue = t("successfulSignUp");
         }
       } else {
         if (serverErrorType === "Login") {
-          renderValue = "Please Check Your Credentials !";
+          renderValue = t("checkCredentials");
         } else if (serverErrorType === "Signup") {
-          renderValue = "This Account Is Already Registered !";
+          renderValue = t("alreadyRegistered");
         } else {
-          renderValue = "There's No Internet Connection !";
+          renderValue = t("noInternet");
         }
       }
     }
@@ -79,9 +82,7 @@ const useRenderByAuthType = () => {
           {renderValue}
         </p>
         {serverErrorType === "NoError" && (
-          <p style={{ marginTop: 10, color: "green" }}>
-            Redirecting To Main Page...
-          </p>
+          <p style={{ marginTop: 10, color: "green" }}>{t("redirecting")}</p>
         )}
       </AuthDataContainer>
     );
@@ -101,7 +102,7 @@ const useRenderByAuthType = () => {
         <div className={styles.container}>
           <DeleteButton />
           <h1 style={{ marginTop: 20 }}>
-            {typeOfAuthState === "Login" ? "Login" : "Signup"}
+            {typeOfAuthState === "Login" ? t("login") : t("signUp")}
           </h1>
           {(fields.email.length > 0 || fields.password.length > 0) && (
             <div className={styles.dataVerificationContainer}>
@@ -125,13 +126,13 @@ const useRenderByAuthType = () => {
           <input
             onChange={(e) => handleChange(e)}
             name="Email"
-            placeholder="Email"
+            placeholder={t("email")}
             type={"email"}
           />
           <input
             onChange={(e) => handleChange(e)}
             name="Password"
-            placeholder="Password"
+            placeholder={t("password")}
             type={"password"}
           />
           {serverErrorType !== null && handleAuth()}
@@ -140,8 +141,9 @@ const useRenderByAuthType = () => {
               !readyToProcess || serverErrorType === "NoError" || loading
             }
           >
-            <ClipLoader {...loadingProps} />
-            {typeOfAuthState === "Login" ? "Signin" : "Signup"}
+            {currentLanguage === "en" && <ClipLoader {...loadingProps} />}
+            {typeOfAuthState === "Login" ? t("login") : t("signUp")}
+            {currentLanguage === "fa" && <ClipLoader {...loadingProps} />}
           </Button>
 
           <p
@@ -152,13 +154,11 @@ const useRenderByAuthType = () => {
             }
             style={{ marginTop: 40 }}
           >
-            {typeOfAuthState === "Login"
-              ? "Does Not Have Account ? Create Now"
-              : "Already Have Account ? Sign In"}
+            {typeOfAuthState === "Login" ? t("noAccount") : t("haveAccount")}
           </p>
           {typeOfAuthState === "Login" && (
             <p onClick={() => processModal("ForgotPassword")}>
-              Forgot Your Password ? Click Here
+              {t("forgetPassword")}
             </p>
           )}
         </div>

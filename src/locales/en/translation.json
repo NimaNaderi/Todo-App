@@ -9,5 +9,18 @@
   "attention": "When Logging In As Guest Your Todo List Content Will Not Be Save And It Will Be Clear After Each Refresh So We Strongly Recommend You To Login And Save Your Data Permanently !",
   "section": "I Have Read The Section And I Accept The Consequences !",
   "bigAttention": "Attention",
-  "continue": "Continue"
+  "continue": "Continue",
+  "email": "email",
+  "password": "password",
+  "noAccount": "Does Not Have Account ? Create Now",
+  "forgetPassword": "Forgot Your Password ? Click Here",
+  "haveAccount": "Already Have Account ? Sign In",
+  "checkCredentials": "Please Check Your Credentials !",
+  "successfulLogin": "Successfully LoggedIn !",
+  "successfulSignUp": "Account Created Successfully !",
+  "redirecting": "Redirecting To Main Page...",
+  "alreadyRegistered": "This Account Is Already Registered !",
+  "noInternet": "There's No Internet Connection !",
+  "enterEmail": "Enter Your Email",
+  "resetPassword": "Reset My Password"
 }
