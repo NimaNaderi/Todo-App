@@ -10,8 +10,8 @@
   "section": "I Have Read The Section And I Accept The Consequences !",
   "bigAttention": "Attention",
   "continue": "Continue",
-  "email": "email",
-  "password": "password",
+  "email": "Email",
+  "password": "Password",
   "noAccount": "Does Not Have Account ? Create Now",
   "forgetPassword": "Forgot Your Password ? Click Here",
   "haveAccount": "Already Have Account ? Sign In",
@@ -22,5 +22,9 @@
   "alreadyRegistered": "This Account Is Already Registered !",
   "noInternet": "There's No Internet Connection !",
   "enterEmail": "Enter Your Email",
-  "resetPassword": "Reset My Password"
+  "resetPassword": "Reset My Password",
+  "notValidEmail": "Please Provide A Valid Email !",
+  "validEmail": "Valid Email Provided !",
+  "validPassword": "Valid Password Provided !",
+  "notValidPassword": "Password Must Be AtLeast 8 Characters |"
 }

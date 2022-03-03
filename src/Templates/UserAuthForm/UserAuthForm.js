@@ -107,9 +107,7 @@ const useRenderByAuthType = () => {
           {(fields.email.length > 0 || fields.password.length > 0) && (
             <div className={styles.dataVerificationContainer}>
               <p style={{ color: isEmailReady() ? "green" : "red" }}>
-                {isEmailReady()
-                  ? "Valid Email Provided !"
-                  : "Please Provide A Valid Email !"}
+                {isEmailReady() ? t("validEmail") : t("notValidEmail")}
               </p>
               <p
                 style={{
@@ -117,8 +115,8 @@ const useRenderByAuthType = () => {
                 }}
               >
                 {isPasswordReady()
-                  ? "Valid Password Provided !"
-                  : `Password Must Be AtLeast 8 Characters | ${fields.password.length} /
+                  ? t("validPassword")
+                  : `${t("notValidPassword")} ${fields.password.length} /
               8`}
               </p>
             </div>

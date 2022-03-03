@@ -22,5 +22,9 @@
   "alreadyRegistered": "این حساب کاربری از قبل وجود دارد !",
   "noInternet": "اتصال به اینترنت وجود ندارد !",
   "enterEmail": "ایمیل خود را وارد کنید",
-  "resetPassword": "رمز عبور من را بازیابی کن"
+  "resetPassword": "رمز عبور من را بازیابی کن",
+  "notValidEmail": " لطفا یک ایمیل معتبر وارد کنید !",
+  "validEmail": "ایمیل معتبر است !",
+  "validPassword": "پسورد معتبر است !",
+  "notValidPassword": "پسورد باید حداقل 8 رقم باشد |"
 }
