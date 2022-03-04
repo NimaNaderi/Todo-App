@@ -3,7 +3,6 @@
   flex-direction: column;
   align-items: center;
 }
-p,
 button {
   color: #fff;
 }
@@ -14,10 +13,10 @@ button {
   border-radius: 10px !important;
 }
 h1 {
-  color: white;
   font-size: 48px !important;
 }
 input {
+  color: #000;
   width: 260px;
   height: 45px;
   border-radius: 10px;

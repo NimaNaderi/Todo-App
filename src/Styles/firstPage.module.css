@@ -1,6 +1,5 @@
 .container {
   height: 100%;
-  background: #1d1d26;
   display: grid;
 }
 .welcomeSection {
@@ -18,7 +17,6 @@
   flex-direction: column;
   align-items: center;
   position: absolute;
-  color: #fff;
   margin-left: 300px;
 }
 .button {

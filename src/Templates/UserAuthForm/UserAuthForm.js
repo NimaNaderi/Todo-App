@@ -10,28 +10,14 @@ import DeleteButton from "../../Components/DeleteButton/DeleteButton";
 import FormContentContainer from "../../Components/FormContentContainer/FormContentContainer";
 import Modal from "../Modal/Modal";
 import { getCurrentLanguage } from "../../Utilities/getCurrentLanguage";
-import styled from "styled-components";
 import styles from "./userAuthForm.module.css";
 import { t } from "i18next";
 import { useAuthUser } from "../../Hooks/useAuthUser";
 import { useFormFields } from "../../Hooks/useFormFields";
+import { useHandleAuth } from "../../Hooks/useHandleAuth";
 import { useLoadingBarData } from "../../Hooks/useLoadingBarData";
 import { useOpenAndCloseModal } from "../../Hooks/useOpenAndCloseModal";
 import { useVerifyAndHandleForm } from "../../Hooks/useVerifyAndHandleForm";
-
-//! Todo Put All Styled Components In External File !
-
-const AuthDataContainer = styled.div`
-  width: 250px;
-  padding: 5px;
-  border-radius: 8px;
-  background: #fff;
-  margin-bottom: -20px;
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
 
 const useRenderByAuthType = () => {
   const { loadingProps, setLoading, loading } = useLoadingBarData("110px");
@@ -51,42 +37,7 @@ const useRenderByAuthType = () => {
     setServerErrorType
   );
 
-  const handleAuth = () => {
-    let renderValue;
-    if (serverErrorType) {
-      if (serverErrorType === "NoError") {
-        if (typeOfAuthState === "Login") {
-          renderValue = t("successfulLogin");
-        } else if (typeOfAuthState === "Signup") {
-          renderValue = t("successfulSignUp");
-        }
-      } else {
-        if (serverErrorType === "Login") {
-          renderValue = t("checkCredentials");
-        } else if (serverErrorType === "Signup") {
-          renderValue = t("alreadyRegistered");
-        } else {
-          renderValue = t("noInternet");
-        }
-      }
-    }
-
-    return (
-      <AuthDataContainer>
-        <p
-          style={{
-            margin: 0,
-            color: serverErrorType === "NoError" ? "green" : "red",
-          }}
-        >
-          {renderValue}
-        </p>
-        {serverErrorType === "NoError" && (
-          <p style={{ marginTop: 10, color: "green" }}>{t("redirecting")}</p>
-        )}
-      </AuthDataContainer>
-    );
-  };
+  const handleAuth = useHandleAuth(serverErrorType, typeOfAuthState);
 
   const { readyToProcess, isEmailReady, isPasswordReady } =
     useVerifyAndHandleForm(fields);

@@ -1,10 +1,7 @@
-import {
-  isUserAuthenticated,
-  localServiceActions,
-} from "../Services/LocalService/localService";
-
+import { localServiceActions } from "../Services/LocalService/localService";
 import { signInUser } from "../Services/RemoteService/Actions/signInUser";
 import { signUpUser } from "../Services/RemoteService/Actions/signUpUser";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const useAuthUser = (
@@ -13,40 +10,31 @@ export const useAuthUser = (
   fields,
   setServerErrorType
 ) => {
+  let timer;
+  useEffect(() => {
+    return () => {
+      //! Cleaning Up The Timer !
+      clearTimeout(timer);
+    };
+  }, []);
   const navigate = useNavigate();
   const handleAuth = async () => {
     setLoading(true);
 
+    let data;
+
     if (typeOfAuthState === "Login") {
       try {
         const { user, error } = await signInUser(fields.email, fields.password);
-
-        if (user) {
-          localServiceActions.setItem("userAccessType", "LoggedIn");
-          setServerErrorType("NoError");
-          setTimeout(() => {
-            navigate("/main");
-          }, 3000);
-        }
+        data = user;
         error.status === 400
           ? setServerErrorType("Login")
           : setServerErrorType("Network");
       } catch (error) {}
-
-      setTimeout(() => {
-        setServerErrorType(null);
-      }, 2999);
     } else if (typeOfAuthState === "Signup") {
       try {
         const { user, error } = await signUpUser(fields.email, fields.password);
-
-        if (user) {
-          localServiceActions.setItem("userAccessType", "LoggedIn");
-          setServerErrorType("NoError");
-          setTimeout(() => {
-            navigate("/main");
-          }, 3000);
-        }
+        data = user;
 
         error.status === 400
           ? setServerErrorType("Signup")
@@ -54,11 +42,19 @@ export const useAuthUser = (
       } catch (error) {}
     }
 
-    setTimeout(() => {
+    setLoading(false);
+
+    timer = setTimeout(() => {
       setServerErrorType(null);
     }, 2999);
 
-    setLoading(false);
+    if (data) {
+      localServiceActions.setItem("userAccessType", "LoggedIn");
+      setServerErrorType("NoError");
+      timer = setTimeout(() => {
+        navigate("/main");
+      }, 3000);
+    }
   };
 
   return handleAuth;

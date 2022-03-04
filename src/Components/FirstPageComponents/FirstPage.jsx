@@ -1,31 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
-import { borderBottom, flexbox } from "@mui/system";
 
 import { Button } from "@mui/material";
 import ButtonGroup from "@mui/material/ButtonGroup";
-import { localServiceActions } from "../../Services/LocalService/localService";
+import DarkMode from "../../theme/DarkMode";
 import styles from "./../../Styles/firstPage.module.css";
+import { useLanguage } from "../../Hooks/useLanguage";
 import { useOpenAndCloseModal } from "../../Hooks/useOpenAndCloseModal";
-import { useTranslation } from "react-i18next";
 
 export default function FirstPage() {
-  const { t, i18n } = useTranslation();
   const { processModal } = useOpenAndCloseModal();
+  const { language, setLanguage, t } = useLanguage();
 
-  const [language, setLanguage] = useState(
-    localServiceActions.getItem("Language")
-      ? localServiceActions.getItem("Language")
-      : "en"
-  );
   const [isMouseOver, setIsMouseOver] = useState(false);
-
-  useEffect(() => {
-    localServiceActions.setItem("Language", language);
-    i18n.changeLanguage(localServiceActions.getItem("Language"));
-  }, [language]);
-
   return (
     <div className={styles.container}>
+      <DarkMode />
       <Button
         onMouseOver={() => setIsMouseOver(true)}
         onMouseLeave={() => setIsMouseOver(false)}
@@ -81,12 +70,11 @@ export default function FirstPage() {
       </Button>
       <section className={styles.welcomeSection}>
         <div className={styles.contentContainer}>
-          <h1 style={{ fontSize: 72 }}>{t("goals")}</h1>
+          <p style={{ fontSize: 72 }}>{t("goals")}</p>
           <p
             style={{
               marginBottom: -2,
               marginTop: 10,
-              color: "#B8B8CD",
               fontSize: 20,
             }}
           >
@@ -96,7 +84,7 @@ export default function FirstPage() {
             sx={{
               marginTop: 5,
               width: 370,
-              display: flexbox,
+              display: "flex",
               justifyContent: "space-around",
             }}
           >
