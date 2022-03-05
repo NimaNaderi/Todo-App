@@ -1,10 +1,9 @@
-import { AuthDataContainer } from "../Components/StyledComponents/AuthDataContainer";
 import React from "react";
 import { t } from "i18next";
-import { useTheme } from "./useTheme";
+import useLightBgDataContainer from "./useLightBgDataContainer";
 
 export const useHandleAuth = (serverErrorType, typeOfAuthState) => {
-  const { theme } = useTheme();
+  const LightBgDataContainer = useLightBgDataContainer();
   const handleAuth = () => {
     let renderValue;
     if (serverErrorType) {
@@ -25,9 +24,7 @@ export const useHandleAuth = (serverErrorType, typeOfAuthState) => {
       }
     }
     return (
-      <AuthDataContainer
-        style={{ background: theme === "light" ? "#fff" : null }}
-      >
+      <LightBgDataContainer>
         <p
           style={{
             margin: 0,
@@ -39,7 +36,7 @@ export const useHandleAuth = (serverErrorType, typeOfAuthState) => {
         {serverErrorType === "NoError" && (
           <p style={{ marginTop: 10, color: "green" }}>{t("redirecting")}</p>
         )}
-      </AuthDataContainer>
+      </LightBgDataContainer>
     );
   };
   return handleAuth;

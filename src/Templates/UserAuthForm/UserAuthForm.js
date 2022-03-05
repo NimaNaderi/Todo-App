@@ -15,6 +15,7 @@ import { t } from "i18next";
 import { useAuthUser } from "../../Hooks/useAuthUser";
 import { useFormFields } from "../../Hooks/useFormFields";
 import { useHandleAuth } from "../../Hooks/useHandleAuth";
+import useLightBgDataContainer from "../../Hooks/useLightBgDataContainer";
 import { useLoadingBarData } from "../../Hooks/useLoadingBarData";
 import { useOpenAndCloseModal } from "../../Hooks/useOpenAndCloseModal";
 import { useTheme } from "../../Hooks/useTheme";
@@ -38,6 +39,7 @@ const useRenderByAuthType = () => {
     setServerErrorType
   );
   const { theme } = useTheme();
+  const LightBgDataContainer = useLightBgDataContainer();
 
   const handleAuth = useHandleAuth(serverErrorType, typeOfAuthState);
 
@@ -58,10 +60,7 @@ const useRenderByAuthType = () => {
             {typeOfAuthState === "Login" ? t("login") : t("signUp")}
           </h1>
           {(fields.email.length > 0 || fields.password.length > 0) && (
-            <div
-              className={styles.dataVerificationContainer}
-              style={{ background: theme === "light" ? "#eee" : null }}
-            >
+            <LightBgDataContainer className={styles.dataVerificationContainer}>
               <p style={{ color: isEmailReady() ? "green" : "red" }}>
                 {isEmailReady() ? t("validEmail") : t("notValidEmail")}
               </p>
@@ -75,7 +74,7 @@ const useRenderByAuthType = () => {
                   : `${t("notValidPassword")} ${fields.password.length} /
               8`}
               </p>
-            </div>
+            </LightBgDataContainer>
           )}
           <input
             onChange={(e) => handleChange(e)}

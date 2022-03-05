@@ -48,7 +48,6 @@ export default function FirstPage() {
   const { processModal } = useOpenAndCloseModal();
   const { language, setLanguage, t } = useLanguage();
 
-  const [isMouseOver, setIsMouseOver] = useState(false);
   return (
     <div className={styles.container}>
       <DarkMode />

@@ -23,14 +23,7 @@ input {
   transition: all 0.2s ease-in;
 }
 .dataVerificationContainer {
-  padding: 10px 5px;
-  border-radius: 10px;
-  width: 400px;
-  margin-top: 15px;
-  margin-bottom: -5px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  width: 350px !important;
 }
 .dataVerificationContainer * {
   font-size: 18px;

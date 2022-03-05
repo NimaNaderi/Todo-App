@@ -6,33 +6,26 @@ import FormContentContainer from "../../Components/FormContentContainer/FormCont
 import Modal from "../Modal/Modal";
 import { localServiceActions } from "../../Services/LocalService/localService";
 import { t } from "i18next";
+import useLightBgDataContainer from "../../Hooks/useLightBgDataContainer";
 import { useNavigate } from "react-router-dom";
-import { useTheme } from "../../Hooks/useTheme";
 
 export default function GuestAttentionForm({ onClose }) {
   const navigate = useNavigate();
-  const { theme } = useTheme();
+  const LightBgDataContainer = useLightBgDataContainer();
   const [readyToProcess, setReadyToProcess] = useState(false);
   return (
     <Modal onClose={onClose}>
       <FormContentContainer>
         <DeleteButton />
-        <h1
-          style={{
-            padding: 5,
-            marginTop: 45,
-            color: "red",
-            background: theme === "light" && "#eee",
-            width: 300,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            borderRadius: 15,
-          }}
-        >
-          {t("bigAttention")}
-        </h1>
-
+        <LightBgDataContainer>
+          <h1
+            style={{
+              color: "red",
+            }}
+          >
+            {t("bigAttention")}
+          </h1>
+        </LightBgDataContainer>
         <h3
           style={{
             textAlign: "justify",

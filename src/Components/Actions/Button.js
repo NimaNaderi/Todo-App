@@ -8,7 +8,7 @@ export default function Button({ disabledHandler, children, width }) {
       disabled={disabledHandler}
       style={{
         width: width,
-        marginTop: 40,
+        marginTop: 35,
         opacity: disabledHandler && "50%",
         display: "flex",
         justifyContent: "center",
