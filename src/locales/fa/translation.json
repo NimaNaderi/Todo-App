@@ -26,5 +26,6 @@
   "notValidEmail": " لطفا یک ایمیل معتبر وارد کنید !",
   "validEmail": "ایمیل معتبر است !",
   "validPassword": "پسورد معتبر است !",
-  "notValidPassword": "پسورد باید حداقل 8 رقم باشد |"
+  "notValidPassword": "پسورد باید حداقل 8 رقم باشد |",
+  "capsLockOn": "هشدار: CapsLock شما روشن است !"
 }

@@ -1,7 +1,7 @@
 import { Navigate, useRoutes } from "react-router-dom";
 
 import AppContainer from "../AppContainer";
-import MainPageContainer from "../Components/MainComponents/MainPageContainer";
+import MainPageContainer from "../Components/MainComponent/MainPageContainer";
 import NotFound from "../Templates/NotFound/NotFound";
 import React from "react";
 import { isUserAuthenticated } from "../Services/LocalService/localService";

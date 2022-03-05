@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   useSetTypeOfAuthState,
   useTypeOfAuthState,
@@ -18,7 +18,6 @@ import { useHandleAuth } from "../../Hooks/Logic/useHandleAuth";
 import useLightBgDataContainer from "../../Hooks/UI/useLightBgDataContainer";
 import { useLoadingBarData } from "../../Hooks/UI/useLoadingBarData";
 import { useOpenAndCloseModal } from "../../Hooks/UI/useOpenAndCloseModal";
-import { useTheme } from "../../Hooks/UI/useTheme";
 import { useVerifyAndHandleForm } from "../../Hooks/Logic/useVerifyAndHandleForm";
 
 const useRenderByAuthType = () => {
@@ -50,6 +49,8 @@ const useRenderByAuthType = () => {
     authUser();
   };
 
+  const [isCapsLockOn, setIsCapsLockOn] = useState(false);
+
   const renderData = () => {
     return (
       <FormContentContainer onSubmit={submitFormHandler}>
@@ -73,15 +74,28 @@ const useRenderByAuthType = () => {
                   : `${t("notValidPassword")} ${fields.password.length} /
               8`}
               </p>
+              {isCapsLockOn && <p>{t("capsLockOn")}</p>}
             </LightBgDataContainer>
           )}
           <input
-            onChange={(e) => handleChange(e)}
+            onKeyDown={(e) => {
+              e.getModifierState("CapsLock")
+                ? setIsCapsLockOn(true)
+                : setIsCapsLockOn(false);
+            }}
+            onChange={(e) => {
+              handleChange(e);
+            }}
             name="Email"
             placeholder={t("email")}
             type={"email"}
           />
           <input
+            onKeyDown={(e) => {
+              e.getModifierState("CapsLock")
+                ? setIsCapsLockOn(true)
+                : setIsCapsLockOn(false);
+            }}
             onChange={(e) => handleChange(e)}
             name="Password"
             placeholder={t("password")}
