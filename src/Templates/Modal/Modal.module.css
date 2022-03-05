@@ -15,13 +15,8 @@
   top: 5vh;
   left: 5%;
   width: 90%;
-  background: linear-gradient(
-    90deg,
-    rgba(76, 209, 55, 1) 0%,
-    rgba(72, 126, 176, 1) 100%
-  );
   padding: 1rem;
-  border-radius: 14px;
+  border-radius: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
   z-index: 30;
   animation: slide-down 300ms ease-out forwards;

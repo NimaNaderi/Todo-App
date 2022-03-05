@@ -23,7 +23,7 @@ input {
   transition: all 0.2s ease-in;
 }
 .dataVerificationContainer {
-  width: 350px !important;
+  width: 400px !important;
 }
 .dataVerificationContainer * {
   font-size: 18px;

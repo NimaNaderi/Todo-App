@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { localServiceActions } from "../Services/LocalService/localService";
+import { localServiceActions } from "./../../Services/LocalService/localService";
 import { useTranslation } from "react-i18next";
 
 export const useLanguage = () => {

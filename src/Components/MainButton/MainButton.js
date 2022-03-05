@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 
 import styled from "styled-components";
-import { useLanguage } from "../../Hooks/useLanguage";
+import { useLanguage } from "./../../Hooks/Logic/useLanguage";
 
 const useIsMouseOver = (margin) => {
   const [isMouseOver, setIsMouseOver] = useState(false);

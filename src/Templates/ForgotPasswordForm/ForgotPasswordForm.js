@@ -6,9 +6,9 @@ import Modal from "../Modal/Modal";
 import React from "react";
 import { supabase } from "../../Services/RemoteService/Configuration/supabaseClient";
 import { t } from "i18next";
-import { useFormFields } from "../../Hooks/useFormFields";
-import { useLoadingBarData } from "../../Hooks/useLoadingBarData";
-import { useVerifyAndHandleForm } from "../../Hooks/useVerifyAndHandleForm";
+import { useFormFields } from "../../Hooks/Logic/useFormFields";
+import { useLoadingBarData } from "../../Hooks/UI/useLoadingBarData";
+import { useVerifyAndHandleForm } from "../../Hooks/Logic/useVerifyAndHandleForm";
 
 export default function ForgotPasswordForm(props) {
   const { fields, handleChange } = useFormFields({ email: "" });

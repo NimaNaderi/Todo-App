@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import {
   useModalShowingStateAndType,
-  useSetModalShowingState,
   useSetModalShowingStateAndType,
 } from "./Context/Providers/ModalShowingState/ModalShowingStateProvider";
 
-import FirstPage from "./Components/FirstPageComponents/FirstPage";
+import FirstPage from "./Templates/FirstPageComponents/FirstPage";
 import ForgotPasswordForm from "./Templates/ForgotPasswordForm/ForgotPasswordForm";
 import GuestAttentionForm from "./Templates/GuestAttentionForm/GuestAttentionForm";
 import UserAuthForm from "./Templates/UserAuthForm/UserAuthForm";

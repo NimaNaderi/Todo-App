@@ -1,7 +1,7 @@
 import { createPortal } from "react-dom";
 import styles from "./Modal.module.css";
-import { useOpenAndCloseModal } from "../../Hooks/useOpenAndCloseModal";
-import { useTheme } from "../../Hooks/useTheme";
+import { useOpenAndCloseModal } from "../../Hooks/UI/useOpenAndCloseModal";
+import { useTheme } from "../../Hooks/UI/useTheme";
 
 const Backdrop = (props) => {
   const { processModal } = useOpenAndCloseModal();

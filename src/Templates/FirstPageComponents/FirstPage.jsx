@@ -1,48 +1,10 @@
-import { Button, createTheme } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
-import { ThemeProvider, useTheme } from "@mui/material/";
-import { amber, deepOrange, grey } from "@mui/material/colors";
-import {
-  getCurrentTheme,
-  localServiceActions,
-} from "../../Services/LocalService/localService";
-
 import ButtonGroup from "@mui/material/ButtonGroup";
 import DarkMode from "../../theme/DarkMode";
-import MainButton from "../MainButton/MainButton";
-import { dark } from "@mui/material/styles/createPalette";
+import MainButton from "../../Components/MainButton/MainButton";
+import React from "react";
 import styles from "./../../Styles/firstPage.module.css";
-import { useLanguage } from "../../Hooks/useLanguage";
-import { useOpenAndCloseModal } from "../../Hooks/useOpenAndCloseModal";
-
-const getDesignTokens = (mode) => ({
-  palette: {
-    mode,
-    ...(mode === "light"
-      ? {
-          // palette values for light mode
-          primary: amber,
-          divider: amber[200],
-          text: {
-            primary: grey[900],
-            secondary: grey[800],
-          },
-        }
-      : {
-          // palette values for dark mode
-          primary: deepOrange,
-          divider: deepOrange[700],
-          background: {
-            default: deepOrange[900],
-            paper: deepOrange[900],
-          },
-          text: {
-            primary: "#fff",
-            secondary: grey[500],
-          },
-        }),
-  },
-});
+import { useLanguage } from "../../Hooks/Logic/useLanguage";
+import { useOpenAndCloseModal } from "../../Hooks/UI/useOpenAndCloseModal";
 
 export default function FirstPage() {
   const { processModal } = useOpenAndCloseModal();

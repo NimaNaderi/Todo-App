@@ -1,7 +1,7 @@
 import CancelIcon from "@mui/icons-material/Cancel";
 import React from "react";
 import styled from "styled-components";
-import { useOpenAndCloseModal } from "../../Hooks/useOpenAndCloseModal";
+import { useOpenAndCloseModal } from "../../Hooks/UI/useOpenAndCloseModal";
 
 const Button = styled.button`
         background: #E60000;,

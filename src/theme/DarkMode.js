@@ -1,6 +1,6 @@
 import "./darkMode.css";
 
-import { useTheme } from "../Hooks/useTheme";
+import { useTheme } from "../Hooks/UI/useTheme";
 
 // 1
 const setDark = () => {

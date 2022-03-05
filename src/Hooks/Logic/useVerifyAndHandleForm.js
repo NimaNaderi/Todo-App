@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { hasEspecialCharacters } from "../Utilities/hasSpecialCharacters";
+import { hasEspecialCharacters } from "../../Utilities/hasSpecialCharacters";
 
 export const verifyForm = (userData) => {
   let { email, password } = userData;

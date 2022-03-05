@@ -1,10 +1,10 @@
 import {
   useSetTypeOfAuthState,
   useTypeOfAuthState,
-} from "../Context/Providers/TypeOfAuthState/TypeOfAuthProvider";
+} from "../../Context/Providers/TypeOfAuthState/TypeOfAuthProvider";
 
 import { useLayoutEffect } from "react";
-import { useSetModalShowingStateAndType } from "../Context/Providers/ModalShowingState/ModalShowingStateProvider";
+import { useSetModalShowingStateAndType } from "../../Context/Providers/ModalShowingState/ModalShowingStateProvider";
 
 export const useOpenAndCloseModal = (typeOfAuth) => {
   const setTypeOfAuthState = useSetTypeOfAuthState();

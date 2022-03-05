@@ -1,6 +1,6 @@
 import React from "react";
 import { t } from "i18next";
-import useLightBgDataContainer from "./useLightBgDataContainer";
+import useLightBgDataContainer from "./../UI/useLightBgDataContainer";
 
 export const useHandleAuth = (serverErrorType, typeOfAuthState) => {
   const LightBgDataContainer = useLightBgDataContainer();

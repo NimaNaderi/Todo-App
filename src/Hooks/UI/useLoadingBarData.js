@@ -1,5 +1,5 @@
 import { css } from "@emotion/react";
-import { getCurrentLanguage } from "../Utilities/getCurrentLanguage";
+import { getCurrentLanguage } from "../../Utilities/getCurrentLanguage";
 import { useState } from "react";
 
 export const useLoadingBarData = (margin) => {

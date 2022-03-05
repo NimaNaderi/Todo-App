@@ -12,14 +12,14 @@ import Modal from "../Modal/Modal";
 import { getCurrentLanguage } from "../../Utilities/getCurrentLanguage";
 import styles from "./userAuthForm.module.css";
 import { t } from "i18next";
-import { useAuthUser } from "../../Hooks/useAuthUser";
-import { useFormFields } from "../../Hooks/useFormFields";
-import { useHandleAuth } from "../../Hooks/useHandleAuth";
-import useLightBgDataContainer from "../../Hooks/useLightBgDataContainer";
-import { useLoadingBarData } from "../../Hooks/useLoadingBarData";
-import { useOpenAndCloseModal } from "../../Hooks/useOpenAndCloseModal";
-import { useTheme } from "../../Hooks/useTheme";
-import { useVerifyAndHandleForm } from "../../Hooks/useVerifyAndHandleForm";
+import { useAuthUser } from "../../Hooks/Logic/useAuthUser";
+import { useFormFields } from "../../Hooks/Logic/useFormFields";
+import { useHandleAuth } from "../../Hooks/Logic/useHandleAuth";
+import useLightBgDataContainer from "../../Hooks/UI/useLightBgDataContainer";
+import { useLoadingBarData } from "../../Hooks/UI/useLoadingBarData";
+import { useOpenAndCloseModal } from "../../Hooks/UI/useOpenAndCloseModal";
+import { useTheme } from "../../Hooks/UI/useTheme";
+import { useVerifyAndHandleForm } from "../../Hooks/Logic/useVerifyAndHandleForm";
 
 const useRenderByAuthType = () => {
   const { loadingProps, setLoading, loading } = useLoadingBarData("110px");
@@ -38,7 +38,6 @@ const useRenderByAuthType = () => {
     fields,
     setServerErrorType
   );
-  const { theme } = useTheme();
   const LightBgDataContainer = useLightBgDataContainer();
 
   const handleAuth = useHandleAuth(serverErrorType, typeOfAuthState);

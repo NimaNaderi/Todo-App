@@ -1,6 +1,6 @@
-import { localServiceActions } from "../Services/LocalService/localService";
-import { signInUser } from "../Services/RemoteService/Actions/signInUser";
-import { signUpUser } from "../Services/RemoteService/Actions/signUpUser";
+import { localServiceActions } from "../../Services/LocalService/localService";
+import { signInUser } from "../../Services/RemoteService/Actions/signInUser";
+import { signUpUser } from "../../Services/RemoteService/Actions/signUpUser";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
