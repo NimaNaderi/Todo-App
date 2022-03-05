@@ -1,19 +1,35 @@
-/* 1 */
 :root {
   --font-color: #333;
   --background-color: #eee;
+  --input-color: #eee;
+  --input-focus-color: #333;
+  --input-bg-color: #eee;
 }
 
 [data-theme="dark"] {
   --font-color: #eee;
   --background-color: #1d1d26;
+  --input-color: #1d1d26;
+  --input-focus-color: #eee;
+  --input-bg-color: #1d1d26;
 }
 
 body {
   background-color: var(--background-color);
   color: var(--font-color);
 }
+input {
+  background-color: var(--input-bg-color) !important;
+  color: var(--input-focus-color);
+}
+input:focus {
+  border-width: 2.5px;
+  border-style: solid;
+  border-color: var(--input-focus-color);
+}
 .toggle-theme-wrapper {
+  margin-top: 40px;
+  margin-left: 20px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -27,7 +43,7 @@ body {
 .toggle-theme {
   position: relative;
   display: inline-block;
-  height: 44px;
+  height: 30px;
   width: 60px;
 }
 

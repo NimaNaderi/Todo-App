@@ -7,9 +7,11 @@ import Modal from "../Modal/Modal";
 import { localServiceActions } from "../../Services/LocalService/localService";
 import { t } from "i18next";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "../../Hooks/useTheme";
 
 export default function GuestAttentionForm({ onClose }) {
   const navigate = useNavigate();
+  const { theme } = useTheme();
   const [readyToProcess, setReadyToProcess] = useState(false);
   return (
     <Modal onClose={onClose}>
@@ -18,9 +20,9 @@ export default function GuestAttentionForm({ onClose }) {
         <h1
           style={{
             padding: 5,
-            marginTop: 50,
+            marginTop: 45,
             color: "red",
-            background: "#fff",
+            background: theme === "light" && "#eee",
             width: 300,
             display: "flex",
             justifyContent: "center",
@@ -36,8 +38,9 @@ export default function GuestAttentionForm({ onClose }) {
             textAlign: "justify",
             marginLeft: 15,
             color: "white",
-            marginTop: 35,
+            marginTop: 20,
             lineHeight: 2,
+            wordSpacing: 3,
           }}
         >
           {t("attention")}
@@ -47,7 +50,7 @@ export default function GuestAttentionForm({ onClose }) {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            marginTop: 30,
+            marginTop: 10,
           }}
         >
           <input
@@ -59,16 +62,14 @@ export default function GuestAttentionForm({ onClose }) {
             id="attentionCheckBox"
             type={"checkbox"}
             style={{
-              marginBottom: 25,
+              marginBottom: 28,
               marginRight: 10,
               marginLeft: 10,
-              padding: 0,
-              boxSizing: "border-box",
               width: 25,
               height: 25,
             }}
           />
-          <label style={{ fontSize: 24 }} htmlFor="attentionCheckBox">
+          <label style={{ fontSize: 20 }} htmlFor="attentionCheckBox">
             {t("section")}
           </label>
         </section>

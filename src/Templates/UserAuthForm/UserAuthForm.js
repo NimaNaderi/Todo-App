@@ -17,6 +17,7 @@ import { useFormFields } from "../../Hooks/useFormFields";
 import { useHandleAuth } from "../../Hooks/useHandleAuth";
 import { useLoadingBarData } from "../../Hooks/useLoadingBarData";
 import { useOpenAndCloseModal } from "../../Hooks/useOpenAndCloseModal";
+import { useTheme } from "../../Hooks/useTheme";
 import { useVerifyAndHandleForm } from "../../Hooks/useVerifyAndHandleForm";
 
 const useRenderByAuthType = () => {
@@ -36,6 +37,7 @@ const useRenderByAuthType = () => {
     fields,
     setServerErrorType
   );
+  const { theme } = useTheme();
 
   const handleAuth = useHandleAuth(serverErrorType, typeOfAuthState);
 
@@ -56,7 +58,10 @@ const useRenderByAuthType = () => {
             {typeOfAuthState === "Login" ? t("login") : t("signUp")}
           </h1>
           {(fields.email.length > 0 || fields.password.length > 0) && (
-            <div className={styles.dataVerificationContainer}>
+            <div
+              className={styles.dataVerificationContainer}
+              style={{ background: theme === "light" ? "#eee" : null }}
+            >
               <p style={{ color: isEmailReady() ? "green" : "red" }}>
                 {isEmailReady() ? t("validEmail") : t("notValidEmail")}
               </p>
@@ -101,12 +106,15 @@ const useRenderByAuthType = () => {
                 ? setTypeOfAuthState("Signup")
                 : setTypeOfAuthState("Login")
             }
-            style={{ marginTop: 40 }}
+            style={{ marginTop: 40, cursor: "pointer" }}
           >
             {typeOfAuthState === "Login" ? t("noAccount") : t("haveAccount")}
           </p>
           {typeOfAuthState === "Login" && (
-            <p onClick={() => processModal("ForgotPassword")}>
+            <p
+              style={{ cursor: "pointer" }}
+              onClick={() => processModal("ForgotPassword")}
+            >
               {t("forgetPassword")}
             </p>
           )}

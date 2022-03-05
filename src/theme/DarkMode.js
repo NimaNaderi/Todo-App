@@ -1,5 +1,7 @@
 import "./darkMode.css";
 
+import { useTheme } from "../Hooks/useTheme";
+
 // 1
 const setDark = () => {
   // 2
@@ -29,15 +31,20 @@ if (defaultDark) {
 }
 
 //5
-const toggleTheme = (e) => {
-  if (e.target.checked) {
-    setDark();
-  } else {
-    setLight();
-  }
-};
 
 const DarkMode = () => {
+  const { theme, setTheme } = useTheme();
+
+  const toggleTheme = (e) => {
+    if (e.target.checked) {
+      setTheme("dark");
+      setDark();
+    } else {
+      setTheme("light");
+      setLight();
+    }
+  };
+
   return (
     <div style={{ position: "absolute" }} className="toggle-theme-wrapper">
       <span>☀️</span>

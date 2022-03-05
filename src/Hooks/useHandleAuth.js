@@ -1,8 +1,10 @@
 import { AuthDataContainer } from "../Components/StyledComponents/AuthDataContainer";
 import React from "react";
 import { t } from "i18next";
+import { useTheme } from "./useTheme";
 
 export const useHandleAuth = (serverErrorType, typeOfAuthState) => {
+  const { theme } = useTheme();
   const handleAuth = () => {
     let renderValue;
     if (serverErrorType) {
@@ -23,7 +25,9 @@ export const useHandleAuth = (serverErrorType, typeOfAuthState) => {
       }
     }
     return (
-      <AuthDataContainer>
+      <AuthDataContainer
+        style={{ background: theme === "light" ? "#fff" : null }}
+      >
         <p
           style={{
             margin: 0,

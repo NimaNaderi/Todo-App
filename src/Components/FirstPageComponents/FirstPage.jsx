@@ -1,11 +1,48 @@
+import { Button, createTheme } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
+import { ThemeProvider, useTheme } from "@mui/material/";
+import { amber, deepOrange, grey } from "@mui/material/colors";
+import {
+  getCurrentTheme,
+  localServiceActions,
+} from "../../Services/LocalService/localService";
 
-import { Button } from "@mui/material";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import DarkMode from "../../theme/DarkMode";
+import MainButton from "../MainButton/MainButton";
+import { dark } from "@mui/material/styles/createPalette";
 import styles from "./../../Styles/firstPage.module.css";
 import { useLanguage } from "../../Hooks/useLanguage";
 import { useOpenAndCloseModal } from "../../Hooks/useOpenAndCloseModal";
+
+const getDesignTokens = (mode) => ({
+  palette: {
+    mode,
+    ...(mode === "light"
+      ? {
+          // palette values for light mode
+          primary: amber,
+          divider: amber[200],
+          text: {
+            primary: grey[900],
+            secondary: grey[800],
+          },
+        }
+      : {
+          // palette values for dark mode
+          primary: deepOrange,
+          divider: deepOrange[700],
+          background: {
+            default: deepOrange[900],
+            paper: deepOrange[900],
+          },
+          text: {
+            primary: "#fff",
+            secondary: grey[500],
+          },
+        }),
+  },
+});
 
 export default function FirstPage() {
   const { processModal } = useOpenAndCloseModal();
@@ -15,59 +52,8 @@ export default function FirstPage() {
   return (
     <div className={styles.container}>
       <DarkMode />
-      <Button
-        onMouseOver={() => setIsMouseOver(true)}
-        onMouseLeave={() => setIsMouseOver(false)}
-        sx={{
-          transition: "all .5s ease",
-          position: "absolute",
-          color: "white",
-          borderColor: "#444550",
-          borderRadius: 4,
-        }}
-        variant="outlined"
-        style={{
-          marginLeft: 50,
-          marginTop: 40,
-          borderWidth: 3,
-          width: 120,
-        }}
-      >
-        {!isMouseOver ? (
-          t("language")
-        ) : (
-          <section
-            style={{
-              fontSize: 18,
-              width: "100%",
-              display: "flex",
-              justifyContent: "space-around",
-              alignItems: "center",
-            }}
-          >
-            <div
-              style={
-                language === "en"
-                  ? { pointerEvents: "none", opacity: 0.3 }
-                  : null
-              }
-              onClick={() => setLanguage("en")}
-            >
-              EN
-            </div>
-            <div
-              style={
-                language === "fa"
-                  ? { pointerEvents: "none", opacity: 0.3 }
-                  : null
-              }
-              onClick={() => setLanguage("fa")}
-            >
-              FA
-            </div>
-          </section>
-        )}
-      </Button>
+
+      <MainButton buttonType={"language"} margin={"200px"} />
       <section className={styles.welcomeSection}>
         <div className={styles.contentContainer}>
           <p style={{ fontSize: 72 }}>{t("goals")}</p>
@@ -92,6 +78,7 @@ export default function FirstPage() {
               onClick={() => processModal("Login")}
               style={{
                 borderRadius: 10,
+                color: "#fff",
                 background:
                   "linear-gradient(90deg, rgba(188,36,140,1) 0%, rgba(247,95,140,1) 100%)",
               }}
@@ -103,6 +90,7 @@ export default function FirstPage() {
               onClick={() => processModal("Guest")}
               style={{
                 background: "#30303D",
+                color: "#fff",
                 borderRadius: 10,
               }}
               className={styles.button}
@@ -114,27 +102,20 @@ export default function FirstPage() {
         </div>
       </section>
       <section className={styles.accountSection}>
-        <ButtonGroup sx={{ color: "black" }} style={{ marginTop: 40 }}>
-          <Button
-            onClick={() => processModal("Login")}
-            sx={{ color: "white", width: 90 }}
-            variant="text"
-          >
+        <ButtonGroup style={{ marginTop: 45 }}>
+          <button onClick={() => processModal("Login")} style={{ width: 90 }}>
             {t("login")}
-          </Button>
-          <Button
+          </button>
+          <MainButton
             onClick={() => processModal("Signup")}
-            sx={{ color: "white", borderColor: "#444550" }}
-            variant="outlined"
+            margin={"100px"}
             style={{
-              marginLeft: 15,
-              borderRadius: 10,
-              borderWidth: 3,
               width: 100,
+              marginTop: -5,
             }}
           >
             {t("signUp")}
-          </Button>
+          </MainButton>
         </ButtonGroup>
       </section>
     </div>

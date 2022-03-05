@@ -1,6 +1,7 @@
 import { createPortal } from "react-dom";
 import styles from "./Modal.module.css";
 import { useOpenAndCloseModal } from "../../Hooks/useOpenAndCloseModal";
+import { useTheme } from "../../Hooks/useTheme";
 
 const Backdrop = (props) => {
   const { processModal } = useOpenAndCloseModal();
@@ -11,9 +12,17 @@ const Backdrop = (props) => {
 };
 
 const ModalOverlay = (props) => {
+  const { theme } = useTheme();
   return (
-    <div className={styles.modal}>
-      {/* <ToastContainer /> */}
+    <div
+      style={{
+        background:
+          theme === "dark"
+            ? "linear-gradient(90deg, #090947 0%, #333 74%)"
+            : "linear-gradient(90deg, #4CD137 0%, #487EB0 74%)",
+      }}
+      className={styles.modal}
+    >
       <div className={styles.content}>{props.children}</div>
     </div>
   );

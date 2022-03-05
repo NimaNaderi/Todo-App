@@ -3,9 +3,6 @@
   flex-direction: column;
   align-items: center;
 }
-button {
-  color: #fff;
-}
 .actionBtn {
   background-color: #ce4f4b;
   width: 150px;
@@ -16,7 +13,6 @@ h1 {
   font-size: 48px !important;
 }
 input {
-  color: #000;
   width: 260px;
   height: 45px;
   border-radius: 10px;
@@ -26,20 +22,10 @@ input {
   outline: none;
   transition: all 0.2s ease-in;
 }
-input:focus {
-  border: 2px solid red;
-}
-p {
-  cursor: pointer;
-}
-p:hover {
-  color: #000;
-}
 .dataVerificationContainer {
   padding: 10px 5px;
   border-radius: 10px;
-  width: 360px;
-  background-color: #eee;
+  width: 400px;
   margin-top: 15px;
   margin-bottom: -5px;
   display: flex;
