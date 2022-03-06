@@ -14,11 +14,7 @@ Multiple Language (EN - FA) !
 
 Dark & Light Mode !
 
-CapsLock On Warning In Form !
-
 Live Form Fields Validation !
-
-NotFound (404) Page !
 
 More Features Will Add Soon...
 
