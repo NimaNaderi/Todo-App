@@ -38,6 +38,7 @@ input:focus {
 
 .toggle-theme-wrapper span {
   font-size: 28px;
+  font-family: Calibri;
 }
 
 .toggle-theme {

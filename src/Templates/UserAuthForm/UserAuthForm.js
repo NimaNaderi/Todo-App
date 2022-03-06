@@ -59,24 +59,26 @@ const useRenderByAuthType = () => {
           <h1 style={{ marginTop: 20 }}>
             {typeOfAuthState === "Login" ? t("login") : t("signUp")}
           </h1>
-          {(fields.email.length > 0 || fields.password.length > 0) && (
-            <LightBgDataContainer className={styles.dataVerificationContainer}>
-              <p style={{ color: isEmailReady() ? "green" : "red" }}>
-                {isEmailReady() ? t("validEmail") : t("notValidEmail")}
-              </p>
-              <p
-                style={{
-                  color: isPasswordReady() ? "green" : "red",
-                }}
+          {(!isEmailReady() || !isPasswordReady() || isCapsLockOn) &&
+            (fields.email.length > 0 || fields.password.length > 0) && (
+              <LightBgDataContainer
+                className={styles.dataVerificationContainer}
               >
-                {isPasswordReady()
-                  ? t("validPassword")
-                  : `${t("notValidPassword")} ${fields.password.length} /
+                <p style={{ color: isEmailReady() ? "green" : "red" }}>
+                  {!isEmailReady() && t("notValidEmail")}
+                </p>
+                <p
+                  style={{
+                    color: isPasswordReady() ? "green" : "red",
+                  }}
+                >
+                  {!isPasswordReady() &&
+                    `${t("notValidPassword")} ${fields.password.length} /
               8`}
-              </p>
-              {isCapsLockOn && <p>{t("capsLockOn")}</p>}
-            </LightBgDataContainer>
-          )}
+                </p>
+                {isCapsLockOn && <p>{t("capsLockOn")}</p>}
+              </LightBgDataContainer>
+            )}
           <input
             onKeyDown={(e) => {
               e.getModifierState("CapsLock")

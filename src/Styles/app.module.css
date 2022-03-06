@@ -6,9 +6,8 @@
   height: 100%;
 }
 .fa {
-  font-family: IranSans;
+  font-family: IranSans !important;
 }
 .en {
-  font-size: 16px;
   font-family: Calibri !important;
 }

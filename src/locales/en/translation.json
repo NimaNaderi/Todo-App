@@ -24,8 +24,6 @@
   "enterEmail": "Enter Your Email",
   "resetPassword": "Reset My Password",
   "notValidEmail": "Please Provide A Valid Email !",
-  "validEmail": "Valid Email Provided !",
-  "validPassword": "Valid Password Provided !",
   "notValidPassword": "Password Must Be AtLeast 8 Characters |",
   "capsLockOn": "Warning: Your CapsLock Is On !"
 }

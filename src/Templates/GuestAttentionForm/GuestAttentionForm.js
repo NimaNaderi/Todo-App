@@ -62,7 +62,10 @@ export default function GuestAttentionForm({ onClose }) {
               height: 25,
             }}
           />
-          <label style={{ fontSize: 20 }} htmlFor="attentionCheckBox">
+          <label
+            style={{ fontSize: 20, marginBottom: 6 }}
+            htmlFor="attentionCheckBox"
+          >
             {t("section")}
           </label>
         </section>

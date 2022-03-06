@@ -24,8 +24,6 @@
   "enterEmail": "ایمیل خود را وارد کنید",
   "resetPassword": "رمز عبور من را بازیابی کن",
   "notValidEmail": " لطفا یک ایمیل معتبر وارد کنید !",
-  "validEmail": "ایمیل معتبر است !",
-  "validPassword": "پسورد معتبر است !",
   "notValidPassword": "پسورد باید حداقل 8 رقم باشد |",
   "capsLockOn": "هشدار: CapsLock شما روشن است !"
 }
