@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { useLanguage } from "./../../Hooks/Logic/useLanguage";
 
-const useIsMouseOver = (margin) => {
+const useIsMouseOver = (marginRight, marginLeft) => {
   const [isMouseOver, setIsMouseOver] = useState(false);
 
   const MainButtons = styled.button`
@@ -13,24 +13,17 @@ const useIsMouseOver = (margin) => {
     padding: 3px;
     border-radius: 10px;
     border: 3px solid #444550;
-    margin: 45px ${margin ? margin : 0} 0 ${margin ? margin : 0};
     width: 120px;
   `;
 
   return { isMouseOver, setIsMouseOver, MainButtons };
 };
 
-export default function MainButton({
-  margin,
-  children,
-  buttonType,
-  onClick,
-  style,
-}) {
+export default function MainButton({ children, buttonType, onClick, style }) {
   const { language, setLanguage, t } = useLanguage();
   const buttonRef = useRef();
 
-  const { MainButtons, isMouseOver, setIsMouseOver } = useIsMouseOver(margin);
+  const { MainButtons, isMouseOver, setIsMouseOver } = useIsMouseOver();
 
   useEffect(() => {
     isMouseOver && (buttonRef.current.style.borderColor = "#1976D2");

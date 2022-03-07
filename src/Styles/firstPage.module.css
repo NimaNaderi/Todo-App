@@ -1,23 +1,17 @@
 .container {
   height: 100%;
-  display: grid;
+  /* display: grid; */
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 }
 .welcomeSection {
-  grid-column: 1 / 9;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.accountSection {
-  position: relative;
-  grid-column: 9/11;
-}
-.contentContainer {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  height: 85%;
   align-items: center;
-  position: absolute;
-  margin-left: 300px;
+  width: 100%;
 }
 .button {
   width: 150px;

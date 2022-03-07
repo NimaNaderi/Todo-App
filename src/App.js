@@ -1,4 +1,4 @@
-import Routes from "./Routes/Routes";
+import AppContainer from "./AppContainer";
 import { localServiceActions } from "./Services/LocalService/localService";
 import styles from "./Styles/app.module.css";
 import { useEffect } from "react";
@@ -15,7 +15,7 @@ function App() {
         i18n.language === "fa" ? styles.fa : styles.en
       } `}
     >
-      <Routes />
+      <AppContainer />
     </div>
   );
 }

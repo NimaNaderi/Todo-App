@@ -71,7 +71,7 @@ export default function GuestAttentionForm({ onClose }) {
         </section>
         <Button
           onClick={() => {
-            navigate("/main");
+            navigate("/main", { replace: true });
             localServiceActions.setItem("userAccessType", "Guest");
           }}
           disabled={!readyToProcess}

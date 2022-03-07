@@ -11,7 +11,7 @@ body {
 .notfound {
   position: relative;
   height: 100vh;
-  background-color: #222;
+  height: 85%;
 }
 
 .notfound .notfoundd {
@@ -51,7 +51,6 @@ body {
 
 .notfoundd p {
   font-family: "Josefin Sans", sans-serif;
-  color: #c9c9c9;
   font-size: 16px;
   font-weight: 400;
   margin-top: 0px;

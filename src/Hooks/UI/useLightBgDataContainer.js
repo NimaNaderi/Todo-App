@@ -6,7 +6,7 @@ const useLightBgDataContainer = (margin = "30px 0 0 0") => {
   return styled.div`
     background: ${theme === "light" ? "#eee" : null};
     width: 260px;
-    padding: 10px 0;
+    padding: 5px 0;
     border-radius: 15px;
     margin: ${margin};
     display: flex;

@@ -22,6 +22,9 @@ input {
   outline: none;
   transition: all 0.2s ease-in;
 }
+p {
+  margin-bottom: 8px !important;
+}
 .dataVerificationContainer {
   width: 400px !important;
 }

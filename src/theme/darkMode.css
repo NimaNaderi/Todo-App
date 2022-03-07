@@ -28,7 +28,7 @@ input:focus {
   border-color: var(--input-focus-color);
 }
 .toggle-theme-wrapper {
-  margin-top: 40px;
+  /* margin-top: 40px; */
   margin-left: 20px;
   display: flex;
   flex-direction: row;
