@@ -80,6 +80,7 @@ const useRenderByAuthType = () => {
               </LightBgDataContainer>
             )}
           <input
+            style={{ color: "black" }}
             onKeyDown={(e) => {
               e.getModifierState("CapsLock")
                 ? setIsCapsLockOn(true)
@@ -93,6 +94,7 @@ const useRenderByAuthType = () => {
             type={"email"}
           />
           <input
+            style={{ color: "black" }}
             onKeyDown={(e) => {
               e.getModifierState("CapsLock")
                 ? setIsCapsLockOn(true)
@@ -126,7 +128,7 @@ const useRenderByAuthType = () => {
           </p>
           {typeOfAuthState === "Login" && (
             <p
-              style={{ cursor: "pointer" }}
+              style={{ cursor: "pointer", marginTop: 10 }}
               onClick={() => processModal("ForgotPassword")}
             >
               {t("forgetPassword")}

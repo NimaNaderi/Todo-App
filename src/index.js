@@ -1,5 +1,4 @@
 import "./Styles/index.css";
-import "bootstrap/dist/css/bootstrap.css";
 import "./i18n";
 
 import App from "./App";

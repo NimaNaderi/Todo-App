@@ -1,7 +1,7 @@
-import { ButtonGroup } from "@mui/material";
 import DarkMode from "../../theme/DarkMode";
 import MainButton from "../MainButton/MainButton";
 import React from "react";
+import { localServiceActions } from "../../Services/LocalService/localService";
 import { t } from "i18next";
 import { useOpenAndCloseModal } from "../../Hooks/UI/useOpenAndCloseModal";
 
@@ -14,6 +14,8 @@ export default function Navbar() {
         alignItems: "center",
         height: "15%",
         width: "100%",
+        backgroundColor:
+          localServiceActions.getItem("userAccessType") && "#232323",
       }}
     >
       <section
@@ -39,7 +41,7 @@ export default function Navbar() {
       >
         <MainButton
           onClick={() => processModal("Signup")}
-          style={{ marginRight: 170, width: 100 }}
+          style={{ marginRight: 150, width: 100 }}
         >
           {t("signUp")}
         </MainButton>

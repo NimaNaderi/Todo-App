@@ -1,6 +1,5 @@
 .container {
   height: 100%;
-  /* display: grid; */
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -10,6 +9,7 @@
   flex-direction: column;
   justify-content: center;
   height: 85%;
+  margin-top: 50px;
   align-items: center;
   width: 100%;
 }

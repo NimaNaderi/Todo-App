@@ -23,7 +23,7 @@ input {
   transition: all 0.2s ease-in;
 }
 p {
-  margin-bottom: 8px !important;
+  margin-bottom: 0 !important;
 }
 .dataVerificationContainer {
   width: 400px !important;

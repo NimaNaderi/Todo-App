@@ -1,5 +1,3 @@
-import ButtonGroup from "@mui/material/ButtonGroup";
-import Navbar from "./../../Components/Navbar/Navbar";
 import React from "react";
 import styles from "./../../Styles/firstPage.module.css";
 import { useLanguage } from "../../Hooks/Logic/useLanguage";
@@ -22,9 +20,9 @@ export default function FirstPage() {
         >
           {t("mainImproveText")}
         </p>
-        <ButtonGroup
-          sx={{
-            marginTop: 5,
+        <div
+          style={{
+            marginTop: 25,
             width: 370,
             display: "flex",
             justifyContent: "space-around",
@@ -54,7 +52,7 @@ export default function FirstPage() {
           >
             {t("continueGuest")}
           </button>
-        </ButtonGroup>
+        </div>
       </section>
     </div>
   );

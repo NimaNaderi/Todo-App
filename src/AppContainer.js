@@ -1,23 +1,25 @@
 import React, { useState } from "react";
+import { useColorMode, useColorModeValue } from "@chakra-ui/color-mode";
 import {
   useModalShowingStateAndType,
   useSetModalShowingStateAndType,
 } from "./Context/Providers/ModalShowingState/ModalShowingStateProvider";
 
-import FirstPage from "./Templates/FirstPageComponents/FirstPage";
+import { Container } from "@chakra-ui/react";
 import ForgotPasswordForm from "./Templates/ForgotPasswordForm/ForgotPasswordForm";
 import GuestAttentionForm from "./Templates/GuestAttentionForm/GuestAttentionForm";
-import MainPageContainer from "./Components/MainComponent/MainPageContainer";
-import Navbar from "./Components/Navbar/Navbar";
-import NotFound from "./Templates/NotFound/NotFound";
-import { Route } from "react-router-dom";
+import Header from "./Components/Header/Header";
 import Routes from "./Routes/Routes";
 import UserAuthForm from "./Templates/UserAuthForm/UserAuthForm";
-import styles from "./Styles/appContainer.module.css";
 
 export default function AppContainer() {
   const modalShowingStateAndType = useModalShowingStateAndType();
   const setModalShowingStateAndType = useSetModalShowingStateAndType();
+
+  const { toggleColorMode } = useColorMode();
+  const headerSidBarBg = useColorModeValue("white", "#21212B");
+
+  const MainBg = useColorModeValue("#f8fafd", "#181820");
 
   const renderValue = () => {
     if (
@@ -62,10 +64,21 @@ export default function AppContainer() {
   return (
     <>
       {renderValue()}
-      <Navbar />
-      <div style={{ height: "85%" }}>
+      <Container
+        p="0"
+        display="flex"
+        maxW="container.1xl"
+        height="full"
+        flexDirection="column"
+        bg={MainBg}
+      >
+        <Header
+          headerSidBarBg={headerSidBarBg}
+          BorderColorHeader={headerSidBarBg}
+          toggleColorMode={toggleColorMode}
+        />
         <Routes />
-      </div>
+      </Container>
     </>
   );
 }

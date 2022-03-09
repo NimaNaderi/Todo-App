@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 
 function App() {
   const { i18n } = useTranslation();
+
   useEffect(() => {
     i18n.changeLanguage(localServiceActions.getItem("Language"));
   }, []);

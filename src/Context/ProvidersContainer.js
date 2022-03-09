@@ -1,3 +1,5 @@
+import { ChakraProvider } from "@chakra-ui/react";
+import MenuStateProvider from "./Providers/MenuState/MenuStateProvider";
 import ModalShowingStateProvider from "./Providers/ModalShowingState/ModalShowingStateProvider";
 import React from "react";
 import TypeOfAuthProvider from "./Providers/TypeOfAuthState/TypeOfAuthProvider";
@@ -5,10 +7,14 @@ import UserAuthStateProvider from "./Providers/UserAuthState/UserAuthStateProvid
 
 export default function ProvidersContainer({ children }) {
   return (
-    <UserAuthStateProvider>
-      <ModalShowingStateProvider>
-        <TypeOfAuthProvider>{children}</TypeOfAuthProvider>
-      </ModalShowingStateProvider>
-    </UserAuthStateProvider>
+    <ChakraProvider>
+      <UserAuthStateProvider>
+        <MenuStateProvider>
+          <ModalShowingStateProvider>
+            <TypeOfAuthProvider>{children}</TypeOfAuthProvider>
+          </ModalShowingStateProvider>
+        </MenuStateProvider>
+      </UserAuthStateProvider>
+    </ChakraProvider>
   );
 }

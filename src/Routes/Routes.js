@@ -1,6 +1,7 @@
 import { Navigate, useRoutes } from "react-router-dom";
 
 import FirstPage from "../Templates/FirstPageComponents/FirstPage";
+import Main from "../Components/MainComponent/Main";
 import MainPageContainer from "../Components/MainComponent/MainPageContainer";
 import NotFound from "../Templates/NotFound/NotFound";
 import React from "react";
@@ -12,7 +13,11 @@ export default function Routes() {
       path: "/main",
       element: <MainPageContainer />,
     },
-    { path: "/", element: <Navigate to={"/welcome"} replace /> },
+    {
+      path: "/main",
+      element: <MainPageContainer />,
+    },
+    { path: "/", element: <Navigate to={"/welcome"} /> },
     {
       path: "/welcome",
       element: isUserAuthenticated ? <Navigate to={"/main"} /> : <FirstPage />,

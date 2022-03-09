@@ -4,6 +4,7 @@
   --input-color: #eee;
   --input-focus-color: #333;
   --input-bg-color: #eee;
+  --aside-bg-color: #333;
 }
 
 [data-theme="dark"] {
@@ -12,6 +13,7 @@
   --input-color: #1d1d26;
   --input-focus-color: #eee;
   --input-bg-color: #474546;
+  --aside-bg-color: #232323;
 }
 
 body {
@@ -27,8 +29,10 @@ input:focus {
   border-style: solid;
   border-color: var(--input-focus-color);
 }
+aside {
+  background-color: var(--aside-bg-color) !important;
+}
 .toggle-theme-wrapper {
-  /* margin-top: 40px; */
   margin-left: 20px;
   display: flex;
   flex-direction: row;

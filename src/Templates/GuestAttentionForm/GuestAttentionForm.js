@@ -30,6 +30,7 @@ export default function GuestAttentionForm({ onClose }) {
           style={{
             textAlign: "justify",
             marginLeft: 15,
+            fontSize: 20,
             color: "white",
             marginTop: 20,
             lineHeight: 2,
@@ -69,7 +70,7 @@ export default function GuestAttentionForm({ onClose }) {
             {t("section")}
           </label>
         </section>
-        <Button
+        <button
           onClick={() => {
             navigate("/main", { replace: true });
             localServiceActions.setItem("userAccessType", "Guest");
@@ -79,7 +80,7 @@ export default function GuestAttentionForm({ onClose }) {
           variant="contained"
         >
           {t("continue")}
-        </Button>
+        </button>
       </FormContentContainer>
     </Modal>
   );
