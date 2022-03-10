@@ -17,6 +17,7 @@ import { getUiInfoStorage } from "../../Services/LocalService/localService";
 import { insertTodo } from "../../Services/RemoteService/Actions/insertTodo";
 import { selectTodoList } from "../../Services/RemoteService/Actions/selectTodoList";
 import { supabase } from "../../Services/RemoteService/Configuration/supabaseClient";
+import { toTitleCase } from "../../Utilities/toTitleCase";
 import { updateTodoServer } from "../../Services/RemoteService/Actions/updateTodoServer";
 import { useCurrentLocation } from "../../Hooks/Logic/useCurrentLocation";
 import { useDisclosure } from "@chakra-ui/react";
@@ -39,9 +40,6 @@ const Main = ({
   let a = 0;
   console.log("reExecute");
 
-  useEffect(() => {
-    console.log("Todos Changed");
-  }, [todos]);
   const handle = async () => {
     setLoading(true);
     try {
@@ -52,16 +50,21 @@ const Main = ({
       a = 1;
 
       const receivedTodos = data[0][searchName];
-      console.log(data);
       setUserData(receivedTodos);
 
       receivedTodos.forEach((item) => newList.push(item));
       setTodos(newList);
     } catch (error) {
       console.log(error);
-      notify.error(
-        "An Unknown Error Occurred ! Check Your Internet Connection !"
-      );
+      const errorRegEx = /0/;
+      if (!errorRegEx.test(error)) {
+        notify().error(
+          `${toTitleCase(searchName)} Is Empty ! Try Adding Task !`
+        );
+      } else
+        notify().error(
+          "An Unknown Error Occurred ! Check Your Internet Connection !"
+        );
     }
     setLoading(false);
   };
@@ -80,10 +83,10 @@ const Main = ({
       return;
     }
     setLoading(true);
-
+    console.log(userData);
     try {
       const newTodo = [todo, ...todos];
-      if (userData === "") {
+      if (userData === undefined) {
         await insertTodo([
           { [searchName]: newTodo, userEmail: getUiInfoStorage().email },
         ]);
