@@ -1,6 +1,6 @@
 import { Box, Container, Flex, Heading } from "@chakra-ui/layout";
 import { NavLink, useLocation, useParams } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 
 import { BsThreeDots } from "react-icons/bs";
@@ -10,12 +10,17 @@ import { IoChevronBackOutline } from "react-icons/io5";
 import { MdAdd } from "react-icons/md";
 import { MdShoppingCart } from "react-icons/md";
 import { RiComputerFill } from "react-icons/ri";
-import { SiAddthis } from "react-icons/si";
 import { TiUser } from "react-icons/ti";
 import Todo from "./Todo";
 import TodoForm from "./TodoForm";
+import { getUiInfoStorage } from "../../Services/LocalService/localService";
+import { insertTodo } from "../../Services/RemoteService/Actions/insertTodo";
+import { selectTodoList } from "../../Services/RemoteService/Actions/selectTodoList";
+import { supabase } from "../../Services/RemoteService/Configuration/supabaseClient";
+import { updateTodoServer } from "../../Services/RemoteService/Actions/updateTodoServer";
 import { useCurrentLocation } from "../../Hooks/Logic/useCurrentLocation";
 import { useDisclosure } from "@chakra-ui/react";
+import { useLoadingBarData } from "../../Hooks/UI/useLoadingBarData";
 
 const Main = ({
   MainBg,
@@ -24,32 +29,81 @@ const Main = ({
   BorderColorHeader,
   headerIconColor,
 }) => {
-  const [currentLocation] = useCurrentLocation();
+  const [currentLocation, pathName, search] = useCurrentLocation();
+  const searchName = search.split("=")[1];
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [todos, setTodos] = useState([]);
+  const newList = [];
+  const [userData, setUserData] = useState();
+  const { setLoading, loading } = useLoadingBarData();
+  let a = 0;
+  console.log("reExecute");
+
+  useEffect(() => {
+    console.log("Todos Changed");
+  }, [todos]);
+  const handle = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from("TodoList")
+        .select(`${searchName}, userEmail`)
+        .match({ userEmail: getUiInfoStorage().email });
+      a = 1;
+
+      const receivedTodos = data[0][searchName];
+      console.log(data);
+      setUserData(receivedTodos);
+
+      receivedTodos.forEach((item) => newList.push(item));
+      setTodos(newList);
+    } catch (error) {
+      console.log(error);
+      notify.error(
+        "An Unknown Error Occurred ! Check Your Internet Connection !"
+      );
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    setTodos([]);
+    handle();
+  }, [currentLocation]);
 
   const notify = () => toast;
 
-  useEffect(() => {
-    getTodosLs();
-  }, []);
-
-  useEffect(() => {
-    addTodosLs();
-  }, [todos]);
-
-  const addTodo = (todo) => {
+  const addTodo = async (todo) => {
+    console.log(a, "add");
     if (!todo._title || !todo._desc || /^\s*$/.test(todo._title, todo._desc)) {
       notify().error("Please enter all fields");
       return;
     }
+    setLoading(true);
 
-    const newTodo = [todo, ...todos];
-    setTodos(newTodo);
-    notify().success("Task added 🥳");
+    try {
+      const newTodo = [todo, ...todos];
+      if (userData === "") {
+        await insertTodo([
+          { [searchName]: newTodo, userEmail: getUiInfoStorage().email },
+        ]);
+      } else {
+        await updateTodoServer(
+          { [searchName]: newTodo },
+          getUiInfoStorage().email
+        );
+      }
+      setTodos(newTodo);
+      notify().success("Task added 🥳");
+    } catch (error) {
+      notify().error(
+        "An Unknown Error Occurred ! Check Your Internet Connection !"
+      );
+    }
+    setLoading(false);
   };
 
-  const updateTodo = (todoId, newValue) => {
+  const updateTodo = async (todoId, newValue) => {
     if (
       !newValue._title ||
       !newValue._desc ||
@@ -58,13 +112,23 @@ const Main = ({
       return;
     }
 
-    setTodos((prev) =>
-      prev.map((item) => (item.id === todoId ? newValue : item))
-    );
-    notify().success("Updated 💥");
+    const items = todos.map((item) => (item.id === todoId ? newValue : item));
+
+    setTodos(items);
+    setLoading(true);
+
+    try {
+      await updateTodoServer({ [searchName]: items }, getUiInfoStorage().email);
+      notify().success("Updated 💥");
+    } catch (error) {
+      notify().error(
+        "An Unknown Error Occurred ! Check Your Internet Connection !"
+      );
+    }
+    setLoading(false);
   };
 
-  const isComplete = (id) => {
+  const isComplete = async (id) => {
     let completedTodo = todos.map((todo) => {
       if (todo.id === id) {
         todo.isComplete = !todo.isComplete;
@@ -72,25 +136,38 @@ const Main = ({
       return todo;
     });
     setTodos(completedTodo);
-  };
+    setLoading(true);
 
-  const delteTodo = (id) => {
-    const updatedTodos = todos.filter((todo) => todo.id !== id);
-    setTodos(updatedTodos);
-  };
-
-  const addTodosLs = () => {
-    localStorage.setItem("todos", JSON.stringify(todos));
-  };
-
-  const getTodosLs = () => {
-    let TodosLs = localStorage.getItem("todos");
-    if (TodosLs === null) {
-      localStorage.setItem("todos", JSON.stringify([]));
-    } else {
-      let getTodos = JSON.parse(localStorage.getItem("todos"));
-      setTodos(getTodos);
+    try {
+      await updateTodoServer(
+        { [searchName]: completedTodo },
+        getUiInfoStorage().email
+      );
+    } catch (error) {
+      notify().error(
+        "An Unknown Error Occurred ! Check Your Internet Connection !"
+      );
     }
+    setLoading(false);
+  };
+
+  const delteTodo = async (id) => {
+    const updatedTodos = todos.filter((todo) => todo.id !== id);
+    setLoading(true);
+
+    try {
+      await updateTodoServer(
+        { [searchName]: updatedTodos },
+        getUiInfoStorage().email
+      );
+      setTodos(updatedTodos);
+      notify().success("Deleted !");
+    } catch (error) {
+      notify().error(
+        "An Unknown Error Occurred ! Check Your Internet Connection !"
+      );
+    }
+    setLoading(false);
   };
 
   return (
@@ -214,7 +291,7 @@ const Main = ({
                   </Box>
                 </NavLink>
                 <Heading color={color} size="lg">
-                  Personal
+                  {search.split("=")[1].toUpperCase()}
                 </Heading>
               </Flex>
 

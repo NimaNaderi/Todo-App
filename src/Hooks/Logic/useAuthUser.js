@@ -27,6 +27,12 @@ export const useAuthUser = (
       try {
         const { user, error } = await signInUser(fields.email, fields.password);
         data = user;
+        console.log()
+        data &&
+          localServiceActions.setItem("uiInfo", {
+            ...localServiceActions.getItem("uiInfo"),
+            email: data.email,
+          });
         error.status === 400
           ? setServerErrorType("Login")
           : setServerErrorType("Network");
@@ -35,6 +41,11 @@ export const useAuthUser = (
       try {
         const { user, error } = await signUpUser(fields.email, fields.password);
         data = user;
+        user &&
+          localServiceActions.setItem("uiInfo", {
+            ...localServiceActions.getItem("uiInfo"),
+            email: user.email,
+          });
 
         error.status === 400
           ? setServerErrorType("Signup")

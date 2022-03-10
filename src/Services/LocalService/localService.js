@@ -10,4 +10,4 @@ export const isUserAuthenticated =
   localServiceActions.getItem("supabase.auth.token") ||
   localServiceActions.getItem("userAccessType") !== null;
 
-export const getUiInfoStorage = localServiceActions.getItem("uiInfo");
+export const getUiInfoStorage = () => localServiceActions.getItem("uiInfo");

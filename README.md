@@ -4,7 +4,7 @@ Features Includes =>
 
 Login - SignUp With Connecting To BackEnd Service !
 
-Saving Data (Todo List And Profile Data) For Users That SignedIn To Their Accounts ! (Not Implemented Yet...)
+Saving Data (Todo List And Profile Data) For Users That SignedIn To Their Accounts !
 
 Login As Guest WithOut Saving Any Data !
 
@@ -27,6 +27,8 @@ SupaBase (BackEnd Service)
 Styled Components
 
 React Material UI (Some Parts Of UI)
+
+Chakra UI
 
 Tailwind (Will Add Soon For Making App Responsive...)
 

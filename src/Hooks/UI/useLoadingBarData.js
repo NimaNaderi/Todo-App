@@ -1,15 +1,20 @@
+import {
+  useLoading,
+  useSetLoading,
+} from "../../Context/Providers/LoadingBarState/LoadingBarStateProvider";
+
 import { css } from "@emotion/react";
 import { getCurrentLanguage } from "../../Utilities/getCurrentLanguage";
-import { useState } from "react";
 
 export const useLoadingBarData = (margin) => {
-  const [loading, setLoading] = useState(false);
+  const loading = useLoading();
+  const setLoading = useSetLoading();
   const currentLanguage = getCurrentLanguage();
   const override = css`
     display: block;
     margin: 0 ${currentLanguage === "en" ? margin : 0} 0
       ${currentLanguage === "fa" ? margin : 0};
-    position: absolute;
+    //! position absolute Taken ! Should Be fixed On userAuth Form !
   `;
 
   return {

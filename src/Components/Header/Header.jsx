@@ -1,14 +1,20 @@
 import { Avatar, AvatarBadge } from "@chakra-ui/avatar";
 import { Link, Text } from "@chakra-ui/layout";
 import React, { useEffect, useState } from "react";
+import {
+  useLoading,
+  useSetLoading,
+} from "../../Context/Providers/LoadingBarState/LoadingBarStateProvider";
 
 import { Button } from "@chakra-ui/button";
 import { CgMenu } from "react-icons/cg";
 import { CgSun } from "react-icons/cg";
+import { ClipLoader } from "react-spinners";
 import { Flex } from "@chakra-ui/react";
 import { RiSearch2Line } from "react-icons/ri";
 import profileImage from "../../Assets/Images/profile.png";
 import { useCurrentLocation } from "../../Hooks/Logic/useCurrentLocation";
+import { useLoadingBarData } from "../../Hooks/UI/useLoadingBarData";
 import { useSetIsMenuOpen } from "../../Context/Providers/MenuState/MenuStateProvider";
 import { useTheme } from "../../Hooks/UI/useTheme";
 
@@ -18,7 +24,8 @@ const Header = ({
   headerIconColor,
   BorderColorHeader,
 }) => {
-  const { theme, setTheme } = useTheme();
+  const { setTheme } = useTheme();
+  const { loadingProps } = useLoadingBarData();
   const setIsMenuOpen = useSetIsMenuOpen();
   const [currentLocation] = useCurrentLocation();
   return (
@@ -40,7 +47,7 @@ const Header = ({
           <Button
             onClick={() => setIsMenuOpen((prevState) => !prevState)}
             cursor="pointer"
-            pr="0"
+            pr="25px"
             pl="0"
             bg="none"
             height="35px"
@@ -49,6 +56,7 @@ const Header = ({
             leftIcon={<CgMenu fontSize="23px" cursor={headerIconColor} />}
           ></Button>
         )}
+        <ClipLoader {...loadingProps} />
       </Flex>
 
       <Flex alignItems="center">

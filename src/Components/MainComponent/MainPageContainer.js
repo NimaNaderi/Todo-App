@@ -32,28 +32,13 @@ export default function MainPageContainer() {
   useLayoutEffect(() => {
     if (currentLocation.includes("main")) {
       localServiceActions.setItem("uiInfo", {
+        ...localServiceActions.getItem("uiInfo"),
         lastPath: currentLocation,
       });
     }
   }, [search, pathName]);
 
   useEffect(() => {
-    const handleSelect = async () => {
-      try {
-        // const { email } = supabase.auth.user();
-        // const { data, error } = await supabase.from("TodoList").insert([
-        //   {
-        //     allTodos: [{ a: "1" }, { b: "2" }],
-        //     userEmail: email,
-        //   },
-        // ]);
-        // console.log(error);
-        // console.log(data);
-        // console.log(email);
-      } catch (error) {}
-    };
-    handleSelect();
-
     setModalShowingState({
       modalType: null,
       isModalShowing: false,
@@ -62,8 +47,12 @@ export default function MainPageContainer() {
     if (
       !acceptableAccessTypes.test(localServiceActions.getItem("userAccessType"))
     ) {
-      !isUserAuthenticated ? navigate("/notFound") : navigate("/main");
-    } else navigate(getUiInfoStorage?.lastPath);
+      !isUserAuthenticated
+        ? navigate("/notFound")
+        : navigate(
+            getUiInfoStorage.lastPath ? getUiInfoStorage.lastPath : "/main"
+          );
+    }
   }, []);
 
   return (
