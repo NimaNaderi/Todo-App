@@ -67,13 +67,12 @@ const Main = ({
         const allTodos = data[0];
         const realData = Object.values(allTodos);
         for (let index = 0; index < 4; index++) {
-          if (realData[index] !== null || realData[index] !== undefined) {
+          if (realData[index] !== null && realData[index] !== undefined) {
             const currentData = realData[index].map((item) => item);
             const completedTodos = currentData.filter((element) => {
               return element.isComplete;
             });
 
-            console.log(currentData);
             setAllData((prevState) => ({
               ...prevState,
               [currentData[0]?._taskCategory]: {
@@ -98,6 +97,18 @@ const Main = ({
     } catch (error) {
       console.log(error);
       const errorRegEx = /0/;
+      const errorRegEx2 = /object/;
+      if (errorRegEx2.test(error)) {
+        setAllData({
+          personal: { all: null, completed: null },
+          school: { all: null, completed: null },
+          work: { all: null, completed: null },
+          groceries: { all: null, completed: null },
+        });
+        setLoading(false);
+        setSummerLoading(false);
+      }
+
       if (!errorRegEx.test(error)) {
         notify().error(
           `${toTitleCase(searchName)} Is Empty ! Try Adding Task !`
@@ -107,6 +118,7 @@ const Main = ({
           "An Unknown Error Occurred ! Check Your Internet Connection !"
         );
     }
+    //! Fix New User Bug !
     setLoading(false);
     setSummerLoading(false);
   };
