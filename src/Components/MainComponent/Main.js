@@ -1,18 +1,22 @@
 import { Box, Container, Flex, Heading } from "@chakra-ui/layout";
 import { NavLink, useLocation, useParams } from "react-router-dom";
 import React, { useEffect, useLayoutEffect, useState } from "react";
+import { SkeletonCircle, SkeletonText, useDisclosure } from "@chakra-ui/react";
 import toast, { Toaster } from "react-hot-toast";
 
 import { BsThreeDots } from "react-icons/bs";
 import CardItem from "../Card/CardItem";
+import { ClipLoader } from "react-spinners";
 import { IoBook } from "react-icons/io5";
 import { IoChevronBackOutline } from "react-icons/io5";
 import { MdAdd } from "react-icons/md";
 import { MdShoppingCart } from "react-icons/md";
 import { RiComputerFill } from "react-icons/ri";
+import Skeleton from "@mui/material/Skeleton";
 import { TiUser } from "react-icons/ti";
 import Todo from "./Todo";
 import TodoForm from "./TodoForm";
+import { css } from "styled-components";
 import { getUiInfoStorage } from "../../Services/LocalService/localService";
 import { insertTodo } from "../../Services/RemoteService/Actions/insertTodo";
 import { selectTodoList } from "../../Services/RemoteService/Actions/selectTodoList";
@@ -20,8 +24,11 @@ import { supabase } from "../../Services/RemoteService/Configuration/supabaseCli
 import { toTitleCase } from "../../Utilities/toTitleCase";
 import { updateTodoServer } from "../../Services/RemoteService/Actions/updateTodoServer";
 import { useCurrentLocation } from "../../Hooks/Logic/useCurrentLocation";
-import { useDisclosure } from "@chakra-ui/react";
 import { useLoadingBarData } from "../../Hooks/UI/useLoadingBarData";
+
+const override = css`
+  margin-left: 50px;
+`;
 
 const Main = ({
   MainBg,
@@ -35,25 +42,59 @@ const Main = ({
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [todos, setTodos] = useState([]);
   const newList = [];
+  const [allData, setAllData] = useState({
+    personal: { all: null, completed: null },
+    school: { all: null, completed: null },
+    work: { all: null, completed: null },
+    groceries: { all: null, completed: null },
+  });
   const [userData, setUserData] = useState();
-  const { setLoading, loading } = useLoadingBarData();
-  let a = 0;
-  console.log("reExecute");
+  const { setLoading } = useLoadingBarData();
+  const [summaryLoading, setSummerLoading] = useState();
+
+  useEffect(() => {
+    console.log(allData);
+  }, [allData]);
 
   const handle = async () => {
-    setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from("TodoList")
-        .select(`${searchName}, userEmail`)
-        .match({ userEmail: getUiInfoStorage().email });
-      a = 1;
+      if (currentLocation === "/main") {
+        setSummerLoading(true);
+        const { data } = await supabase
+          .from("TodoList")
+          .select("personal, school, work, groceries, userEmail")
+          .match({ userEmail: getUiInfoStorage().email });
+        const allTodos = data[0];
+        const realData = Object.values(allTodos);
+        for (let index = 0; index < 4; index++) {
+          if (realData[index] !== null || realData[index] !== undefined) {
+            const currentData = realData[index].map((item) => item);
+            const completedTodos = currentData.filter((element) => {
+              return element.isComplete;
+            });
 
-      const receivedTodos = data[0][searchName];
-      setUserData(receivedTodos);
+            console.log(currentData);
+            setAllData((prevState) => ({
+              ...prevState,
+              [currentData[0]?._taskCategory]: {
+                all: Object.keys(currentData).length,
+                completed: completedTodos.length,
+              },
+            }));
+          }
+        }
+      } else {
+        setLoading(true);
+        const { data } = await supabase
+          .from("TodoList")
+          .select(`${searchName}, userEmail`)
+          .match({ userEmail: getUiInfoStorage().email });
 
-      receivedTodos.forEach((item) => newList.push(item));
-      setTodos(newList);
+        const targetTodos = data[0][searchName];
+        setUserData(targetTodos);
+        targetTodos.forEach((item) => newList.push(item));
+        setTodos(newList);
+      }
     } catch (error) {
       console.log(error);
       const errorRegEx = /0/;
@@ -67,17 +108,24 @@ const Main = ({
         );
     }
     setLoading(false);
+    setSummerLoading(false);
   };
 
-  useEffect(() => {
-    setTodos([]);
+  useLayoutEffect(() => {
+    if (currentLocation === "/main") {
+      setAllData({
+        personal: { all: null, completed: null },
+        school: { all: null, completed: null },
+        work: { all: null, completed: null },
+        groceries: { all: null, completed: null },
+      });
+    } else setTodos([]);
     handle();
   }, [currentLocation]);
 
   const notify = () => toast;
 
   const addTodo = async (todo) => {
-    console.log(a, "add");
     if (!todo._title || !todo._desc || /^\s*$/.test(todo._title, todo._desc)) {
       notify().error("Please enter all fields");
       return;
@@ -200,7 +248,18 @@ const Main = ({
                     <span className="text-4xl">Personal</span>
                   </span>
                   <span className="w-1/3 mt-1">
-                    <span className="text-2xl ml-10">1/12</span>
+                    <ClipLoader
+                      size={25}
+                      css={override}
+                      loading={summaryLoading}
+                    />
+                    {!summaryLoading && (
+                      <p className="ml-10 text-2xl">
+                        {allData.personal.all > 0
+                          ? `${allData.personal.completed} / ${allData.personal.all}`
+                          : "Empty"}
+                      </p>
+                    )}
                     <div className="text-lg ml-6">Completed</div>
                   </span>
                 </div>
@@ -219,7 +278,18 @@ const Main = ({
                     <span className="text-4xl ml-6">School</span>
                   </span>
                   <span className="w-1/3 mt-1">
-                    <span className="text-2xl ml-10">1/12</span>
+                    <ClipLoader
+                      size={25}
+                      css={override}
+                      loading={summaryLoading}
+                    />
+                    {!summaryLoading && (
+                      <p className="ml-10 text-2xl">
+                        {allData.school.all > 0
+                          ? `${allData.school.completed} / ${allData.school.all}`
+                          : "Empty"}
+                      </p>
+                    )}
                     <div className="text-lg ml-6">Completed</div>
                   </span>
                 </div>
@@ -240,7 +310,18 @@ const Main = ({
                     <span className="text-4xl ml-6">Work</span>
                   </span>
                   <span className="w-1/3 mt-1">
-                    <span className="text-2xl ml-10">1/12</span>
+                    <ClipLoader
+                      size={25}
+                      css={override}
+                      loading={summaryLoading}
+                    />
+                    {!summaryLoading && (
+                      <p className="ml-10 text-2xl">
+                        {allData.work.all > 0
+                          ? `${allData.work.completed} / ${allData.work.all}`
+                          : "Empty"}
+                      </p>
+                    )}
                     <div className="text-lg ml-6">Completed</div>
                   </span>
                 </div>
@@ -259,7 +340,18 @@ const Main = ({
                     <span className="text-3xl mr-8">Groceries</span>
                   </span>
                   <span className="w-1/3 mt-1">
-                    <span className="text-2xl ml-3">1/12</span>
+                    <ClipLoader
+                      size={25}
+                      css={override}
+                      loading={summaryLoading}
+                    />
+                    {!summaryLoading && (
+                      <p className="ml-10 text-2xl">
+                        {allData.groceries.all > 0
+                          ? `${allData.groceries.completed} / ${allData.groceries.all}`
+                          : "Empty"}
+                      </p>
+                    )}
                     <div className="text-lg">Completed</div>
                   </span>
                 </div>

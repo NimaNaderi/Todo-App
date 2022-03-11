@@ -1,22 +1,31 @@
-import React, { useState } from "react";
-
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
   Button,
+  Flex,
   FormControl,
   FormLabel,
-  Flex,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
 } from "@chakra-ui/react";
+import React, { useState } from "react";
+
 import { Input } from "@chakra-ui/input";
+import { useCurrentLocation } from "../../Hooks/Logic/useCurrentLocation";
 
-
-const TodoForm = ({ onClose, isOpen, onsubmit, edit, headerSidBarBg, color }) => {
-  const [title, setTitle] = useState(edit ? edit.value : '');
-  const [desc, setDesc] = useState(edit ? edit.desc : '');
+const TodoForm = ({
+  onClose,
+  isOpen,
+  onsubmit,
+  edit,
+  headerSidBarBg,
+  color,
+}) => {
+  const [title, setTitle] = useState(edit ? edit.value : "");
+  const [desc, setDesc] = useState(edit ? edit.desc : "");
+  const [currentLocation, pathName, search] = useCurrentLocation();
+  const searchName = search.split("=")[1];
 
   const titleHandler = (e) => {
     setTitle(e.target.value);
@@ -33,6 +42,7 @@ const TodoForm = ({ onClose, isOpen, onsubmit, edit, headerSidBarBg, color }) =>
       id: Math.floor(Math.random() * 1282372837287),
       _title: title,
       _desc: desc,
+      _taskCategory: searchName,
     });
 
     setTitle("");
@@ -41,7 +51,6 @@ const TodoForm = ({ onClose, isOpen, onsubmit, edit, headerSidBarBg, color }) =>
 
   return (
     <>
-      
       <Modal
         isCentered
         onClose={onClose}
