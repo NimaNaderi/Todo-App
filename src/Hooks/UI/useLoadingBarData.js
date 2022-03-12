@@ -1,14 +1,9 @@
-import {
-  useLoading,
-  useSetLoading,
-} from "../../Context/Providers/LoadingBarState/LoadingBarStateProvider";
-
 import { css } from "@emotion/react";
 import { getCurrentLanguage } from "../../Utilities/getCurrentLanguage";
+import { useUiState } from "../../Context/Providers/LoadingBarState/LoadingBarStateProvider";
 
 export const useLoadingBarData = (margin) => {
-  const loading = useLoading();
-  const setLoading = useSetLoading();
+  const loading = useUiState().loading;
   const currentLanguage = getCurrentLanguage();
   const override = css`
     display: block;
@@ -18,8 +13,6 @@ export const useLoadingBarData = (margin) => {
   `;
 
   return {
-    loading,
-    setLoading,
     loadingProps: { css: override, size: 20, color: "#fff", loading },
   };
 };

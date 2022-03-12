@@ -3,6 +3,10 @@ import { NavLink, useLocation, useParams } from "react-router-dom";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { SkeletonCircle, SkeletonText, useDisclosure } from "@chakra-ui/react";
 import toast, { Toaster } from "react-hot-toast";
+import {
+  useDispatchUiState,
+  useUiState,
+} from "../../Context/Providers/LoadingBarState/LoadingBarStateProvider";
 
 import { BsThreeDots } from "react-icons/bs";
 import CardItem from "../Card/CardItem";
@@ -49,12 +53,16 @@ const Main = ({
     groceries: { all: null, completed: null },
   });
   const [userData, setUserData] = useState();
-  const { setLoading } = useLoadingBarData();
   const [summaryLoading, setSummerLoading] = useState();
+  const dispatchUiState = useDispatchUiState();
+  const uiState = useUiState();
 
   useEffect(() => {
-    console.log(allData);
-  }, [allData]);
+    if (uiState.shouldReRender) {
+      handle();
+      dispatchUiState({ type: "error", payload: false });
+    }
+  }, [uiState.shouldReRender]);
 
   const handle = async () => {
     try {
@@ -83,19 +91,24 @@ const Main = ({
           }
         }
       } else {
-        setLoading(true);
+        dispatchUiState({ type: "loading", payload: true });
         const { data } = await supabase
           .from("TodoList")
           .select(`${searchName}, userEmail`)
           .match({ userEmail: getUiInfoStorage().email });
 
         const targetTodos = data[0][searchName];
+        if (targetTodos.length === 0)
+          notify().error(
+            `${toTitleCase(searchName)} Is Empty ! Try Adding Task !`
+          );
         setUserData(targetTodos);
         targetTodos.forEach((item) => newList.push(item));
         setTodos(newList);
       }
     } catch (error) {
-      console.log(error);
+      // dispatchUiState({ type: "loading", payload: false });
+      // setSummerLoading(false);
       const errorRegEx = /0/;
       const errorRegEx2 = /object/;
       if (errorRegEx2.test(error)) {
@@ -105,25 +118,26 @@ const Main = ({
           work: { all: null, completed: null },
           groceries: { all: null, completed: null },
         });
-        setLoading(false);
-        setSummerLoading(false);
       }
 
       if (!errorRegEx.test(error)) {
         notify().error(
           `${toTitleCase(searchName)} Is Empty ! Try Adding Task !`
         );
-      } else
+      } else {
         notify().error(
           "An Unknown Error Occurred ! Check Your Internet Connection !"
         );
+        dispatchUiState({ type: "error", payload: true });
+      }
     }
-    //! Fix New User Bug !
-    setLoading(false);
+    dispatchUiState({ type: "loading", payload: false });
     setSummerLoading(false);
+    dispatchUiState({ type: "shouldReRender", payload: false });
   };
 
   useLayoutEffect(() => {
+    dispatchUiState({ type: "error", payload: false });
     if (currentLocation === "/main") {
       setAllData({
         personal: { all: null, completed: null },
@@ -142,7 +156,7 @@ const Main = ({
       notify().error("Please enter all fields");
       return;
     }
-    setLoading(true);
+    dispatchUiState({ type: "loading", payload: true });
     console.log(userData);
     try {
       const newTodo = [todo, ...todos];
@@ -163,7 +177,7 @@ const Main = ({
         "An Unknown Error Occurred ! Check Your Internet Connection !"
       );
     }
-    setLoading(false);
+    dispatchUiState({ type: "loading", payload: false });
   };
 
   const updateTodo = async (todoId, newValue) => {
@@ -178,7 +192,7 @@ const Main = ({
     const items = todos.map((item) => (item.id === todoId ? newValue : item));
 
     setTodos(items);
-    setLoading(true);
+    dispatchUiState({ type: "loading", payload: true });
 
     try {
       await updateTodoServer({ [searchName]: items }, getUiInfoStorage().email);
@@ -188,7 +202,7 @@ const Main = ({
         "An Unknown Error Occurred ! Check Your Internet Connection !"
       );
     }
-    setLoading(false);
+    dispatchUiState({ type: "loading", payload: false });
   };
 
   const isComplete = async (id) => {
@@ -199,7 +213,7 @@ const Main = ({
       return todo;
     });
     setTodos(completedTodo);
-    setLoading(true);
+    dispatchUiState({ type: "loading", payload: true });
 
     try {
       await updateTodoServer(
@@ -211,12 +225,12 @@ const Main = ({
         "An Unknown Error Occurred ! Check Your Internet Connection !"
       );
     }
-    setLoading(false);
+    dispatchUiState({ type: "loading", payload: false });
   };
 
   const delteTodo = async (id) => {
     const updatedTodos = todos.filter((todo) => todo.id !== id);
-    setLoading(true);
+    dispatchUiState({ type: "loading", payload: true });
 
     try {
       await updateTodoServer(
@@ -230,7 +244,7 @@ const Main = ({
         "An Unknown Error Occurred ! Check Your Internet Connection !"
       );
     }
-    setLoading(false);
+    dispatchUiState({ type: "loading", payload: false });
   };
 
   return (

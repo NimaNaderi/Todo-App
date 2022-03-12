@@ -1,27 +1,28 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useReducer, useState } from "react";
+import { reducerFn, uiInitialState } from "../../uiStateReducer";
 
-const loadingContext = createContext();
-const setLoadingContext = createContext();
+const uiStateContext = createContext();
+const dispatchUiStateContext = createContext();
 
 //! Custom Hooks To Make Using Easier !
 
-export const useLoading = () => {
-  const context = useContext(loadingContext);
+export const useUiState = () => {
+  const context = useContext(uiStateContext);
   return context;
 };
 
-export const useSetLoading = () => {
-  const context = useContext(setLoadingContext);
+export const useDispatchUiState = () => {
+  const context = useContext(dispatchUiStateContext);
   return context;
 };
 
-export default function LoadingBarStateProvider({ children }) {
-  const [loading, setLoading] = useState(false);
+export default function UiStateProvider({ children }) {
+  const [uiState, dispatchUiState] = useReducer(reducerFn, uiInitialState);
   return (
-    <loadingContext.Provider value={loading}>
-      <setLoadingContext.Provider value={setLoading}>
+    <uiStateContext.Provider value={uiState}>
+      <dispatchUiStateContext.Provider value={dispatchUiState}>
         {children}
-      </setLoadingContext.Provider>
-    </loadingContext.Provider>
+      </dispatchUiStateContext.Provider>
+    </uiStateContext.Provider>
   );
 }
