@@ -9,10 +9,10 @@ export const useLoadingBarData = (margin) => {
     display: block;
     margin: 0 ${currentLanguage === "en" ? margin : 0} 0
       ${currentLanguage === "fa" ? margin : 0};
-    //! position absolute Taken ! Must Be fixed On userAuth Form !
+    position: absolute;
   `;
 
   return {
-    loadingProps: { css: override, size: 20, color: "#fff", loading },
+    loadingProps: { css: override, size: 20, color: "#fff" },
   };
 };

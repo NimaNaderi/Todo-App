@@ -15,11 +15,16 @@ import { ClipLoader } from "react-spinners";
 import { Flex } from "@chakra-ui/react";
 import { RiSearch2Line } from "react-icons/ri";
 import { UI_STATE_TYPES } from "../../Context/uiStateReducer";
+import { css } from "@emotion/react";
 import profileImage from "../../Assets/Images/profile.png";
 import { useCurrentLocation } from "../../Hooks/Logic/useCurrentLocation";
 import { useLoadingBarData } from "../../Hooks/UI/useLoadingBarData";
 import { useSetIsMenuOpen } from "../../Context/Providers/MenuState/MenuStateProvider";
 import { useTheme } from "../../Hooks/UI/useTheme";
+
+const override = css`
+  display: block;
+`;
 
 const Header = ({
   toggleColorMode,
@@ -28,7 +33,6 @@ const Header = ({
   BorderColorHeader,
 }) => {
   const { setTheme } = useTheme();
-  const { loadingProps } = useLoadingBarData();
   const setIsMenuOpen = useSetIsMenuOpen();
   const [currentLocation] = useCurrentLocation();
   const uiState = useUiState();
@@ -61,7 +65,12 @@ const Header = ({
             leftIcon={<CgMenu fontSize="23px" cursor={headerIconColor} />}
           ></Button>
         )}
-        <ClipLoader {...loadingProps} />
+        <ClipLoader
+          css={override}
+          color="#fff"
+          size={20}
+          loading={uiState.loading}
+        />
         {uiState.error && (
           <svg
             onClick={() => {

@@ -1,16 +1,13 @@
 import { localServiceActions } from "../../Services/LocalService/localService";
 import { signInUser } from "../../Services/RemoteService/Actions/signInUser";
 import { signUpUser } from "../../Services/RemoteService/Actions/signUpUser";
+import { useDispatchUiState } from "../../Context/Providers/LoadingBarState/LoadingBarStateProvider";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-export const useAuthUser = (
-  setLoading,
-  typeOfAuthState,
-  fields,
-  setServerErrorType
-) => {
+export const useAuthUser = (typeOfAuthState, fields, setServerErrorType) => {
   let timer;
+  const dispatchUiState = useDispatchUiState();
   useEffect(() => {
     return () => {
       //! Cleaning Up The Timer !
@@ -19,15 +16,14 @@ export const useAuthUser = (
   }, []);
   const navigate = useNavigate();
   const handleAuth = async () => {
-    setLoading(true);
-
+    dispatchUiState({ type: "loading", payload: true });
     let data;
 
     if (typeOfAuthState === "Login") {
       try {
         const { user, error } = await signInUser(fields.email, fields.password);
         data = user;
-        console.log()
+        console.log();
         data &&
           localServiceActions.setItem("uiInfo", {
             ...localServiceActions.getItem("uiInfo"),
@@ -53,7 +49,7 @@ export const useAuthUser = (
       } catch (error) {}
     }
 
-    setLoading(false);
+    dispatchUiState({ type: "loading", payload: false });
 
     timer = setTimeout(() => {
       setServerErrorType(null);

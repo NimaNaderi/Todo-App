@@ -1,5 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
+  useDispatchUiState,
+  useUiState,
+} from "../../Context/Providers/LoadingBarState/LoadingBarStateProvider";
+import {
   useSetTypeOfAuthState,
   useTypeOfAuthState,
 } from "../../Context/Providers/TypeOfAuthState/TypeOfAuthProvider";
@@ -21,7 +25,8 @@ import { useOpenAndCloseModal } from "../../Hooks/UI/useOpenAndCloseModal";
 import { useVerifyAndHandleForm } from "../../Hooks/Logic/useVerifyAndHandleForm";
 
 const useRenderByAuthType = () => {
-  const { loadingProps, setLoading, loading } = useLoadingBarData("110px");
+  const { loadingProps } = useLoadingBarData("110px");
+  const uiState = useUiState();
   const [serverErrorType, setServerErrorType] = useState(null);
   const typeOfAuthState = useTypeOfAuthState();
   const currentLanguage = getCurrentLanguage();
@@ -31,12 +36,7 @@ const useRenderByAuthType = () => {
     email: "",
     password: "",
   });
-  const authUser = useAuthUser(
-    setLoading,
-    typeOfAuthState,
-    fields,
-    setServerErrorType
-  );
+  const authUser = useAuthUser(typeOfAuthState, fields, setServerErrorType);
   const LightBgDataContainer = useLightBgDataContainer();
 
   const handleAuth = useHandleAuth(serverErrorType, typeOfAuthState);
@@ -108,12 +108,18 @@ const useRenderByAuthType = () => {
           {serverErrorType !== null && handleAuth()}
           <Button
             disabledHandler={
-              !readyToProcess || serverErrorType === "NoError" || loading
+              !readyToProcess ||
+              serverErrorType === "NoError" ||
+              uiState.loading
             }
           >
-            {currentLanguage === "en" && <ClipLoader {...loadingProps} />}
+            {currentLanguage === "en" && (
+              <ClipLoader {...loadingProps} loading={uiState.loading} />
+            )}
             {typeOfAuthState === "Login" ? t("login") : t("signUp")}
-            {currentLanguage === "fa" && <ClipLoader {...loadingProps} />}
+            {currentLanguage === "fa" && (
+              <ClipLoader {...loadingProps} loading={uiState.loading} />
+            )}
           </Button>
 
           <p

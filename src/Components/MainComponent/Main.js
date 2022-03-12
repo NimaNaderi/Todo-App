@@ -107,8 +107,8 @@ const Main = ({
         setTodos(newList);
       }
     } catch (error) {
-      // dispatchUiState({ type: "loading", payload: false });
-      // setSummerLoading(false);
+      dispatchUiState({ type: "loading", payload: false });
+      setSummerLoading(false);
       const errorRegEx = /0/;
       const errorRegEx2 = /object/;
       if (errorRegEx2.test(error)) {
