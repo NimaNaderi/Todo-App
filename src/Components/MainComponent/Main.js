@@ -16,22 +16,19 @@ import { IoChevronBackOutline } from "react-icons/io5";
 import { MdAdd } from "react-icons/md";
 import { MdShoppingCart } from "react-icons/md";
 import { RiComputerFill } from "react-icons/ri";
-import Skeleton from "@mui/material/Skeleton";
 import { TiUser } from "react-icons/ti";
 import Todo from "./Todo";
 import TodoForm from "./TodoForm";
 import { css } from "styled-components";
 import { getUiInfoStorage } from "../../Services/LocalService/localService";
 import { insertTodo } from "../../Services/RemoteService/Actions/insertTodo";
-import { selectTodoList } from "../../Services/RemoteService/Actions/selectTodoList";
 import { supabase } from "../../Services/RemoteService/Configuration/supabaseClient";
 import { toTitleCase } from "../../Utilities/toTitleCase";
 import { updateTodoServer } from "../../Services/RemoteService/Actions/updateTodoServer";
 import { useCurrentLocation } from "../../Hooks/Logic/useCurrentLocation";
-import { useLoadingBarData } from "../../Hooks/UI/useLoadingBarData";
 
 const override = css`
-  margin-left: 50px;
+  margin-bottom: 5px;
 `;
 
 const Main = ({
@@ -64,6 +61,10 @@ const Main = ({
     }
   }, [uiState.shouldReRender]);
 
+  useEffect(() => {
+    console.log(allData);
+  }, [allData]);
+
   const handle = async () => {
     try {
       if (currentLocation === "/main") {
@@ -72,8 +73,10 @@ const Main = ({
           .from("TodoList")
           .select("personal, school, work, groceries, userEmail")
           .match({ userEmail: getUiInfoStorage().email });
+
         const allTodos = data[0];
         const realData = Object.values(allTodos);
+
         for (let index = 0; index < 4; index++) {
           if (realData[index] !== null && realData[index] !== undefined) {
             const currentData = realData[index].map((item) => item);
@@ -92,6 +95,7 @@ const Main = ({
         }
       } else {
         dispatchUiState({ type: "loading", payload: true });
+
         const { data } = await supabase
           .from("TodoList")
           .select(`${searchName}, userEmail`)
@@ -103,6 +107,7 @@ const Main = ({
             `${toTitleCase(searchName)} Is Empty ! Try Adding Task !`
           );
         setUserData(targetTodos);
+
         targetTodos.forEach((item) => newList.push(item));
         setTodos(newList);
       }
@@ -273,20 +278,20 @@ const Main = ({
                     <TiUser color="white" fontSize="144px" className="inline" />
                     <span className="text-4xl">Personal</span>
                   </span>
-                  <span className="w-1/3 mt-1">
+                  <span className="w-1/3 mt-1 flex flex-col items-center">
                     <ClipLoader
                       size={25}
                       css={override}
                       loading={summaryLoading}
                     />
                     {!summaryLoading && (
-                      <p className="ml-10 text-2xl">
+                      <p className=" text-2xl">
                         {allData.personal.all > 0
                           ? `${allData.personal.completed} / ${allData.personal.all}`
                           : "Empty"}
                       </p>
                     )}
-                    <div className="text-lg ml-6">Completed</div>
+                    <div className="text-lg">Completed</div>
                   </span>
                 </div>
               </NavLink>
@@ -303,20 +308,20 @@ const Main = ({
                     />
                     <span className="text-4xl ml-6">School</span>
                   </span>
-                  <span className="w-1/3 mt-1">
+                  <span className="w-1/3 mt-1 flex flex-col items-center">
                     <ClipLoader
                       size={25}
                       css={override}
                       loading={summaryLoading}
                     />
                     {!summaryLoading && (
-                      <p className="ml-10 text-2xl">
+                      <p className=" text-2xl">
                         {allData.school.all > 0
                           ? `${allData.school.completed} / ${allData.school.all}`
                           : "Empty"}
                       </p>
                     )}
-                    <div className="text-lg ml-6">Completed</div>
+                    <div className="text-lg">Completed</div>
                   </span>
                 </div>
               </NavLink>
@@ -335,20 +340,20 @@ const Main = ({
                     />
                     <span className="text-4xl ml-6">Work</span>
                   </span>
-                  <span className="w-1/3 mt-1">
+                  <span className="w-1/3 mt-1 flex flex-col items-center">
                     <ClipLoader
                       size={25}
                       css={override}
                       loading={summaryLoading}
                     />
                     {!summaryLoading && (
-                      <p className="ml-10 text-2xl">
+                      <p className=" text-2xl">
                         {allData.work.all > 0
                           ? `${allData.work.completed} / ${allData.work.all}`
                           : "Empty"}
                       </p>
                     )}
-                    <div className="text-lg ml-6">Completed</div>
+                    <div className="text-lg">Completed</div>
                   </span>
                 </div>
               </NavLink>
@@ -363,16 +368,16 @@ const Main = ({
                       fontSize="144px"
                       className="inline"
                     />
-                    <span className="text-3xl mr-8">Groceries</span>
+                    <span className="text-3xl mr-7">Groceries</span>
                   </span>
-                  <span className="w-1/3 mt-1">
+                  <span className="w-1/3 mt-1 flex flex-col items-center mr-7">
                     <ClipLoader
                       size={25}
                       css={override}
                       loading={summaryLoading}
                     />
                     {!summaryLoading && (
-                      <p className="ml-10 text-2xl">
+                      <p className=" text-2xl">
                         {allData.groceries.all > 0
                           ? `${allData.groceries.completed} / ${allData.groceries.all}`
                           : "Empty"}

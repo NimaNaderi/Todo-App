@@ -12,6 +12,7 @@ import { Button } from "@chakra-ui/button";
 import { CgMenu } from "react-icons/cg";
 import { CgSun } from "react-icons/cg";
 import { ClipLoader } from "react-spinners";
+import { DeviceThermostatOutlined } from "@mui/icons-material";
 import { Flex } from "@chakra-ui/react";
 import { RiSearch2Line } from "react-icons/ri";
 import { UI_STATE_TYPES } from "../../Context/uiStateReducer";
@@ -24,6 +25,7 @@ import { useTheme } from "../../Hooks/UI/useTheme";
 
 const override = css`
   display: block;
+  margin-left: 15px;
 `;
 
 const Header = ({
@@ -32,7 +34,7 @@ const Header = ({
   headerIconColor,
   BorderColorHeader,
 }) => {
-  const { setTheme } = useTheme();
+  const { setTheme, theme } = useTheme();
   const setIsMenuOpen = useSetIsMenuOpen();
   const [currentLocation] = useCurrentLocation();
   const uiState = useUiState();
@@ -56,18 +58,23 @@ const Header = ({
           <Button
             onClick={() => setIsMenuOpen((prevState) => !prevState)}
             cursor="pointer"
-            pr="25px"
             pl="0"
             bg="none"
             height="35px"
             as="a"
             iconSpacing
-            leftIcon={<CgMenu fontSize="23px" cursor={headerIconColor} />}
+            leftIcon={
+              <CgMenu
+                className="ml-3"
+                fontSize="23px"
+                cursor={headerIconColor}
+              />
+            }
           ></Button>
         )}
         <ClipLoader
           css={override}
-          color="#fff"
+          color={theme === "dark" ? "#fff" : "#000"}
           size={20}
           loading={uiState.loading}
         />
@@ -102,7 +109,7 @@ const Header = ({
         >
           <CgSun fontSize="23px" />
         </Button>
-        {currentLocation.includes("main") && (
+        {currentLocation !== "/main" && (
           <Button cursor="pointer" bg="none" as="a" p="5px" height="35px">
             <RiSearch2Line fontSize="23px" />
           </Button>
