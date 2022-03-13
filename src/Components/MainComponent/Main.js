@@ -2,6 +2,10 @@ import { Box, Container, Flex, Heading } from "@chakra-ui/layout";
 import { NavLink, useLocation, useParams } from "react-router-dom";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { SkeletonCircle, SkeletonText, useDisclosure } from "@chakra-ui/react";
+import {
+  getUiInfoStorage,
+  localServiceActions,
+} from "../../Services/LocalService/localService";
 import toast, { Toaster } from "react-hot-toast";
 import {
   useDispatchUiState,
@@ -20,12 +24,12 @@ import { TiUser } from "react-icons/ti";
 import Todo from "./Todo";
 import TodoForm from "./TodoForm";
 import { css } from "styled-components";
-import { getUiInfoStorage } from "../../Services/LocalService/localService";
 import { insertTodo } from "../../Services/RemoteService/Actions/insertTodo";
 import { supabase } from "../../Services/RemoteService/Configuration/supabaseClient";
 import { toTitleCase } from "../../Utilities/toTitleCase";
 import { updateTodoServer } from "../../Services/RemoteService/Actions/updateTodoServer";
 import { useCurrentLocation } from "../../Hooks/Logic/useCurrentLocation";
+import { useOpenAndCloseModal } from "../../Hooks/UI/useOpenAndCloseModal";
 
 const override = css`
   margin-bottom: 5px;
@@ -52,6 +56,9 @@ const Main = ({
   const [userData, setUserData] = useState();
   const [summaryLoading, setSummerLoading] = useState();
   const dispatchUiState = useDispatchUiState();
+  const { processModal } = useOpenAndCloseModal();
+  const userAccessType = localServiceActions.getItem("userAccessType");
+
   const uiState = useUiState();
 
   useEffect(() => {
@@ -61,9 +68,10 @@ const Main = ({
     }
   }, [uiState.shouldReRender]);
 
-  useEffect(() => {
-    console.log(allData);
-  }, [allData]);
+  useLayoutEffect(() => {
+    processModal(null);
+    if (userAccessType !== "LoggedIn") localServiceActions.removeItem("uiInfo");
+  }, []);
 
   const handle = async () => {
     try {
@@ -141,7 +149,7 @@ const Main = ({
     dispatchUiState({ type: "shouldReRender", payload: false });
   };
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     dispatchUiState({ type: "error", payload: false });
     if (currentLocation === "/main") {
       setAllData({
@@ -162,14 +170,16 @@ const Main = ({
       return;
     }
     dispatchUiState({ type: "loading", payload: true });
-    console.log(userData);
     try {
       const newTodo = [todo, ...todos];
       if (userData === undefined) {
+        console.log("undefined");
         await insertTodo([
           { [searchName]: newTodo, userEmail: getUiInfoStorage().email },
         ]);
       } else {
+        console.log("nooo");
+
         await updateTodoServer(
           { [searchName]: newTodo },
           getUiInfoStorage().email

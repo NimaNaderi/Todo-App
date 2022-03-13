@@ -13,10 +13,6 @@ export default function Routes() {
       path: "/main",
       element: <MainPageContainer />,
     },
-    {
-      path: "/main",
-      element: <MainPageContainer />,
-    },
     { path: "/", element: <Navigate to={"/welcome"} /> },
     {
       path: "/welcome",
