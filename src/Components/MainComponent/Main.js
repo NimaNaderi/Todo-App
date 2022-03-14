@@ -301,7 +301,9 @@ const Main = ({
                           : "Empty"}
                       </p>
                     )}
-                    <div className="text-lg">Completed</div>
+                    {allData.personal.all > 0 && (
+                      <div className="text-lg">Completed</div>
+                    )}
                   </span>
                 </div>
               </NavLink>
@@ -331,7 +333,9 @@ const Main = ({
                           : "Empty"}
                       </p>
                     )}
-                    <div className="text-lg">Completed</div>
+                    {allData.school.all > 0 && (
+                      <div className="text-lg">Completed</div>
+                    )}
                   </span>
                 </div>
               </NavLink>
@@ -363,7 +367,9 @@ const Main = ({
                           : "Empty"}
                       </p>
                     )}
-                    <div className="text-lg">Completed</div>
+                    {allData.work.all > 0 && (
+                      <div className="text-lg">Completed</div>
+                    )}
                   </span>
                 </div>
               </NavLink>
@@ -393,7 +399,9 @@ const Main = ({
                           : "Empty"}
                       </p>
                     )}
-                    <div className="text-lg">Completed</div>
+                    {allData.groceries.all > 0 && (
+                      <div className="text-lg">Completed</div>
+                    )}
                   </span>
                 </div>
               </NavLink>
