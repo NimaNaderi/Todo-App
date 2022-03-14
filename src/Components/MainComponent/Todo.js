@@ -1,23 +1,23 @@
-import React, { useState } from "react";
-import { Box, Flex, Heading, Text } from "@chakra-ui/layout";
-import toast, { Toaster } from "react-hot-toast";
-
 import {
   Accordion,
-  AccordionItem,
   AccordionButton,
-  AccordionPanel,
   AccordionIcon,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
+  AccordionItem,
+  AccordionPanel,
   Button,
   Divider,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
 } from "@chakra-ui/react";
-import { HiCheck } from "react-icons/hi";
-import { BsThreeDots } from "react-icons/bs";
 import { BiEdit, BiTrash } from "react-icons/bi";
+import { Box, Flex, Heading, Text } from "@chakra-ui/layout";
+import React, { useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
+
+import { BsThreeDots } from "react-icons/bs";
+import { HiCheck } from "react-icons/hi";
 import TodoForm from "./TodoForm";
 
 const Todo = ({
@@ -119,6 +119,7 @@ const Todo = ({
                         as={todo.isComplete ? "s" : "a"}
                       >
                         {todo._title}
+                        {/* {todo._addedDate} */}
                       </Heading>
                     </Box>
                     <AccordionIcon mr="-15px" />

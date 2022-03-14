@@ -11,6 +11,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 
+import { DateRangeOutlined } from "@mui/icons-material";
 import { Input } from "@chakra-ui/input";
 import { useCurrentLocation } from "../../Hooks/Logic/useCurrentLocation";
 
@@ -26,6 +27,21 @@ const TodoForm = ({
   const [desc, setDesc] = useState(edit ? edit.desc : "");
   const [currentLocation, pathName, search] = useCurrentLocation();
   const searchName = search.split("=")[1];
+  const date = new Date();
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
 
   const titleHandler = (e) => {
     setTitle(e.target.value);
@@ -43,6 +59,7 @@ const TodoForm = ({
       _title: title,
       _desc: desc,
       _taskCategory: searchName,
+      // _addedDate: `${months[date.getMonth()]} ${date.getDay()}`,
     });
 
     setTitle("");

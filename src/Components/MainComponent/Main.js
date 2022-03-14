@@ -61,6 +61,8 @@ const Main = ({
 
   const uiState = useUiState();
 
+  const ac = new AbortController();
+
   useEffect(() => {
     if (uiState.shouldReRender) {
       handle();
@@ -76,6 +78,8 @@ const Main = ({
   const handle = async () => {
     try {
       if (currentLocation === "/main") {
+        dispatchUiState({ type: "loading", payload: false });
+
         setSummerLoading(true);
         const { data } = await supabase
           .from("TodoList")
@@ -104,10 +108,13 @@ const Main = ({
       } else {
         dispatchUiState({ type: "loading", payload: true });
 
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from("TodoList")
           .select(`${searchName}, userEmail`)
-          .match({ userEmail: getUiInfoStorage().email });
+          .match({ userEmail: getUiInfoStorage().email })
+          .abortSignal(ac.signal);
+
+        if (error?.message.includes("aborted")) throw new Error("aborted");
 
         const targetTodos = data[0][searchName];
         if (targetTodos.length === 0)
@@ -120,36 +127,42 @@ const Main = ({
         setTodos(newList);
       }
     } catch (error) {
-      dispatchUiState({ type: "loading", payload: false });
-      setSummerLoading(false);
-      const errorRegEx = /0/;
-      const errorRegEx2 = /object/;
-      if (errorRegEx2.test(error)) {
-        setAllData({
-          personal: { all: null, completed: null },
-          school: { all: null, completed: null },
-          work: { all: null, completed: null },
-          groceries: { all: null, completed: null },
-        });
-      }
+      const changeRegEx = /aborted/;
+      if (!changeRegEx.test(error)) {
+        setSummerLoading(false);
+        dispatchUiState({ type: "loading", payload: false });
+        const errorRegEx = /0/;
+        const errorRegEx2 = /object/;
+        if (errorRegEx2.test(error)) {
+          setAllData({
+            personal: { all: null, completed: null },
+            school: { all: null, completed: null },
+            work: { all: null, completed: null },
+            groceries: { all: null, completed: null },
+          });
+        }
 
-      if (!errorRegEx.test(error)) {
-        notify().error(
-          `${toTitleCase(searchName)} Is Empty ! Try Adding Task !`
-        );
-      } else {
-        notify().error(
-          "An Unknown Error Occurred ! Check Your Internet Connection !"
-        );
-        dispatchUiState({ type: "error", payload: true });
-      }
+        if (!errorRegEx.test(error)) {
+          notify().error(
+            `${toTitleCase(searchName)} Is Empty ! Try Adding Task !`
+          );
+        } else {
+          notify().error(
+            "An Unknown Error Occurred ! Check Your Internet Connection !"
+          );
+          dispatchUiState({ type: "error", payload: true });
+        }
+      } else return;
     }
     dispatchUiState({ type: "loading", payload: false });
     setSummerLoading(false);
     dispatchUiState({ type: "shouldReRender", payload: false });
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    setTimeout(() => {
+      ac.abort();
+    }, 10000);
     dispatchUiState({ type: "error", payload: false });
     if (currentLocation === "/main") {
       setAllData({
@@ -160,6 +173,14 @@ const Main = ({
       });
     } else setTodos([]);
     handle();
+    return () => {
+      if (
+        searchName !== todos[0]?._taskCategory &&
+        currentLocation !== "/main"
+      ) {
+        ac.abort();
+      }
+    };
   }, [currentLocation]);
 
   const notify = () => toast;
