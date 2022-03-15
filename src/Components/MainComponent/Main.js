@@ -36,6 +36,7 @@ import { toTitleCase } from "../../Utilities/toTitleCase";
 import { updateTodoServer } from "../../Services/RemoteService/Actions/updateTodoServer";
 import { useCurrentLocation } from "../../Hooks/Logic/useCurrentLocation";
 import { useOpenAndCloseModal } from "../../Hooks/UI/useOpenAndCloseModal";
+import { useQuery } from "react-query";
 
 const override = css`
   margin-bottom: 5px;
@@ -65,10 +66,9 @@ const Main = ({
   const isMounted = useRef(true);
   const { processModal } = useOpenAndCloseModal();
   const userAccessType = localServiceActions.getItem("userAccessType");
+  const ac = new AbortController();
 
   const uiState = useUiState();
-
-  const ac = new AbortController();
 
   useEffect(() => {
     if (uiState.shouldReRender) {

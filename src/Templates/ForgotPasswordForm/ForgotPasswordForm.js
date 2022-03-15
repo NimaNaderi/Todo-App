@@ -1,3 +1,8 @@
+import {
+  useDispatchUiState,
+  useUiState,
+} from "../../Context/Providers/LoadingBarState/LoadingBarStateProvider";
+
 import Button from "../../Components/Actions/Button";
 import ClipLoader from "react-spinners/ClipLoader";
 import DeleteButton from "../../Components/DeleteButton/DeleteButton";
@@ -12,16 +17,19 @@ import { useVerifyAndHandleForm } from "../../Hooks/Logic/useVerifyAndHandleForm
 
 export default function ForgotPasswordForm(props) {
   const { fields, handleChange } = useFormFields({ email: "" });
-  const { readyToProcess } = useVerifyAndHandleForm(fields);
-  const { loadingProps, setLoading } = useLoadingBarData("190px");
+  let { readyToProcess } = useVerifyAndHandleForm(fields);
+  const { loadingProps } = useLoadingBarData("190px");
+  const loading = useUiState().loading;
+  const dispatchUiState = useDispatchUiState();
 
   const submitFormHandler = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    dispatchUiState({ type: "loading", payload: true });
+
     const { data, error } = await supabase.auth.api.resetPasswordForEmail(
       "nima.er.84@gmail.com"
     );
-    setLoading(false);
+    dispatchUiState({ type: "loading", payload: false });
   };
   return (
     <Modal onClose={props.onClose}>
@@ -33,8 +41,8 @@ export default function ForgotPasswordForm(props) {
           name="Email"
           placeholder={t("enterEmail")}
         ></input>
-        <Button width={230} disabledHandler={!readyToProcess}>
-          <ClipLoader {...loadingProps} />
+        <Button width={230} disabledHandler={!readyToProcess || loading}>
+          <ClipLoader {...loadingProps} loading={loading} />
           {t("resetPassword")}
         </Button>
       </FormContentContainer>
