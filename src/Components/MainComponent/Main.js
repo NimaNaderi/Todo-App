@@ -1,6 +1,12 @@
 import { Box, Container, Flex, Heading } from "@chakra-ui/layout";
 import { NavLink, useLocation, useParams } from "react-router-dom";
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { SkeletonCircle, SkeletonText, useDisclosure } from "@chakra-ui/react";
 import {
   getUiInfoStorage,
@@ -54,8 +60,9 @@ const Main = ({
     groceries: { all: null, completed: null },
   });
   const [userData, setUserData] = useState();
-  const [summaryLoading, setSummerLoading] = useState();
+  const [summaryLoading, setSummeryLoading] = useState();
   const dispatchUiState = useDispatchUiState();
+  const isMounted = useRef(true);
   const { processModal } = useOpenAndCloseModal();
   const userAccessType = localServiceActions.getItem("userAccessType");
 
@@ -70,22 +77,18 @@ const Main = ({
     }
   }, [uiState.shouldReRender]);
 
-  useLayoutEffect(() => {
-    processModal(null);
-    if (userAccessType !== "LoggedIn") localServiceActions.removeItem("uiInfo");
-  }, []);
-
-  const handle = async () => {
+  const handle = useCallback(async () => {
+    if (!isMounted.current) return null;
     try {
       if (currentLocation === "/main") {
         dispatchUiState({ type: "loading", payload: false });
 
-        setSummerLoading(true);
+        setSummeryLoading(true);
         const { data } = await supabase
           .from("TodoList")
           .select("personal, school, work, groceries, userEmail")
-          .match({ userEmail: getUiInfoStorage().email });
-
+          .match({ userEmail: getUiInfoStorage().email })
+          .abortSignal(ac.signal);
         const allTodos = data[0];
         const realData = Object.values(allTodos);
 
@@ -95,14 +98,15 @@ const Main = ({
             const completedTodos = currentData.filter((element) => {
               return element.isComplete;
             });
-
-            setAllData((prevState) => ({
-              ...prevState,
-              [currentData[0]?._taskCategory]: {
-                all: Object.keys(currentData).length,
-                completed: completedTodos.length,
-              },
-            }));
+            if (isMounted.current) {
+              setAllData((prevState) => ({
+                ...prevState,
+                [currentData[0]?._taskCategory]: {
+                  all: Object.keys(currentData).length,
+                  completed: completedTodos.length,
+                },
+              }));
+            } else return null;
           }
         }
       } else {
@@ -129,7 +133,7 @@ const Main = ({
     } catch (error) {
       const changeRegEx = /aborted/;
       if (!changeRegEx.test(error)) {
-        setSummerLoading(false);
+        setSummeryLoading(false);
         dispatchUiState({ type: "loading", payload: false });
         const errorRegEx = /0/;
         const errorRegEx2 = /object/;
@@ -155,11 +159,21 @@ const Main = ({
       } else return;
     }
     dispatchUiState({ type: "loading", payload: false });
-    setSummerLoading(false);
+    setSummeryLoading(false);
     dispatchUiState({ type: "shouldReRender", payload: false });
-  };
+  }, [currentLocation]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
+    processModal(null);
+    if (userAccessType !== "LoggedIn") localServiceActions.removeItem("uiInfo");
+
+    return () => {
+      dispatchUiState({ type: "loading", payload: false });
+      isMounted.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
     setTimeout(() => {
       ac.abort();
     }, 10000);
@@ -199,8 +213,6 @@ const Main = ({
           { [searchName]: newTodo, userEmail: getUiInfoStorage().email },
         ]);
       } else {
-        console.log("nooo");
-
         await updateTodoServer(
           { [searchName]: newTodo },
           getUiInfoStorage().email
