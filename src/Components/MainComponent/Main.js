@@ -218,7 +218,8 @@ const Main = ({
           getUiInfoStorage().email
         );
       }
-      setTodos(newTodo);
+      if (isMounted.current) setTodos(newTodo);
+      else return null;
       notify().success("Task added 🥳");
     } catch (error) {
       notify().error(
@@ -239,7 +240,8 @@ const Main = ({
 
     const items = todos.map((item) => (item.id === todoId ? newValue : item));
 
-    setTodos(items);
+    if (isMounted.current) setTodos(items);
+    else return null;
     dispatchUiState({ type: "loading", payload: true });
 
     try {
@@ -260,7 +262,8 @@ const Main = ({
       }
       return todo;
     });
-    setTodos(completedTodo);
+    if (isMounted.current) setTodos(completedTodo);
+    else return null;
     dispatchUiState({ type: "loading", payload: true });
 
     try {
@@ -285,7 +288,8 @@ const Main = ({
         { [searchName]: updatedTodos },
         getUiInfoStorage().email
       );
-      setTodos(updatedTodos);
+      if (isMounted.current) setTodos(updatedTodos);
+      else return null;
       notify().success("Deleted !");
     } catch (error) {
       notify().error(
