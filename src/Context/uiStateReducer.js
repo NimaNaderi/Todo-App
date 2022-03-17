@@ -1,13 +1,13 @@
 export const UI_STATE_TYPES = {
   error: "error",
   loading: "loading",
-  shouldReRender: "shouldReRender",
+  searchedText: "searchedText",
 };
 
 export const uiInitialState = {
   error: false,
   loading: false,
-  shouldReRender: false,
+  searchedText: "",
 };
 
 export const reducerFn = (state, action) => {
@@ -16,9 +16,8 @@ export const reducerFn = (state, action) => {
       return { ...state, error: action.payload };
     case UI_STATE_TYPES.loading:
       return { ...state, loading: action.payload };
-    case UI_STATE_TYPES.shouldReRender:
-      console.log(state.shouldReRender);
-      return { ...state, shouldReRender: action.payload };
+    case UI_STATE_TYPES.searchedText:
+      return { ...state, searchedText: action.payload };
     default:
       return state;
   }

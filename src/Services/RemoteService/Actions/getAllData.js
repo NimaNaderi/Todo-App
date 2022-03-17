@@ -1,4 +1,5 @@
-import ac from "../../../Utilities/getAbortController";
+import controllers from "../../../Utilities/getAbortController";
+import getAc from "../../../Utilities/getAbortController";
 import { getUiInfoStorage } from "../../LocalService/localService";
 import { supabase } from "../Configuration/supabaseClient";
 
@@ -7,4 +8,4 @@ export const getAllData = async () =>
     .from("TodoList")
     .select("personal, school, work, groceries, userEmail")
     .match({ userEmail: getUiInfoStorage().email })
-    .abortSignal(ac.signal);
+    .abortSignal(controllers.getAc.signal);

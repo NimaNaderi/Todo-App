@@ -68,7 +68,7 @@ const Todo = ({
         color={color}
         display={todos.length > 0 ? "block" : "none"}
       >
-        Tasks {todos.length}
+        {todos.length} {todos.length > 1 ? "Tasks" : "Task"}
       </Heading>
       {todos.map((todo) => {
         return (

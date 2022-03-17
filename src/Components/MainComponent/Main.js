@@ -25,7 +25,10 @@ import { RiComputerFill } from "react-icons/ri";
 import { TiUser } from "react-icons/ti";
 import Todo from "./Todo";
 import TodoForm from "./TodoForm";
+import { UI_STATE_TYPES } from "../../Context/uiStateReducer";
+import controllers from "../../Utilities/getAbortController";
 import { css } from "styled-components";
+import getAc from "../../Utilities/getAbortController";
 import queryKeys from "../../Utilities/queryKeys";
 import { setAll } from "../../Function/setAll";
 import { setTodoList } from "../../Function/setTodoList";
@@ -64,7 +67,6 @@ const Main = ({
   const isMounted = useRef(true);
   const { processModal } = useOpenAndCloseModal();
   const userAccessType = localServiceActions.getItem("userAccessType");
-  const ac = new AbortController();
   const uiState = useUiState();
 
   const {
@@ -83,11 +85,31 @@ const Main = ({
     refetch: refetchOne,
     isRefetching: isOneRefetching,
     isFetchedAfterMount,
+    isLoading: isOneLoading,
   } = useGetOneData(searchName);
   const queryClient = useQueryClient();
 
   const updateMutation = useUpdateTodo(searchName);
   const insertMutation = useInsertTodo(searchName);
+
+  useEffect(() => {
+    if (dataOne === undefined) return null;
+
+    const originalData = dataOne.data[0][searchName];
+
+    const searchedItems = originalData.filter((todo) =>
+      todo._title.toLowerCase().includes(uiState.searchedText.trim())
+    );
+    if (searchedItems) {
+      if (uiState.searchedText.length > 0) setTodos(searchedItems);
+      else setTodos(originalData);
+    }
+    searchedItems.length === 0 &&
+      notify().error("Couldn't Find Any Todo !", {
+        id: "NoData",
+        duration: 2000,
+      });
+  }, [uiState.searchedText]);
 
   useEffect(() => {
     if (!window.navigator.onLine) {
@@ -121,17 +143,16 @@ const Main = ({
   }, [isAllFetching, isAllReFetching, isAllLoading, isOneFetching]);
 
   useEffect(() => {
-    console.log("called");
     if (isOneSuccess) {
       dispatchUiState({ type: "loading", payload: false });
       setTodos(
         setTodoList(searchName, dataOne, setUserData, isFetchedAfterMount)
       );
     }
-    if (isOneFetching) {
+    if (isOneLoading) {
       if (!uiState.loading) dispatchUiState({ type: "loading", payload: true });
     }
-  }, [isOneFetching, isOneRefetching]);
+  }, [isOneFetching, isOneRefetching, isOneLoading]);
 
   useEffect(() => {
     processModal(null);
@@ -144,11 +165,8 @@ const Main = ({
   }, []);
 
   useEffect(() => {
-    setTimeout(() => {
-      ac.abort();
-    }, 10000);
-
     dispatchUiState({ type: "error", payload: false });
+    dispatchUiState({ type: UI_STATE_TYPES.searchedText, payload: "" });
 
     if (currentLocation === "/main") {
       refetchAll();
@@ -162,7 +180,9 @@ const Main = ({
     //     searchName !== todos[0]?._taskCategory &&
     //     currentLocation !== "/main"
     //   ) {
-    //     ac.abort();
+    //     notify().error("Operation Canceled Due To Exiting The Page !", {
+    //       id: "Canceled",
+    //     });
     //   }
     // };
   }, [currentLocation]);
@@ -208,15 +228,11 @@ const Main = ({
         updatedData
       );
 
-      //Todo Fix Some Caching Bugs On Sorted Pages
-
       dispatchUiState({ type: "loading", payload: false });
       if (notifyType.current === "update") notify().success("Updated 💥");
       else if (notifyType.current === "delete") notify().success("Deleted !");
 
       notifyType.current = null;
-
-      // queryClient.refetchQueries([queryKeys.GET_ONE_DATA_KEY, searchName]);
 
       queryClient.invalidateQueries(queryKeys.GET_ALL_DATA_KEY);
     }

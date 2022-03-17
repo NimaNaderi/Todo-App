@@ -1,9 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-  useDispatchUiState,
-  useUiState,
-} from "../../Context/Providers/LoadingBarState/LoadingBarStateProvider";
-import {
   useSetTypeOfAuthState,
   useTypeOfAuthState,
 } from "../../Context/Providers/TypeOfAuthState/TypeOfAuthProvider";
@@ -22,6 +18,9 @@ import { useHandleAuth } from "../../Hooks/Logic/useHandleAuth";
 import useLightBgDataContainer from "../../Hooks/UI/useLightBgDataContainer";
 import { useLoadingBarData } from "../../Hooks/UI/useLoadingBarData";
 import { useOpenAndCloseModal } from "../../Hooks/UI/useOpenAndCloseModal";
+import {
+  useUiState,
+} from "../../Context/Providers/LoadingBarState/LoadingBarStateProvider";
 import { useVerifyAndHandleForm } from "../../Hooks/Logic/useVerifyAndHandleForm";
 
 const useRenderByAuthType = () => {

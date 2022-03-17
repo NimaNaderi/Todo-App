@@ -7,6 +7,7 @@ import {
 } from "../../Context/Providers/LoadingBarState/LoadingBarStateProvider";
 
 import { Button } from "@chakra-ui/button";
+import CancelIcon from "@mui/icons-material/Cancel";
 import { CgMenu } from "react-icons/cg";
 import { CgSun } from "react-icons/cg";
 import { ClipLoader } from "react-spinners";
@@ -17,6 +18,7 @@ import { css } from "@emotion/react";
 import { localServiceActions } from "../../Services/LocalService/localService";
 import profileImage from "../../Assets/Images/profile.png";
 import { useCurrentLocation } from "../../Hooks/Logic/useCurrentLocation";
+import { useFormFields } from "../../Hooks/Logic/useFormFields";
 import { useNavigate } from "react-router-dom";
 import { useSetIsMenuOpen } from "../../Context/Providers/MenuState/MenuStateProvider";
 import { useTheme } from "../../Hooks/UI/useTheme";
@@ -36,9 +38,17 @@ const Header = ({
   const setIsMenuOpen = useSetIsMenuOpen();
   const [currentLocation, pathName, search] = useCurrentLocation();
   const uiState = useUiState();
-  const dispatchUiState = useDispatchUiState();
   const navigate = useNavigate();
+  const { fields, handleChange } = useFormFields({ searched: "" });
+  const dispatchUiState = useDispatchUiState();
   const userAccessType = localServiceActions.getItem("userAccessType");
+
+  useEffect(() => {
+    dispatchUiState({
+      type: UI_STATE_TYPES.searchedText,
+      payload: fields.searched,
+    });
+  }, [fields]);
 
   const logoutHandler = () => {
     localServiceActions.removeItem("supabase.auth.token");
@@ -142,10 +152,17 @@ const Header = ({
           <CgSun fontSize="23px" />
         </Button>
         {search && (
-          <Button cursor="pointer" bg="none" as="a" p="5px" height="35px">
-            <RiSearch2Line fontSize="23px" />
-          </Button>
+          <input
+            value={uiState.searchedText}
+            placeholder="Search For Todo..."
+            name="searched"
+            onChange={(e) => handleChange(e)}
+            type={"text"}
+            className="w-36 h-8 mb-6 mx-3 text-black"
+            style={theme === "light" ? { border: "2px solid black" } : null}
+          />
         )}
+
         <Link href="https://github.com/NimaNaderi" _focus={{}} isExternal>
           <Avatar
             src={profileImage}
