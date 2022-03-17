@@ -92,24 +92,24 @@ const Main = ({
   const updateMutation = useUpdateTodo(searchName);
   const insertMutation = useInsertTodo(searchName);
 
-  useEffect(() => {
-    if (dataOne === undefined) return null;
+  // useEffect(() => {
+  //   if (dataOne === undefined) return null;
 
-    const originalData = dataOne.data[0][searchName];
+  //   const originalData = dataOne.data[0][searchName];
 
-    const searchedItems = originalData.filter((todo) =>
-      todo._title.toLowerCase().includes(uiState.searchedText.trim())
-    );
-    if (searchedItems) {
-      if (uiState.searchedText.length > 0) setTodos(searchedItems);
-      else setTodos(originalData);
-    }
-    searchedItems.length === 0 &&
-      notify().error("Couldn't Find Any Todo !", {
-        id: "NoData",
-        duration: 2000,
-      });
-  }, [uiState.searchedText]);
+  //   const searchedItems = originalData.filter((todo) =>
+  //     todo._title.toLowerCase().includes(uiState.searchedText.trim())
+  //   );
+  //   if (searchedItems) {
+  //     if (uiState.searchedText.length > 0) setTodos(searchedItems);
+  //     else setTodos(originalData);
+  //   }
+  //   searchedItems.length === 0 &&
+  //     notify().error("Couldn't Find Any Todo !", {
+  //       id: "NoData",
+  //       duration: 2000,
+  //     });
+  // }, [uiState.searchedText]);
 
   useEffect(() => {
     if (!window.navigator.onLine) {
