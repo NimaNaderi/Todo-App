@@ -1,12 +1,6 @@
 import { Box, Container, Flex, Heading } from "@chakra-ui/layout";
 import { NavLink, useLocation, useParams } from "react-router-dom";
-import React, {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { SkeletonCircle, SkeletonText, useDisclosure } from "@chakra-ui/react";
 import {
   getUiInfoStorage,
@@ -17,6 +11,8 @@ import {
   useDispatchUiState,
   useUiState,
 } from "../../Context/Providers/LoadingBarState/LoadingBarStateProvider";
+import { useInsertTodo, useUpdateTodo } from "../../Hooks/Server/useSendTodo";
+import { useIsFetching, useQueryClient } from "react-query";
 
 import { BsThreeDots } from "react-icons/bs";
 import CardItem from "../Card/CardItem";
@@ -30,13 +26,13 @@ import { TiUser } from "react-icons/ti";
 import Todo from "./Todo";
 import TodoForm from "./TodoForm";
 import { css } from "styled-components";
-import { insertTodo } from "../../Services/RemoteService/Actions/insertTodo";
-import { supabase } from "../../Services/RemoteService/Configuration/supabaseClient";
-import { toTitleCase } from "../../Utilities/toTitleCase";
-import { updateTodoServer } from "../../Services/RemoteService/Actions/updateTodoServer";
+import queryKeys from "../../Utilities/queryKeys";
+import { setAll } from "../../Function/setAll";
+import { setTodoList } from "../../Function/setTodoList";
 import { useCurrentLocation } from "../../Hooks/Logic/useCurrentLocation";
+import { useGetAllData } from "../../Hooks/Server/useGetAllData";
+import { useGetOneData } from "../../Hooks/Server/useGetOneData";
 import { useOpenAndCloseModal } from "../../Hooks/UI/useOpenAndCloseModal";
-import { useQuery } from "react-query";
 
 const override = css`
   margin-bottom: 5px;
@@ -53,115 +49,89 @@ const Main = ({
   const searchName = search.split("=")[1];
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [todos, setTodos] = useState([]);
-  const newList = [];
-  const [allData, setAllData] = useState({
+  const notifyType = useRef(null);
+  const allDataInitialValue = {
     personal: { all: null, completed: null },
     school: { all: null, completed: null },
     work: { all: null, completed: null },
     groceries: { all: null, completed: null },
-  });
+  };
+  const [allData, setAllData] = useState(allDataInitialValue);
+  const isNetworkAvailable = useRef();
   const [userData, setUserData] = useState();
-  const [summaryLoading, setSummeryLoading] = useState();
+  const [summaryLoading, setSummeryLoading] = useState(false);
   const dispatchUiState = useDispatchUiState();
   const isMounted = useRef(true);
   const { processModal } = useOpenAndCloseModal();
   const userAccessType = localServiceActions.getItem("userAccessType");
   const ac = new AbortController();
-
   const uiState = useUiState();
 
+  const {
+    data: dataAll,
+    isSuccess: isAllSuccess,
+    isFetching: isAllFetching,
+    refetch: refetchAll,
+    isLoading: isAllLoading,
+    isRefetching: isAllReFetching,
+  } = useGetAllData();
+
+  const {
+    data: dataOne,
+    isSuccess: isOneSuccess,
+    isFetching: isOneFetching,
+    refetch: refetchOne,
+    isRefetching: isOneRefetching,
+    isFetchedAfterMount,
+  } = useGetOneData(searchName);
+  const queryClient = useQueryClient();
+
+  const updateMutation = useUpdateTodo(searchName);
+  const insertMutation = useInsertTodo(searchName);
+
   useEffect(() => {
-    if (uiState.shouldReRender) {
-      handle();
-      dispatchUiState({ type: "error", payload: false });
+    if (!window.navigator.onLine) {
+      isNetworkAvailable.current = false;
+      notify().error("No Network !, Reconnect For Auto Retry !", {
+        id: "NoNetwork",
+        duration: 5000,
+      });
+    } else {
+      if (isNetworkAvailable.current === false)
+        isNetworkAvailable.current = true;
     }
-  }, [uiState.shouldReRender]);
-
-  const handle = useCallback(async () => {
-    if (!isMounted.current) return null;
-    try {
-      if (currentLocation === "/main") {
-        dispatchUiState({ type: "loading", payload: false });
-
+    if (isAllSuccess) {
+      setSummeryLoading(false);
+      setAll(dataAll, setAllData);
+    }
+    if (isAllFetching || isAllReFetching) {
+      if (isNetworkAvailable.current) {
         setSummeryLoading(true);
-        const { data } = await supabase
-          .from("TodoList")
-          .select("personal, school, work, groceries, userEmail")
-          .match({ userEmail: getUiInfoStorage().email })
-          .abortSignal(ac.signal);
-        const allTodos = data[0];
-        const realData = Object.values(allTodos);
-
-        for (let index = 0; index < 4; index++) {
-          if (realData[index] !== null && realData[index] !== undefined) {
-            const currentData = realData[index].map((item) => item);
-            const completedTodos = currentData.filter((element) => {
-              return element.isComplete;
-            });
-            if (isMounted.current) {
-              setAllData((prevState) => ({
-                ...prevState,
-                [currentData[0]?._taskCategory]: {
-                  all: Object.keys(currentData).length,
-                  completed: completedTodos.length,
-                },
-              }));
-            } else return null;
-          }
-        }
-      } else {
-        dispatchUiState({ type: "loading", payload: true });
-
-        const { data, error } = await supabase
-          .from("TodoList")
-          .select(`${searchName}, userEmail`)
-          .match({ userEmail: getUiInfoStorage().email })
-          .abortSignal(ac.signal);
-
-        if (error?.message.includes("aborted")) throw new Error("aborted");
-
-        const targetTodos = data[0][searchName];
-        if (targetTodos.length === 0)
-          notify().error(
-            `${toTitleCase(searchName)} Is Empty ! Try Adding Task !`
-          );
-        setUserData(targetTodos);
-
-        targetTodos.forEach((item) => newList.push(item));
-        setTodos(newList);
+        isNetworkAvailable.current = null;
       }
-    } catch (error) {
-      const changeRegEx = /aborted/;
-      if (!changeRegEx.test(error)) {
-        setSummeryLoading(false);
-        dispatchUiState({ type: "loading", payload: false });
-        const errorRegEx = /0/;
-        const errorRegEx2 = /object/;
-        if (errorRegEx2.test(error)) {
-          setAllData({
-            personal: { all: null, completed: null },
-            school: { all: null, completed: null },
-            work: { all: null, completed: null },
-            groceries: { all: null, completed: null },
-          });
-        }
-
-        if (!errorRegEx.test(error)) {
-          notify().error(
-            `${toTitleCase(searchName)} Is Empty ! Try Adding Task !`
-          );
-        } else {
-          notify().error(
-            "An Unknown Error Occurred ! Check Your Internet Connection !"
-          );
-          dispatchUiState({ type: "error", payload: true });
-        }
-      } else return;
+      dispatchUiState({ type: "loading", payload: false });
+      setAllData((prev) => prev);
+      if (updateMutation?.variables && !isOneFetching) {
+        setSummeryLoading(true);
+        updateMutation.reset();
+      }
     }
-    dispatchUiState({ type: "loading", payload: false });
-    setSummeryLoading(false);
-    dispatchUiState({ type: "shouldReRender", payload: false });
-  }, [currentLocation]);
+
+    isAllLoading && setSummeryLoading(true);
+  }, [isAllFetching, isAllReFetching, isAllLoading, isOneFetching]);
+
+  useEffect(() => {
+    console.log("called");
+    if (isOneSuccess) {
+      dispatchUiState({ type: "loading", payload: false });
+      setTodos(
+        setTodoList(searchName, dataOne, setUserData, isFetchedAfterMount)
+      );
+    }
+    if (isOneFetching) {
+      if (!uiState.loading) dispatchUiState({ type: "loading", payload: true });
+    }
+  }, [isOneFetching, isOneRefetching]);
 
   useEffect(() => {
     processModal(null);
@@ -177,59 +147,85 @@ const Main = ({
     setTimeout(() => {
       ac.abort();
     }, 10000);
+
     dispatchUiState({ type: "error", payload: false });
+
     if (currentLocation === "/main") {
-      setAllData({
-        personal: { all: null, completed: null },
-        school: { all: null, completed: null },
-        work: { all: null, completed: null },
-        groceries: { all: null, completed: null },
-      });
-    } else setTodos([]);
-    handle();
-    return () => {
-      if (
-        searchName !== todos[0]?._taskCategory &&
-        currentLocation !== "/main"
-      ) {
-        ac.abort();
-      }
-    };
+      refetchAll();
+      setAllData(allDataInitialValue);
+    } else {
+      refetchOne();
+      setTodos([]);
+    }
+    // return () => {
+    //   if (
+    //     searchName !== todos[0]?._taskCategory &&
+    //     currentLocation !== "/main"
+    //   ) {
+    //     ac.abort();
+    //   }
+    // };
   }, [currentLocation]);
 
   const notify = () => toast;
 
-  const addTodo = async (todo) => {
+  const addTodo = (todo) => {
     if (!todo._title || !todo._desc || /^\s*$/.test(todo._title, todo._desc)) {
       notify().error("Please enter all fields");
       return;
     }
-    dispatchUiState({ type: "loading", payload: true });
-    try {
-      const newTodo = [todo, ...todos];
-      if (userData === undefined) {
-        console.log("undefined");
-        await insertTodo([
-          { [searchName]: newTodo, userEmail: getUiInfoStorage().email },
-        ]);
-      } else {
-        await updateTodoServer(
-          { [searchName]: newTodo },
-          getUiInfoStorage().email
-        );
-      }
-      if (isMounted.current) setTodos(newTodo);
-      else return null;
-      notify().success("Task added 🥳");
-    } catch (error) {
-      notify().error(
-        "An Unknown Error Occurred ! Check Your Internet Connection !"
-      );
+    const newTodo = [todo, ...todos];
+
+    if (userData === undefined) {
+      insertMutation.mutate(newTodo);
+    } else {
+      updateMutation.mutate(newTodo);
     }
-    dispatchUiState({ type: "loading", payload: false });
   };
 
-  const updateTodo = async (todoId, newValue) => {
+  useEffect(() => {
+    if (insertMutation.isSuccess) {
+      queryClient.invalidateQueries(queryKeys.GET_ALL_DATA_KEY);
+    }
+  }, [insertMutation.isLoading]);
+
+  useEffect(() => {
+    if (updateMutation.isSuccess) {
+      setTodos(updateMutation.variables);
+
+      const updatedData = {
+        ...dataOne,
+        data: [
+          {
+            [searchName]: updateMutation.variables,
+            userEmail: getUiInfoStorage().email,
+          },
+        ],
+      };
+
+      queryClient.setQueryData(
+        [queryKeys.GET_ONE_DATA_KEY, searchName],
+        updatedData
+      );
+
+      //Todo Fix Some Caching Bugs On Sorted Pages
+
+      dispatchUiState({ type: "loading", payload: false });
+      if (notifyType.current === "update") notify().success("Updated 💥");
+      else if (notifyType.current === "delete") notify().success("Deleted !");
+
+      notifyType.current = null;
+
+      // queryClient.refetchQueries([queryKeys.GET_ONE_DATA_KEY, searchName]);
+
+      queryClient.invalidateQueries(queryKeys.GET_ALL_DATA_KEY);
+    }
+
+    if (updateMutation.isLoading)
+      dispatchUiState({ type: "loading", payload: true });
+  }, [updateMutation.isLoading]);
+
+  const updateTodo = (todoId, newValue) => {
     if (
       !newValue._title ||
       !newValue._desc ||
@@ -237,66 +233,28 @@ const Main = ({
     ) {
       return;
     }
+    notifyType.current = "update";
 
     const items = todos.map((item) => (item.id === todoId ? newValue : item));
-
-    if (isMounted.current) setTodos(items);
-    else return null;
-    dispatchUiState({ type: "loading", payload: true });
-
-    try {
-      await updateTodoServer({ [searchName]: items }, getUiInfoStorage().email);
-      notify().success("Updated 💥");
-    } catch (error) {
-      notify().error(
-        "An Unknown Error Occurred ! Check Your Internet Connection !"
-      );
-    }
-    dispatchUiState({ type: "loading", payload: false });
+    updateMutation.mutate(items);
   };
 
-  const isComplete = async (id) => {
+  const isComplete = (id) => {
     let completedTodo = todos.map((todo) => {
       if (todo.id === id) {
         todo.isComplete = !todo.isComplete;
       }
       return todo;
     });
-    if (isMounted.current) setTodos(completedTodo);
-    else return null;
-    dispatchUiState({ type: "loading", payload: true });
 
-    try {
-      await updateTodoServer(
-        { [searchName]: completedTodo },
-        getUiInfoStorage().email
-      );
-    } catch (error) {
-      notify().error(
-        "An Unknown Error Occurred ! Check Your Internet Connection !"
-      );
-    }
-    dispatchUiState({ type: "loading", payload: false });
+    updateMutation.mutate(completedTodo);
   };
 
-  const delteTodo = async (id) => {
+  const deleteTodo = (id) => {
     const updatedTodos = todos.filter((todo) => todo.id !== id);
-    dispatchUiState({ type: "loading", payload: true });
+    notifyType.current = "delete";
 
-    try {
-      await updateTodoServer(
-        { [searchName]: updatedTodos },
-        getUiInfoStorage().email
-      );
-      if (isMounted.current) setTodos(updatedTodos);
-      else return null;
-      notify().success("Deleted !");
-    } catch (error) {
-      notify().error(
-        "An Unknown Error Occurred ! Check Your Internet Connection !"
-      );
-    }
-    dispatchUiState({ type: "loading", payload: false });
+    updateMutation.mutate(updatedTodos);
   };
 
   return (
@@ -526,7 +484,7 @@ const Main = ({
             <Todo
               todos={todos}
               isComplete={isComplete}
-              removeTodo={delteTodo}
+              removeTodo={deleteTodo}
               updateTodo={updateTodo}
               onOpen={onOpen}
               isOpen={isOpen}
