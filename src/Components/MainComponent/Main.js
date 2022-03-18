@@ -26,15 +26,15 @@ import { TiUser } from "react-icons/ti";
 import Todo from "./Todo";
 import TodoForm from "./TodoForm";
 import { UI_STATE_TYPES } from "../../Context/uiStateReducer";
-import controllers from "../../Utilities/getAbortController";
 import { css } from "styled-components";
-import getAc from "../../Utilities/getAbortController";
 import queryKeys from "../../Utilities/queryKeys";
 import { setAll } from "../../Function/setAll";
 import { setTodoList } from "../../Function/setTodoList";
+import { toTitleCase } from "../../Utilities/toTitleCase";
 import { useCurrentLocation } from "../../Hooks/Logic/useCurrentLocation";
 import { useGetAllData } from "../../Hooks/Server/useGetAllData";
 import { useGetOneData } from "../../Hooks/Server/useGetOneData";
+import { useIsUserSignedUp } from "../../Hooks/Server/useIsUserSignedUp";
 import { useOpenAndCloseModal } from "../../Hooks/UI/useOpenAndCloseModal";
 
 const override = css`
@@ -61,7 +61,6 @@ const Main = ({
   };
   const [allData, setAllData] = useState(allDataInitialValue);
   const isNetworkAvailable = useRef();
-  const [userData, setUserData] = useState();
   const [summaryLoading, setSummeryLoading] = useState(false);
   const dispatchUiState = useDispatchUiState();
   const isMounted = useRef(true);
@@ -87,29 +86,44 @@ const Main = ({
     isFetchedAfterMount,
     isLoading: isOneLoading,
   } = useGetOneData(searchName);
+
+  const {
+    data: emailData,
+    isSuccess: isEmailSuccess,
+    isFetching: isEmailFetching,
+  } = useIsUserSignedUp();
+
+  const userEmailExisted = useRef(false);
   const queryClient = useQueryClient();
 
   const updateMutation = useUpdateTodo(searchName);
   const insertMutation = useInsertTodo(searchName);
 
-  // useEffect(() => {
-  //   if (dataOne === undefined) return null;
+  useEffect(() => {
+    if (dataOne === undefined) return null;
 
-  //   const originalData = dataOne.data[0][searchName];
+    const originalData = dataOne.data[0][searchName];
 
-  //   const searchedItems = originalData.filter((todo) =>
-  //     todo._title.toLowerCase().includes(uiState.searchedText.trim())
-  //   );
-  //   if (searchedItems) {
-  //     if (uiState.searchedText.length > 0) setTodos(searchedItems);
-  //     else setTodos(originalData);
-  //   }
-  //   searchedItems.length === 0 &&
-  //     notify().error("Couldn't Find Any Todo !", {
-  //       id: "NoData",
-  //       duration: 2000,
-  //     });
-  // }, [uiState.searchedText]);
+    const searchedItems = originalData.filter((todo) =>
+      todo._title
+        .toLowerCase()
+        .includes(uiState.searchedText.trim().toLowerCase())
+    );
+    if (searchedItems) {
+      if (uiState.searchedText.length > 0) setTodos(searchedItems);
+      else setTodos(originalData);
+    }
+    searchedItems.length === 0 &&
+      notify().error("Couldn't Find Any Todo !", {
+        id: "NoData",
+        duration: 2000,
+      });
+  }, [uiState.searchedText]);
+
+  useEffect(() => {
+    if (isEmailSuccess)
+      userEmailExisted.current = emailData.data.length > 0 ? true : false;
+  }, [isEmailFetching]);
 
   useEffect(() => {
     if (!window.navigator.onLine) {
@@ -124,7 +138,7 @@ const Main = ({
     }
     if (isAllSuccess) {
       setSummeryLoading(false);
-      setAll(dataAll, setAllData);
+      setAll(dataAll.data, setAllData);
     }
     if (isAllFetching || isAllReFetching) {
       if (isNetworkAvailable.current) {
@@ -145,13 +159,12 @@ const Main = ({
   useEffect(() => {
     if (isOneSuccess) {
       dispatchUiState({ type: "loading", payload: false });
-      setTodos(
-        setTodoList(searchName, dataOne, setUserData, isFetchedAfterMount)
-      );
+      if (dataOne.data.length > 0) {
+        setTodos(setTodoList(searchName, dataOne.data, isFetchedAfterMount));
+      }
     }
-    if (isOneLoading) {
+    if (isOneLoading)
       if (!uiState.loading) dispatchUiState({ type: "loading", payload: true });
-    }
   }, [isOneFetching, isOneRefetching, isOneLoading]);
 
   useEffect(() => {
@@ -196,23 +209,41 @@ const Main = ({
     }
     const newTodo = [todo, ...todos];
 
-    if (userData === undefined) {
+    console.log(isEmailSuccess, userEmailExisted.current);
+    if (isEmailSuccess && !userEmailExisted.current) {
       insertMutation.mutate(newTodo);
-    } else {
+    } else if (isEmailSuccess && userEmailExisted.current) {
       updateMutation.mutate(newTodo);
     }
   };
 
   useEffect(() => {
     if (insertMutation.isSuccess) {
+      const updatedData = {
+        ...dataOne,
+        data: [
+          {
+            [searchName]: insertMutation.variables,
+            userEmail: getUiInfoStorage().email,
+          },
+        ],
+      };
+
+      queryClient.setQueryData(
+        [queryKeys.GET_ONE_DATA_KEY, searchName],
+        updatedData
+      );
+
+      dispatchUiState({ type: "loading", payload: false });
       queryClient.invalidateQueries(queryKeys.GET_ALL_DATA_KEY);
+      setTodos(insertMutation.variables);
     }
+    insertMutation.isLoading &&
+      dispatchUiState({ type: "loading", payload: true });
   }, [insertMutation.isLoading]);
 
   useEffect(() => {
     if (updateMutation.isSuccess) {
-      setTodos(updateMutation.variables);
-
       const updatedData = {
         ...dataOne,
         data: [
@@ -228,6 +259,8 @@ const Main = ({
         updatedData
       );
 
+      setTodos(updateMutation.variables);
+
       dispatchUiState({ type: "loading", payload: false });
       if (notifyType.current === "update") notify().success("Updated 💥");
       else if (notifyType.current === "delete") notify().success("Deleted !");
@@ -236,8 +269,7 @@ const Main = ({
 
       queryClient.invalidateQueries(queryKeys.GET_ALL_DATA_KEY);
     }
-
-    if (updateMutation.isLoading)
+    updateMutation.isLoading &&
       dispatchUiState({ type: "loading", payload: true });
   }, [updateMutation.isLoading]);
 
@@ -498,7 +530,7 @@ const Main = ({
               headerSidBarBg={headerSidBarBg}
             />
             <Todo
-              todos={todos}
+              todos={todos ? todos : []}
               isComplete={isComplete}
               removeTodo={deleteTodo}
               updateTodo={updateTodo}
