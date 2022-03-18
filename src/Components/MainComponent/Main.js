@@ -100,7 +100,9 @@ const Main = ({
   const {
     data: emailData,
     isSuccess: isEmailSuccess,
+    isRefetching: isEmailRefetching,
     isFetching: isEmailFetching,
+    refetch: refetchEmail,
   } = useIsUserSignedUp();
 
   const userEmailExisted = useRef(false);
@@ -131,9 +133,11 @@ const Main = ({
   }, [uiState.searchedText]);
 
   useEffect(() => {
-    if (isEmailSuccess)
-      userEmailExisted.current = emailData.data.length > 0 ? true : false;
-  }, [isEmailFetching]);
+    if (isEmailSuccess) {
+      userEmailExisted.current = emailData.data.length !== 0 ? true : false;
+      console.log(userEmailExisted.current);
+    }
+  }, [isEmailFetching, isEmailRefetching]);
 
   useEffect(() => {
     if (!window.navigator.onLine) {
@@ -219,7 +223,6 @@ const Main = ({
     }
     const newTodo = [todo, ...todos];
 
-    console.log(isEmailSuccess, userEmailExisted.current);
     if (isEmailSuccess && !userEmailExisted.current) {
       insertMutation.mutate(newTodo);
     } else if (isEmailSuccess && userEmailExisted.current) {
@@ -229,6 +232,7 @@ const Main = ({
 
   useEffect(() => {
     if (insertMutation.isSuccess) {
+      refetchEmail();
       const updatedData = {
         ...dataOne,
         data: [
