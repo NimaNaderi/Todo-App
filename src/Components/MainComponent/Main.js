@@ -1,7 +1,17 @@
+import { BiEdit, BiTrash } from "react-icons/bi";
 import { Box, Container, Flex, Heading } from "@chakra-ui/layout";
+import {
+  Button,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  SkeletonCircle,
+  SkeletonText,
+  useDisclosure,
+} from "@chakra-ui/react";
 import { NavLink, useLocation, useParams } from "react-router-dom";
 import React, { useEffect, useRef, useState } from "react";
-import { SkeletonCircle, SkeletonText, useDisclosure } from "@chakra-ui/react";
 import {
   getUiInfoStorage,
   localServiceActions,
@@ -264,6 +274,8 @@ const Main = ({
       dispatchUiState({ type: "loading", payload: false });
       if (notifyType.current === "update") notify().success("Updated 💥");
       else if (notifyType.current === "delete") notify().success("Deleted !");
+      else if (notifyType.current === "removeAll")
+        notify().success("Your List Cleared !");
 
       notifyType.current = null;
 
@@ -303,6 +315,18 @@ const Main = ({
     notifyType.current = "delete";
 
     updateMutation.mutate(updatedTodos);
+  };
+
+  const removeAll = () => {
+    if (dataOne.data[0][searchName].length === 0) {
+      notify().error("Your List Is Empty !", {
+        id: "ClearAllFailed",
+        duration: 3000,
+      });
+      return;
+    }
+    notifyType.current = "removeAll";
+    updateMutation.mutate([]);
   };
 
   return (
@@ -486,11 +510,30 @@ const Main = ({
                 display="flex"
                 alignItems="center"
                 justifyContent="center"
-                p="8px"
                 borderRadius="10px"
                 cursor="pointer"
               >
-                <BsThreeDots color={headerIconColor} />
+                <Menu>
+                  <MenuButton
+                    pl="0"
+                    pr="3"
+                    bg="transparent"
+                    _focus={{ outline: "none" }}
+                    _hover={{}}
+                    _active={{}}
+                    as={Button}
+                    rightIcon={<BsThreeDots color={headerIconColor} />}
+                  ></MenuButton>
+                  <MenuList>
+                    <MenuItem
+                      icon={<BiTrash fontSize="17px" />}
+                      color="red.400"
+                      onClick={removeAll}
+                    >
+                      Remove All
+                    </MenuItem>
+                  </MenuList>
+                </Menu>
               </Box>
             </Flex>
 
