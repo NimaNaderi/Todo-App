@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import { BiEdit, BiTrash } from "react-icons/bi";
 import { Box, Flex, Heading, Text } from "@chakra-ui/layout";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 
 import { BsThreeDots } from "react-icons/bs";
@@ -38,6 +38,7 @@ const Todo = ({
     id: null,
     value: "",
     desc: "",
+    isComplete: false,
   });
 
   const submitHandler = (value) => {
@@ -46,19 +47,9 @@ const Todo = ({
       id: null,
       value: "",
       desc: "",
+      isComplete: false,
     });
   };
-
-  if (edit.id) {
-    return (
-      <TodoForm
-        isOpen={isOpen}
-        onClose={onClose}
-        edit={edit}
-        onsubmit={submitHandler}
-      />
-    );
-  }
 
   return (
     <Box mt="14" width="full">
@@ -70,6 +61,14 @@ const Todo = ({
       >
         {todos.length} {todos.length > 1 ? "Tasks" : "Task"}
       </Heading>
+      {edit.id && (
+        <TodoForm
+          isOpen={isOpen}
+          onClose={onClose}
+          edit={edit}
+          onsubmit={submitHandler}
+        />
+      )}
       {todos.map((todo) => {
         return (
           <Box
@@ -81,7 +80,7 @@ const Todo = ({
             p="1px"
             mt="3"
           >
-            <Accordion allowMultiple>
+            <Accordion allowToggle>
               <AccordionItem as="a">
                 <Flex alignItems="center">
                   <Flex
@@ -99,7 +98,10 @@ const Todo = ({
                     onClick={() => {
                       isComplete(todo.id);
                       if (todo.isComplete) {
+                        setEdit({ ...edit, isComplete: true });
                         notify();
+                      } else {
+                        setEdit({ ...edit, isComplete: false });
                       }
                     }}
                   >
@@ -145,6 +147,7 @@ const Todo = ({
                             id: todo.id,
                             value: todo._title,
                             desc: todo._desc,
+                            isComplete: todo.isComplete,
                           });
                         }}
                       >

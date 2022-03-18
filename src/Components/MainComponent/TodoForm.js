@@ -11,18 +11,10 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 
-import { DateRangeOutlined } from "@mui/icons-material";
 import { Input } from "@chakra-ui/input";
 import { useCurrentLocation } from "../../Hooks/Logic/useCurrentLocation";
 
-const TodoForm = ({
-  onClose,
-  isOpen,
-  onsubmit,
-  edit,
-  headerSidBarBg,
-  color,
-}) => {
+const TodoForm = ({ onClose, isOpen, onsubmit, edit, headerSidBarBg }) => {
   const [title, setTitle] = useState(edit ? edit.value : "");
   const [desc, setDesc] = useState(edit ? edit.desc : "");
   const [currentLocation, pathName, search] = useCurrentLocation();
@@ -55,11 +47,11 @@ const TodoForm = ({
     e.preventDefault();
 
     onsubmit({
-      id: Math.floor(Math.random() * 1282372837287),
+      id: edit ? edit.id : Math.floor(Math.random() * 1282372837287),
       _title: title,
       _desc: desc,
       _taskCategory: searchName,
-      // _addedDate: `${months[date.getMonth()]} ${date.getDay()}`,
+      isComplete: edit ? edit.isComplete : false,
     });
 
     setTitle("");

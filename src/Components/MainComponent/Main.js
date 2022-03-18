@@ -85,6 +85,7 @@ const Main = ({
     refetch: refetchAll,
     isLoading: isAllLoading,
     isRefetching: isAllReFetching,
+    remove: removeAll,
   } = useGetAllData();
 
   const {
@@ -154,7 +155,7 @@ const Main = ({
       setSummeryLoading(false);
       setAll(dataAll.data, setAllData);
     }
-    if (isAllFetching || isAllReFetching) {
+    if (isAllFetching || isAllReFetching || isAllLoading) {
       if (isNetworkAvailable.current) {
         setSummeryLoading(true);
         isNetworkAvailable.current = null;
@@ -168,7 +169,13 @@ const Main = ({
     }
 
     isAllLoading && setSummeryLoading(true);
-  }, [isAllFetching, isAllReFetching, isAllLoading, isOneFetching]);
+  }, [
+    isAllFetching,
+    isAllReFetching,
+    isAllLoading,
+    isOneFetching,
+    isAllLoading,
+  ]);
 
   useEffect(() => {
     if (isOneSuccess) {
@@ -188,6 +195,7 @@ const Main = ({
     return () => {
       dispatchUiState({ type: "loading", payload: false });
       isMounted.current = false;
+      removeAll();
     };
   }, []);
 
@@ -321,7 +329,7 @@ const Main = ({
     updateMutation.mutate(updatedTodos);
   };
 
-  const removeAll = () => {
+  const deleteAll = () => {
     if (dataOne.data[0][searchName].length === 0) {
       notify().error("Your List Is Empty !", {
         id: "ClearAllFailed",
@@ -532,7 +540,7 @@ const Main = ({
                     <MenuItem
                       icon={<BiTrash fontSize="17px" />}
                       color="red.400"
-                      onClick={removeAll}
+                      onClick={deleteAll}
                     >
                       Remove All
                     </MenuItem>

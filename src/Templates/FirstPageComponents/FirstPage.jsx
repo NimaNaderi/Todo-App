@@ -40,18 +40,6 @@ export default function FirstPage() {
           >
             {t("getStarted")}
           </button>
-          <button
-            onClick={() => processModal("Guest")}
-            style={{
-              background: "#30303D",
-              color: "#fff",
-              borderRadius: 10,
-            }}
-            className={styles.button}
-            variant="contained"
-          >
-            {t("continueGuest")}
-          </button>
         </div>
       </section>
     </div>
