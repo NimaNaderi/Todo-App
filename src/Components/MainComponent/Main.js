@@ -109,13 +109,11 @@ const Main = ({
     refetch: refetchEmail,
   } = useIsUserSignedUp();
 
+  const [oneQueryData, setOneQueryData] = useState(null);
+
   const { i18n } = useTranslation();
   const queryClient = useQueryClient();
 
-  const oneQueryData = queryClient.getQueryData([
-    queryKeys.GET_ONE_DATA_KEY,
-    searchName,
-  ])?.data[0][searchName];
   const userEmailExisted = useRef(false);
 
   const updateMutation = useUpdateTodo(searchName);
@@ -179,6 +177,10 @@ const Main = ({
     if (isOneSuccess) {
       dispatchUiState({ type: "loading", payload: false });
       if (dataOne.data.length > 0) {
+        setOneQueryData(
+          queryClient.getQueryData([queryKeys.GET_ONE_DATA_KEY, searchName])
+            ?.data[0][searchName]
+        );
         realOneQueryData.current = queryClient.getQueryData([
           queryKeys.GET_ONE_DATA_KEY,
           searchName,
@@ -213,19 +215,8 @@ const Main = ({
       refetchAll();
       setAllData(allDataInitialValue);
     } else {
-      console.log(
-        queryClient.getQueryData([queryKeys.GET_ONE_DATA_KEY, searchName])
-      );
-      if (queryClient.getQueryData([queryKeys.GET_ONE_DATA_KEY, searchName])) {
-        setTodos(
-          queryClient.getQueryData([queryKeys.GET_ONE_DATA_KEY, searchName])
-            .data[0][searchName]
-        );
-        return null;
-      } else {
-        refetchOne();
-        setTodos([]);
-      }
+      setTodos([]);
+      refetchOne();
     }
     // return () => {
     //   if (
@@ -426,7 +417,7 @@ const Main = ({
   };
 
   const searchHandler = () => {
-    const originalData = realOneQueryData?.current;
+    const originalData = todos;
     const searchedItems = originalData?.filter((todo) =>
       todo._title
         .toLowerCase()
@@ -435,7 +426,7 @@ const Main = ({
     if (dataOne === undefined || !searchedItems) return null;
 
     if (uiState.searchedText.length > 0) setTodos(searchedItems);
-    else setTodos(originalData);
+    else setTodos(realOneData.current);
     searchedItems.length === 0 &&
       notify().error("Couldn't Find Any Todo !", {
         id: "NoData",
