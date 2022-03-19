@@ -13,6 +13,7 @@ export const useLanguage = () => {
   );
 
   useEffect(() => {
+    console.log("changed");
     localServiceActions.setItem("Language", language);
     i18n.changeLanguage(localServiceActions.getItem("Language"));
   }, [language]);

@@ -1,4 +1,5 @@
 import { Avatar, AvatarBadge } from "@chakra-ui/avatar";
+import { Flex, color } from "@chakra-ui/react";
 import { Link, Text } from "@chakra-ui/layout";
 import React, { useEffect, useState } from "react";
 import {
@@ -7,18 +8,17 @@ import {
 } from "../../Context/Providers/LoadingBarState/LoadingBarStateProvider";
 
 import { Button } from "@chakra-ui/button";
-import CancelIcon from "@mui/icons-material/Cancel";
 import { CgMenu } from "react-icons/cg";
 import { CgSun } from "react-icons/cg";
 import { ClipLoader } from "react-spinners";
-import { Flex } from "@chakra-ui/react";
-import { RiSearch2Line } from "react-icons/ri";
 import { UI_STATE_TYPES } from "../../Context/uiStateReducer";
 import { css } from "@emotion/react";
+import { getCurrentLanguage } from "../../Utilities/getCurrentLanguage";
 import { localServiceActions } from "../../Services/LocalService/localService";
 import profileImage from "../../Assets/Images/profile.png";
 import { useCurrentLocation } from "../../Hooks/Logic/useCurrentLocation";
 import { useFormFields } from "../../Hooks/Logic/useFormFields";
+import { useLanguage } from "./../../Hooks/Logic/useLanguage";
 import { useNavigate } from "react-router-dom";
 import { useSetIsMenuOpen } from "../../Context/Providers/MenuState/MenuStateProvider";
 import { useTheme } from "../../Hooks/UI/useTheme";
@@ -42,6 +42,7 @@ const Header = ({
   const { fields, handleChange } = useFormFields({ searched: "" });
   const dispatchUiState = useDispatchUiState();
   const userAccessType = localServiceActions.getItem("userAccessType");
+  const { setLanguage, language } = useLanguage();
 
   useEffect(() => {
     dispatchUiState({
@@ -56,7 +57,7 @@ const Header = ({
     localServiceActions.removeItem("uiInfo");
     if (!localServiceActions.getItem("uiInfo")) {
       console.log("Not");
-      navigate("/");
+      navigate("/", { replace: true });
     }
   };
 
@@ -75,22 +76,6 @@ const Header = ({
           >
             <svg className="fill-red-500 w-6" viewBox="0 0 512 512">
               <path d="M160 416H96c-17.67 0-32-14.33-32-32V128c0-17.67 14.33-32 32-32h64c17.67 0 32-14.33 32-32S177.7 32 160 32H96C42.98 32 0 74.98 0 128v256c0 53.02 42.98 96 96 96h64c17.67 0 32-14.33 32-32S177.7 416 160 416zM502.6 233.4l-128-128c-12.51-12.51-32.76-12.49-45.25 0c-12.5 12.5-12.5 32.75 0 45.25L402.8 224H192C174.3 224 160 238.3 160 256s14.31 32 32 32h210.8l-73.38 73.38c-12.5 12.5-12.5 32.75 0 45.25s32.75 12.5 45.25 0l128-128C515.1 266.1 515.1 245.9 502.6 233.4z" />
-            </svg>
-          </Button>
-        );
-      } else if (userAccessType === "Guest") {
-        return (
-          <Button
-            onClick={logoutHandler}
-            title="Back"
-            cursor="pointer"
-            bg="none"
-            as="a"
-            p="5px"
-            mr="2px"
-          >
-            <svg className="fill-red-500 w-6" viewBox="0 0 512 512">
-              <path d="M40 16C53.25 16 64 26.75 64 40v102.1C103.7 75.57 176.3 32.11 256.1 32.11C379.6 32.11 480 132.5 480 256s-100.4 223.9-223.9 223.9c-52.31 0-103.3-18.33-143.5-51.77c-10.19-8.5-11.56-23.62-3.062-33.81c8.5-10.22 23.66-11.56 33.81-3.062C174.9 417.5 214.9 432 256 432c97.03 0 176-78.97 176-176S353 80 256 80c-66.54 0-126.8 38.28-156.5 96H200C213.3 176 224 186.8 224 200S213.3 224 200 224h-160C26.75 224 16 213.3 16 200v-160C16 26.75 26.75 16 40 16z" />
             </svg>
           </Button>
         );
@@ -129,6 +114,18 @@ const Header = ({
               />
             }
           ></Button>
+        )}
+        {!currentLocation.includes("main") && (
+          <svg
+            onClick={() =>
+              language === "en" ? setLanguage("fa") : setLanguage("en")
+            }
+            className="w-10 h-10 cursor-pointer"
+            style={theme === "light" ? { fill: "#000" } : { fill: "#fff" }}
+            viewBox="0 0 640 512"
+          >
+            <path d="M448 164C459 164 468 172.1 468 184V188H528C539 188 548 196.1 548 208C548 219 539 228 528 228H526L524.4 232.5C515.5 256.1 501.9 279.1 484.7 297.9C485.6 298.4 486.5 298.1 487.4 299.5L506.3 310.8C515.8 316.5 518.8 328.8 513.1 338.3C507.5 347.8 495.2 350.8 485.7 345.1L466.8 333.8C462.4 331.1 457.1 328.3 453.7 325.3C443.2 332.8 431.8 339.3 419.8 344.7L416.1 346.3C406 350.8 394.2 346.2 389.7 336.1C385.2 326 389.8 314.2 399.9 309.7L403.5 308.1C409.9 305.2 416.1 301.1 422 298.3L409.9 286.1C402 278.3 402 265.7 409.9 257.9C417.7 250 430.3 250 438.1 257.9L452.7 272.4L453.3 272.1C465.7 259.9 475.8 244.7 483.1 227.1H376C364.1 227.1 356 219 356 207.1C356 196.1 364.1 187.1 376 187.1H428V183.1C428 172.1 436.1 163.1 448 163.1L448 164zM160 233.2L179 276H140.1L160 233.2zM0 128C0 92.65 28.65 64 64 64H576C611.3 64 640 92.65 640 128V384C640 419.3 611.3 448 576 448H64C28.65 448 0 419.3 0 384V128zM320 384H576V128H320V384zM178.3 175.9C175.1 168.7 167.9 164 160 164C152.1 164 144.9 168.7 141.7 175.9L77.72 319.9C73.24 329.1 77.78 341.8 87.88 346.3C97.97 350.8 109.8 346.2 114.3 336.1L123.2 315.1H196.8L205.7 336.1C210.2 346.2 222 350.8 232.1 346.3C242.2 341.8 246.8 329.1 242.3 319.9L178.3 175.9z" />
+          </svg>
         )}
 
         <ClipLoader

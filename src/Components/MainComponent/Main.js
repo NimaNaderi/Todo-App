@@ -40,12 +40,12 @@ import { css } from "styled-components";
 import queryKeys from "../../Utilities/queryKeys";
 import { setAll } from "../../Function/setAll";
 import { setTodoList } from "../../Function/setTodoList";
-import { toTitleCase } from "../../Utilities/toTitleCase";
 import { useCurrentLocation } from "../../Hooks/Logic/useCurrentLocation";
 import { useGetAllData } from "../../Hooks/Server/useGetAllData";
 import { useGetOneData } from "../../Hooks/Server/useGetOneData";
 import { useIsUserSignedUp } from "../../Hooks/Server/useIsUserSignedUp";
 import { useOpenAndCloseModal } from "../../Hooks/UI/useOpenAndCloseModal";
+import { useTranslation } from "react-i18next";
 
 const override = css`
   margin-bottom: 5px;
@@ -105,6 +105,8 @@ const Main = ({
     isFetching: isEmailFetching,
     refetch: refetchEmail,
   } = useIsUserSignedUp();
+
+  const { i18n } = useTranslation();
 
   const userEmailExisted = useRef(false);
   const queryClient = useQueryClient();
@@ -189,6 +191,8 @@ const Main = ({
   }, [isOneFetching, isOneRefetching, isOneLoading]);
 
   useEffect(() => {
+    localServiceActions.setItem("Language", "en");
+    i18n.changeLanguage("en");
     processModal(null);
     if (userAccessType !== "LoggedIn") localServiceActions.removeItem("uiInfo");
 

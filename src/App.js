@@ -1,10 +1,10 @@
 import { QueryClient, QueryClientProvider } from "react-query";
+import { useEffect, useLayoutEffect } from "react";
 
 import AppContainer from "./AppContainer";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { localServiceActions } from "./Services/LocalService/localService";
 import styles from "./Styles/app.module.css";
-import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 const queryClient = new QueryClient();
