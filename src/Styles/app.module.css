@@ -1,12 +1,5 @@
-@font-face {
-  font-family: IranSans;
-  src: url(../Assets/Fonts/IRANSans_Medium.woff);
-}
 .app {
   height: 100%;
-}
-.fa {
-  font-family: IranSans !important;
 }
 .en {
   font-family: Calibri !important;

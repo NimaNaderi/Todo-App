@@ -29,6 +29,13 @@ export default function ForgotPasswordForm(props) {
     const { data, error } = await supabase.auth.api.resetPasswordForEmail(
       "nima.er.84@gmail.com"
     );
+
+    // const token = localStorage.getItem("supabase.auth.token").currentSession
+    //   .access_token;
+    // console.log(token);
+
+    // const {} = await supabase.auth.api.updateUser();
+
     dispatchUiState({ type: "loading", payload: false });
   };
   return (
