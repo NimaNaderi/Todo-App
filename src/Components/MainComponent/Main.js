@@ -6,11 +6,8 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  SkeletonCircle,
-  SkeletonText,
   useDisclosure,
 } from "@chakra-ui/react";
-import { NavLink, useLocation, useParams } from "react-router-dom";
 import React, { useEffect, useRef, useState } from "react";
 import {
   getUiInfoStorage,
@@ -32,15 +29,19 @@ import { IoBook } from "react-icons/io5";
 import { IoChevronBackOutline } from "react-icons/io5";
 import { MdAdd } from "react-icons/md";
 import { MdShoppingCart } from "react-icons/md";
+import { NavLink } from "react-router-dom";
 import { RiComputerFill } from "react-icons/ri";
 import { TiUser } from "react-icons/ti";
 import Todo from "./Todo";
 import TodoForm from "./TodoForm";
 import { UI_STATE_TYPES } from "../../Context/uiStateReducer";
 import { css } from "styled-components";
+import { data } from "autoprefixer";
 import queryKeys from "../../Utilities/queryKeys";
 import { setAll } from "../../Function/setAll";
 import { setTodoList } from "../../Function/setTodoList";
+import { supabase } from "../../Services/RemoteService/Configuration/supabaseClient";
+import updateQueryData from "../../Utilities/updateQueryData";
 import { useCurrentLocation } from "../../Hooks/Logic/useCurrentLocation";
 import { useGetAllData } from "../../Hooks/Server/useGetAllData";
 import { useGetOneData } from "../../Hooks/Server/useGetOneData";
@@ -78,8 +79,7 @@ const Main = ({
   const { processModal } = useOpenAndCloseModal();
   const userAccessType = localServiceActions.getItem("userAccessType");
   const uiState = useUiState();
-  const realOneData = useRef(null);
-  const realOneQueryData = useRef(null);
+  const [sortedType, setSortedType] = useState(null);
 
   const {
     data: dataAll,
@@ -109,8 +109,6 @@ const Main = ({
     refetch: refetchEmail,
   } = useIsUserSignedUp();
 
-  const [oneQueryData, setOneQueryData] = useState(null);
-
   const { i18n } = useTranslation();
   const queryClient = useQueryClient();
 
@@ -119,13 +117,15 @@ const Main = ({
   const updateMutation = useUpdateTodo(searchName);
   const insertMutation = useInsertTodo(searchName);
 
+  const currentLocationCache = useRef();
+
   useEffect(() => {
     searchHandler();
   }, [uiState.searchedText]);
 
   useEffect(() => {
     if (isEmailSuccess) {
-      userEmailExisted.current = emailData.data.length !== 0 ? true : false;
+      userEmailExisted.current = emailData?.data.length !== 0 ? true : false;
     }
   }, [isEmailFetching, isEmailRefetching]);
 
@@ -167,28 +167,17 @@ const Main = ({
   ]);
 
   useEffect(() => {
-    realOneQueryData.current = queryClient.getQueryData([
-      queryKeys.GET_ONE_DATA_KEY,
-      searchName,
-    ])?.data[0][searchName];
-  }, [oneQueryData]);
-
-  useEffect(() => {
     if (isOneSuccess) {
+      if (!dataOne) return false;
       dispatchUiState({ type: "loading", payload: false });
-      if (dataOne.data.length > 0) {
-        setOneQueryData(
-          queryClient.getQueryData([queryKeys.GET_ONE_DATA_KEY, searchName])
-            ?.data[0][searchName]
-        );
-        realOneQueryData.current = queryClient.getQueryData([
-          queryKeys.GET_ONE_DATA_KEY,
-          searchName,
-        ]).data[0][searchName];
-        realOneData.current = dataOne.data[0][searchName];
 
-        setTodos(setTodoList(searchName, dataOne.data, isFetchedAfterMount));
-      }
+      currentLocationCache.current = queryClient
+        .getQueryCache()
+        .find([queryKeys.GET_ONE_DATA_KEY, searchName]).state.data.data[0][
+        searchName
+      ];
+
+      setTodos(setTodoList(searchName, dataOne.data, isFetchedAfterMount));
     }
     if (isOneLoading)
       if (!uiState.loading) dispatchUiState({ type: "loading", payload: true });
@@ -215,8 +204,16 @@ const Main = ({
       refetchAll();
       setAllData(allDataInitialValue);
     } else {
-      setTodos([]);
-      refetchOne();
+      console.log(currentLocationCache.current);
+      currentLocationCache.current = queryClient
+        .getQueryCache()
+        .find([queryKeys.GET_ONE_DATA_KEY, searchName]).state?.data?.data[0][
+        searchName
+      ];
+      setTodos(currentLocationCache.current);
+      if (!currentLocationCache.current || !currentLocationCache.current.length)
+        refetchOne();
+      console.log(currentLocationCache.current);
     }
     // return () => {
     //   if (
@@ -249,19 +246,10 @@ const Main = ({
   useEffect(() => {
     if (insertMutation.isSuccess) {
       refetchEmail();
-      const updatedData = {
-        ...dataOne,
-        data: [
-          {
-            [searchName]: insertMutation.variables,
-            userEmail: getUiInfoStorage().email,
-          },
-        ],
-      };
 
-      queryClient.setQueryData(
-        [queryKeys.GET_ONE_DATA_KEY, searchName],
-        updatedData
+      updateQueryData(
+        { ...dataOne },
+        { newData: insertMutation.variables, queryClient, searchName }
       );
 
       dispatchUiState({ type: "loading", payload: false });
@@ -274,18 +262,13 @@ const Main = ({
 
   useEffect(() => {
     if (updateMutation.isSuccess) {
-      const updatedData = {
-        ...dataOne,
-        data: [
-          {
-            [searchName]: updateMutation.variables,
-            userEmail: getUiInfoStorage().email,
-          },
-        ],
-      };
-      queryClient.setQueryData(
-        [queryKeys.GET_ONE_DATA_KEY, searchName],
-        updatedData
+      updateQueryData(
+        { ...dataOne },
+        {
+          searchName,
+          newData: updateMutation.variables,
+          queryClient,
+        }
       );
 
       if (uiState.searchedText) {
@@ -317,14 +300,12 @@ const Main = ({
     }
     notifyType.current = "update";
 
-    const items = realOneQueryData.current.map((item) =>
-      item.id === todoId ? newValue : item
-    );
+    const items = todos.map((item) => (item.id === todoId ? newValue : item));
     updateMutation.mutate(items);
   };
 
   const isComplete = (id) => {
-    let completedTodo = realOneQueryData.current.map((todo) => {
+    let completedTodo = todos.current.map((todo) => {
       if (todo.id === id) {
         todo.isComplete = !todo.isComplete;
       }
@@ -335,16 +316,14 @@ const Main = ({
   };
 
   const deleteTodo = (id) => {
-    const updatedTodos = realOneQueryData.current.filter(
-      (todo) => todo.id !== id
-    );
+    const updatedTodos = todos.filter((todo) => todo.id !== id);
     notifyType.current = "delete";
 
     updateMutation.mutate(updatedTodos);
   };
 
   const deleteAll = () => {
-    if (realOneData.current.length === 0) {
+    if (todos.length === 0) {
       notify().error("Your List Is Empty !", {
         id: "ClearAllFailed",
         duration: 3000,
@@ -355,83 +334,132 @@ const Main = ({
     updateMutation.mutate([]);
   };
 
+  const searchHandler = () => {
+    if (dataOne === undefined || !todos) return;
+
+    const originalData = [...todos];
+
+    const searchedItems = originalData.filter((todo) =>
+      todo._title
+        .toLowerCase()
+        .includes(uiState.searchedText.trim().toLowerCase())
+    );
+
+    if (uiState.searchedText.length > 0) setTodos(searchedItems);
+    else setTodos(currentLocationCache.current);
+
+    if (!searchedItems.length) {
+      notify().error("Couldn't Find Any Todo !", {
+        id: "NoData",
+        duration: 2000,
+      });
+      return;
+    }
+  };
+
   const sortHandler = (sortType) => {
+    validateSort();
+    setSortedType(sortType);
+
+    const { originalSortedTodos, searchedSortedTodos } = sortTodos(sortType);
+
+    updateQueryData(
+      { ...dataOne },
+      {
+        newData: originalSortedTodos,
+        searchName,
+        queryClient,
+        sortedType: sortType,
+      }
+    );
+
+    !uiState.searchedText.length
+      ? setTodos(originalSortedTodos)
+      : setTodos(searchedSortedTodos);
+  };
+
+  const sortTodos = (sortType) => {
+    const searchedTodos = [...todos];
+    const originalTodos = [...currentLocationCache.current];
+
+    return {
+      searchedSortedTodos: searchedTodos.sort(function (a, b) {
+        let nameA = a._title.toLowerCase(),
+          nameB = b._title.toLowerCase();
+        if (sortType === "Asc" ? nameA < nameB : nameA > nameB)
+          //sort string ascending
+          return -1;
+        if (sortType === "Des" ? nameA < nameB : nameA > nameB) return 1;
+        return 0; //default return value (no sorting)
+      }),
+      originalSortedTodos: originalTodos.sort(function (a, b) {
+        let nameA = a._title.toLowerCase(),
+          nameB = b._title.toLowerCase();
+        if (sortType === "Asc" ? nameA < nameB : nameA > nameB)
+          //sort string ascending
+          return -1;
+        if (sortType === "Des" ? nameA < nameB : nameA > nameB) return 1;
+        return 0; //default return value (no sorting)
+      }),
+    };
+  };
+
+  const validateSort = () => {
     if (todos.length === 0) {
       notify().error("Your List Is Empty !", {
         id: "SortFailed",
         duration: 3000,
       });
-      return;
+      throw new Error("Your List Is Empty !");
     } else if (todos.length === 1) {
       notify().error("Can't Sort One Item !", {
         id: "SortFailed",
         duration: 3000,
       });
-      return;
+      throw new Error("Can't Sort One Item !");
     }
-
-    const sortedArray = [...todos];
-    const originalDataSorted = [...realOneData.current];
-    sortedArray.sort(function (a, b) {
-      let nameA = a._title.toLowerCase(),
-        nameB = b._title.toLowerCase();
-      if (sortType === "Asc" ? nameA < nameB : nameA > nameB)
-        //sort string ascending
-        return -1;
-      if (sortType === "Asc" ? nameA < nameB : nameA > nameB) return 1;
-      return 0; //default return value (no sorting)
-    });
-
-    originalDataSorted.sort(function (a, b) {
-      let nameA = a._title.toLowerCase(),
-        nameB = b._title.toLowerCase();
-      if (sortType === "Asc" ? nameA < nameB : nameA > nameB)
-        //sort string ascending
-        return -1;
-      if (sortType === "Asc" ? nameA < nameB : nameA > nameB) return 1;
-      return 0; //default return value (no sorting)
-    });
-
-    const updatedData = {
-      ...dataOne,
-      data: [
-        {
-          [searchName]: originalDataSorted,
-          userEmail: getUiInfoStorage().email,
-        },
-      ],
-    };
-
-    if (uiState.searchedText) {
-      queryClient.setQueryData(
-        [queryKeys.GET_ONE_DATA_KEY, searchName],
-        updatedData
-      );
-    } else
-      queryClient.setQueryData(
-        [queryKeys.GET_ONE_DATA_KEY, searchName],
-        updatedData
-      );
-
-    setTodos(sortedArray);
   };
 
-  const searchHandler = () => {
-    const originalData = todos;
-    const searchedItems = originalData?.filter((todo) =>
-      todo._title
-        .toLowerCase()
-        .includes(uiState.searchedText.trim().toLowerCase())
-    );
-    if (dataOne === undefined || !searchedItems) return null;
+  const renderSortIcon = () => {
+    if (
+      todos === undefined ||
+      !todos.length ||
+      !sortedType ||
+      !queryClient.getQueryData([queryKeys.GET_ONE_DATA_KEY, searchName])
+    )
+      return null;
 
-    if (uiState.searchedText.length > 0) setTodos(searchedItems);
-    else setTodos(realOneData.current);
-    searchedItems.length === 0 &&
-      notify().error("Couldn't Find Any Todo !", {
-        id: "NoData",
-        duration: 2000,
-      });
+    const currentPageSortedType = queryClient.getQueryData([
+      queryKeys.GET_ONE_DATA_KEY,
+      searchName,
+    ]).data[0].sortedType;
+
+    switch (currentPageSortedType) {
+      case "Asc":
+        return (
+          <svg
+            className="w-4 h-5 fill-white"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 512 512"
+          >
+            <path d="M239.6 373.1c11.94-13.05 11.06-33.31-1.969-45.27c-13.55-12.42-33.76-10.52-45.22 1.973L160 366.1V64.03c0-17.7-14.33-32.03-32-32.03S96 46.33 96 64.03v302l-32.4-35.39C51.64 317.7 31.39 316.7 18.38 328.7c-13.03 11.95-13.9 32.22-1.969 45.27l87.1 96.09c12.12 13.26 35.06 13.26 47.19 0L239.6 373.1zM448 416h-50.75l73.38-73.38c9.156-9.156 11.89-22.91 6.938-34.88S460.9 288 447.1 288H319.1C302.3 288 288 302.3 288 320s14.33 32 32 32h50.75l-73.38 73.38c-9.156 9.156-11.89 22.91-6.938 34.88S307.1 480 319.1 480h127.1C465.7 480 480 465.7 480 448S465.7 416 448 416zM492.6 209.3l-79.99-160.1c-10.84-21.81-46.4-21.81-57.24 0L275.4 209.3c-7.906 15.91-1.5 35.24 14.31 43.19c15.87 7.922 35.04 1.477 42.93-14.4l7.154-14.39h88.43l7.154 14.39c6.174 12.43 23.97 23.87 42.93 14.4C494.1 244.6 500.5 225.2 492.6 209.3zM367.8 167.4L384 134.7l16.22 32.63H367.8z" />
+          </svg>
+        );
+
+      case "Des":
+        return (
+          <svg
+            className="w-4 h-5 fill-white"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 512 512"
+          >
+            <path d="M151.6 41.95c-12.12-13.26-35.06-13.26-47.19 0l-87.1 96.09C4.473 151.1 5.348 171.4 18.38 183.3c13.02 11.95 33.27 11.04 45.22-1.973L96 145.9v302C96 465.7 110.3 480 128 480S160 465.7 160 447.1V145.9L192.4 181.3c11.46 12.49 31.67 14.39 45.22 1.973c13.03-11.95 13.9-32.22 1.969-45.27L151.6 41.95zM448 416h-50.75l73.38-73.38c9.156-9.156 11.89-22.91 6.938-34.88s-16.63-19.86-29.56-19.86H319.1C302.3 287.9 288 302.3 288 320s14.33 32 32 32h50.75l-73.38 73.38c-9.156 9.156-11.89 22.91-6.938 34.88S307.1 480 319.1 480h127.1C465.7 480 480 465.7 480 448S465.7 416 448 416zM492.6 209.3l-79.99-160.1c-10.84-21.81-46.4-21.81-57.24 0L275.4 209.3c-7.906 15.91-1.5 35.24 14.31 43.19c15.87 7.922 35.04 1.477 42.93-14.4l7.154-14.39h88.43l7.154 14.39c6.174 12.43 23.97 23.87 42.93 14.4C494.1 244.6 500.5 225.2 492.6 209.3zM367.8 167.4L384 134.7l16.22 32.63H367.8z" />
+          </svg>
+        );
+
+      default:
+        break;
+    }
   };
 
   return (
@@ -618,6 +646,7 @@ const Main = ({
                 borderRadius="10px"
                 cursor="pointer"
               >
+                <section className="mr-2">{renderSortIcon()}</section>
                 <Menu>
                   <MenuButton
                     pl="0"

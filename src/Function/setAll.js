@@ -1,4 +1,6 @@
 export const setAll = (queryData, setAllData) => {
+  if (!queryData) return;
+
   const data = queryData;
   const allTodos = data.length > 0 ? data[0] : [];
   const realData = Object.values(allTodos);
