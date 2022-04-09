@@ -171,11 +171,17 @@ const Main = ({
       if (!dataOne) return false;
       dispatchUiState({ type: "loading", payload: false });
 
-      currentLocationCache.current = queryClient
-        .getQueryCache()
-        .find([queryKeys.GET_ONE_DATA_KEY, searchName]).state.data.data[0][
-        searchName
-      ];
+      if (
+        queryClient
+          .getQueryCache()
+          .find([queryKeys.GET_ONE_DATA_KEY, searchName]).state.data.data[0] !==
+        undefined
+      )
+        currentLocationCache.current = queryClient
+          .getQueryCache()
+          .find([queryKeys.GET_ONE_DATA_KEY, searchName]).state.data.data[0][
+          searchName
+        ];
 
       if (!uiState.searchedText)
         setTodos(setTodoList(searchName, dataOne.data, isFetchedAfterMount));
@@ -206,11 +212,17 @@ const Main = ({
       refetchAll();
       setAllData(allDataInitialValue);
     } else {
-      currentLocationCache.current = queryClient
-        .getQueryCache()
-        .find([queryKeys.GET_ONE_DATA_KEY, searchName]).state?.data?.data[0][
-        searchName
-      ];
+      currentLocationCache.current =
+        queryClient
+          .getQueryCache()
+          .find([queryKeys.GET_ONE_DATA_KEY, searchName]).state?.data
+          ?.data[0] !== undefined
+          ? queryClient
+              .getQueryCache()
+              .find([queryKeys.GET_ONE_DATA_KEY, searchName]).state?.data
+              ?.data[0][searchName]
+          : [];
+
       setTodos(currentLocationCache.current);
       if (!currentLocationCache.current || !currentLocationCache.current.length)
         refetchOne();
@@ -268,7 +280,6 @@ const Main = ({
           newData: updateMutation.variables,
           searchName,
           queryClient,
-          sortedType: sortedType.current,
         }
       );
 
@@ -439,10 +450,12 @@ const Main = ({
     )
       return null;
 
-    const currentPageSortedType = queryClient.getQueryData([
-      queryKeys.GET_ONE_DATA_KEY,
-      searchName,
-    ]).data[0].sortedType;
+    const currentPageSortedType =
+      queryClient.getQueryData([queryKeys.GET_ONE_DATA_KEY, searchName])
+        .data[0] !== undefined
+        ? queryClient.getQueryData([queryKeys.GET_ONE_DATA_KEY, searchName])
+            .data[0].sortedType
+        : null;
 
     console.log(
       queryClient.getQueryData([queryKeys.GET_ONE_DATA_KEY, searchName]).data[0]
