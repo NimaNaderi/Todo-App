@@ -79,7 +79,7 @@ const Main = ({
   const { processModal } = useOpenAndCloseModal();
   const userAccessType = localServiceActions.getItem("userAccessType");
   const uiState = useUiState();
-  const [sortedType, setSortedType] = useState(null);
+  const sortedType = useRef(null);
 
   const {
     data: dataAll,
@@ -177,7 +177,9 @@ const Main = ({
         searchName
       ];
 
-      setTodos(setTodoList(searchName, dataOne.data, isFetchedAfterMount));
+      if (!uiState.searchedText)
+        setTodos(setTodoList(searchName, dataOne.data, isFetchedAfterMount));
+      else return;
     }
     if (isOneLoading)
       if (!uiState.loading) dispatchUiState({ type: "loading", payload: true });
@@ -204,7 +206,6 @@ const Main = ({
       refetchAll();
       setAllData(allDataInitialValue);
     } else {
-      console.log(currentLocationCache.current);
       currentLocationCache.current = queryClient
         .getQueryCache()
         .find([queryKeys.GET_ONE_DATA_KEY, searchName]).state?.data?.data[0][
@@ -213,7 +214,6 @@ const Main = ({
       setTodos(currentLocationCache.current);
       if (!currentLocationCache.current || !currentLocationCache.current.length)
         refetchOne();
-      console.log(currentLocationCache.current);
     }
     // return () => {
     //   if (
@@ -234,7 +234,7 @@ const Main = ({
       notify().error("Please enter all fields");
       return;
     }
-    const newTodo = [todo, ...todos];
+    const newTodo = [todo, ...currentLocationCache.current];
 
     if (isEmailSuccess && !userEmailExisted.current) {
       insertMutation.mutate(newTodo);
@@ -265,12 +265,14 @@ const Main = ({
       updateQueryData(
         { ...dataOne },
         {
-          searchName,
           newData: updateMutation.variables,
+          searchName,
           queryClient,
+          sortedType: sortedType.current,
         }
       );
 
+      refetchOne();
       if (uiState.searchedText) {
         searchHandler();
       } else setTodos(updateMutation.variables);
@@ -300,12 +302,14 @@ const Main = ({
     }
     notifyType.current = "update";
 
-    const items = todos.map((item) => (item.id === todoId ? newValue : item));
+    const items = currentLocationCache.current.map((item) =>
+      item.id === todoId ? newValue : item
+    );
     updateMutation.mutate(items);
   };
 
   const isComplete = (id) => {
-    let completedTodo = todos.current.map((todo) => {
+    let completedTodo = currentLocationCache.current.map((todo) => {
       if (todo.id === id) {
         todo.isComplete = !todo.isComplete;
       }
@@ -316,7 +320,9 @@ const Main = ({
   };
 
   const deleteTodo = (id) => {
-    const updatedTodos = todos.filter((todo) => todo.id !== id);
+    const updatedTodos = currentLocationCache.current.filter(
+      (todo) => todo.id !== id
+    );
     notifyType.current = "delete";
 
     updateMutation.mutate(updatedTodos);
@@ -337,7 +343,7 @@ const Main = ({
   const searchHandler = () => {
     if (dataOne === undefined || !todos) return;
 
-    const originalData = [...todos];
+    const originalData = [...currentLocationCache.current];
 
     const searchedItems = originalData.filter((todo) =>
       todo._title
@@ -346,7 +352,11 @@ const Main = ({
     );
 
     if (uiState.searchedText.length > 0) setTodos(searchedItems);
-    else setTodos(currentLocationCache.current);
+    else
+      setTodos(
+        queryClient.getQueryData([queryKeys.GET_ONE_DATA_KEY, searchName])
+          .data[0][searchName]
+      );
 
     if (!searchedItems.length) {
       notify().error("Couldn't Find Any Todo !", {
@@ -359,7 +369,7 @@ const Main = ({
 
   const sortHandler = (sortType) => {
     validateSort();
-    setSortedType(sortType);
+    sortedType.current = sortType;
 
     const { originalSortedTodos, searchedSortedTodos } = sortTodos(sortType);
 
@@ -433,6 +443,10 @@ const Main = ({
       queryKeys.GET_ONE_DATA_KEY,
       searchName,
     ]).data[0].sortedType;
+
+    console.log(
+      queryClient.getQueryData([queryKeys.GET_ONE_DATA_KEY, searchName]).data[0]
+    );
 
     switch (currentPageSortedType) {
       case "Asc":
