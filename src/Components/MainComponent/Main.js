@@ -457,10 +457,6 @@ const Main = ({
             .data[0].sortedType
         : null;
 
-    console.log(
-      queryClient.getQueryData([queryKeys.GET_ONE_DATA_KEY, searchName]).data[0]
-    );
-
     switch (currentPageSortedType) {
       case "Asc":
         return (
@@ -490,7 +486,7 @@ const Main = ({
   };
 
   return (
-    <Box h="full" bg={MainBg} height="fit-content" minH="full">
+    <Box h="full" bg={MainBg} height="fit-content">
       <Toaster notify={notify} />
       <Container
         maxW="container.lg"
@@ -504,11 +500,11 @@ const Main = ({
         pr={{ base: "3", md: "3", lg: "3", xl: "0" }}
       >
         {currentLocation === "/main" ? (
-          <div className="flex content-start w-full flex-col h-screen pb-24 ">
-            <section className=" h-1/2 flex justify-center items-end mb-4">
+          <div className="flex content-start w-full flex-col lg:pb-24">
+            <section className="h-1/2 block lg:flex justify-center items-end mb-4">
               <NavLink to={"/main?type=personal"}>
                 <div
-                  className="mr-20 w-96 h-44 rounded-xl flex items-center "
+                  className="md:w-96 w-72 h-44 rounded-xl flex items-center "
                   style={{ backgroundColor: "#78DEC7" }}
                 >
                   <span className="w-2/3 flex items-center ">
@@ -536,7 +532,7 @@ const Main = ({
               </NavLink>
               <NavLink to="/main?type=school">
                 <div
-                  className="w-96 h-44 rounded-xl flex items-center"
+                  className="md:w-96 w-72 h-56 md:h-44 rounded-xl flex items-center"
                   style={{ backgroundColor: "#FF95C5" }}
                 >
                   <span className="w-2/3 flex items-center pl-8 ">
@@ -567,10 +563,10 @@ const Main = ({
                 </div>
               </NavLink>
             </section>
-            <section className="h-1/2 flex justify-center mt-4">
+            <section className="h-1/2 block lg:flex justify-center items-end mb-4 mt-4">
               <NavLink to="/main?type=work">
                 <div
-                  className="mr-20 w-96 h-44  rounded-xl flex items-center"
+                  className="md:w-96 w-72 h-44 rounded-xl flex items-center"
                   style={{ backgroundColor: "#B983FF" }}
                 >
                   <span className="w-2/3 flex items-center pl-8 ">
@@ -602,7 +598,7 @@ const Main = ({
               </NavLink>
               <NavLink to="/main?type=groceries">
                 <div
-                  className="w-96 h-44 rounded-xl flex items-center"
+                  className="md:w-96 w-72 h-44 rounded-xl flex items-center"
                   style={{ backgroundColor: "#FFD523" }}
                 >
                   <span className="w-2/3 flex items-center ml-7 ">
