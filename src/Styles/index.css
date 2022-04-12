@@ -7,10 +7,7 @@
   margin: 0;
   padding: 0;
   text-decoration: none;
-}
-
-#root {
-  height: 100vh;
+  box-sizing: border-box;
 }
 
 ::-webkit-scrollbar {

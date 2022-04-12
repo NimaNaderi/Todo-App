@@ -486,13 +486,13 @@ const Main = ({
   };
 
   return (
-    <Box h="full" bg={MainBg} height="fit-content">
+    <Box bg={MainBg} height={"fit-content"}>
       <Toaster notify={notify} />
       <Container
-        maxW="container.lg"
+        maxW="100%"
         border="1px solid"
         borderColor="transparent"
-        height="full"
+        minHeight="100vh"
         display="flex"
         flexDirection="column"
         alignItems="center"
@@ -500,11 +500,11 @@ const Main = ({
         pr={{ base: "3", md: "3", lg: "3", xl: "0" }}
       >
         {currentLocation === "/main" ? (
-          <div className="flex content-start w-full flex-col lg:pb-24">
+          <div className="flex content-start flex-col lg:pb-24 mt-10 lg:mt-32">
             <section className="h-1/2 block lg:flex justify-center items-end mb-4">
               <NavLink to={"/main?type=personal"}>
                 <div
-                  className="md:w-96 w-72 h-44 rounded-xl flex items-center "
+                  className="md:w-96 w-72 h-44 lg:mr-12 rounded-xl flex items-center mb-10 lg:mb-0"
                   style={{ backgroundColor: "#78DEC7" }}
                 >
                   <span className="w-2/3 flex items-center ">
@@ -532,7 +532,7 @@ const Main = ({
               </NavLink>
               <NavLink to="/main?type=school">
                 <div
-                  className="md:w-96 w-72 h-56 md:h-44 rounded-xl flex items-center"
+                  className="md:w-96 w-72 h-44 md:h-44 rounded-xl flex items-center"
                   style={{ backgroundColor: "#FF95C5" }}
                 >
                   <span className="w-2/3 flex items-center pl-8 ">
@@ -566,7 +566,7 @@ const Main = ({
             <section className="h-1/2 block lg:flex justify-center items-end mb-4 mt-4">
               <NavLink to="/main?type=work">
                 <div
-                  className="md:w-96 w-72 h-44 rounded-xl flex items-center"
+                  className="md:w-96 w-72 h-44 lg:mr-12 rounded-xl flex items-center mb-10 lg:mb-0"
                   style={{ backgroundColor: "#B983FF" }}
                 >
                   <span className="w-2/3 flex items-center pl-8 ">

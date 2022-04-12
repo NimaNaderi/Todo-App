@@ -22,7 +22,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <div className={` ${styles.app}`}>
         <AppContainer />
-        <ReactQueryDevtools />
+        {/* <ReactQueryDevtools /> */}
       </div>
     </QueryClientProvider>
   );
