@@ -497,7 +497,9 @@ const Main = ({
         flexDirection="column"
         alignItems="center"
         mt="53px"
-        pr={{ base: "3", md: "3", lg: "3", xl: "0" }}
+        pl={{ base: "3", md: "5", lg: "5", xl: "5" }}
+        // pr={{ base: "3", md: "3", lg: "3", xl: "10" }
+        pr={{ base: "3", md: "5", lg: "5", xl: "10" }}
       >
         {currentLocation === "/main" ? (
           <div className="flex content-start flex-col lg:pb-24 mt-10 lg:mt-32">

@@ -62,7 +62,7 @@ const Header = ({
   };
 
   const renderLogout = () => {
-    if (currentLocation !== "/welcome") {
+    if (currentLocation !== "/welcome" && !uiState.loading) {
       if (userAccessType === "LoggedIn") {
         return (
           <Button
@@ -97,7 +97,7 @@ const Header = ({
       zIndex="10"
     >
       <Flex alignItems="center">
-        {currentLocation.includes("main") && (
+        {pathName === "/main" && (
           <Button
             onClick={() => setIsMenuOpen((prevState) => !prevState)}
             cursor="pointer"
