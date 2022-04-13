@@ -27,14 +27,16 @@ export const useHandleAuth = (serverErrorType, typeOfAuthState) => {
       <LightBgDataContainer>
         <p
           style={{
-            margin: 0,
+            padding: "0 7px",
             color: serverErrorType === "NoError" ? "green" : "red",
           }}
         >
           {renderValue}
         </p>
         {serverErrorType === "NoError" && (
-          <p style={{ marginTop: 10, color: "green" }}>{t("redirecting")}</p>
+          <p style={{ marginTop: 10, color: "green", padding: "0 7px" }}>
+            {t("redirecting")}
+          </p>
         )}
       </LightBgDataContainer>
     );

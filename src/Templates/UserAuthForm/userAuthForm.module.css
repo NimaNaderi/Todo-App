@@ -26,7 +26,7 @@ p {
   margin-bottom: 0 !important;
 }
 .dataVerificationContainer {
-  width: 400px !important;
+  /* width: 400px !important; */
 }
 .dataVerificationContainer * {
   font-size: 18px;

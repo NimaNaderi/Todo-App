@@ -5,10 +5,9 @@ import { useOpenAndCloseModal } from "../../Hooks/UI/useOpenAndCloseModal";
 
 export default function FirstPage() {
   const { processModal } = useOpenAndCloseModal();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   return (
-    //Todo Fix Here Responsive
     <div className={styles.container}>
       <section className={styles.welcomeSection}>
         <div
@@ -17,7 +16,13 @@ export default function FirstPage() {
             marginTop: 25,
           }}
         >
-          <p className={`text-5xl md:text-7xl ${styles.goals}`}>{t("goals")}</p>
+          <p
+            className={`text-5xl md:text-7xl ${
+              language === "en" ? styles.goalsEn : styles.goalsFa
+            } `}
+          >
+            {t("goals")}
+          </p>
         </div>
         <div
           className={`w-72 md:w-auto ${styles.improveContainer}`}
@@ -30,7 +35,9 @@ export default function FirstPage() {
               marginBottom: -2,
               marginTop: 10,
             }}
-            className={`text-base md:text-xl ml-5 md:ml-0 ${styles.improve}`}
+            className={`text-base md:text-xl ml-5 md:ml-0 ${styles.improve} ${
+              language === "fn" && "text-4xl"
+            }`}
           >
             {t("mainImproveText")}
           </p>

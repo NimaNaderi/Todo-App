@@ -18,9 +18,7 @@ import { useHandleAuth } from "../../Hooks/Logic/useHandleAuth";
 import useLightBgDataContainer from "../../Hooks/UI/useLightBgDataContainer";
 import { useLoadingBarData } from "../../Hooks/UI/useLoadingBarData";
 import { useOpenAndCloseModal } from "../../Hooks/UI/useOpenAndCloseModal";
-import {
-  useUiState,
-} from "../../Context/Providers/LoadingBarState/LoadingBarStateProvider";
+import { useUiState } from "../../Context/Providers/LoadingBarState/LoadingBarStateProvider";
 import { useVerifyAndHandleForm } from "../../Hooks/Logic/useVerifyAndHandleForm";
 
 const useRenderByAuthType = () => {
@@ -61,12 +59,13 @@ const useRenderByAuthType = () => {
           {(!isEmailReady() || !isPasswordReady() || isCapsLockOn) &&
             (fields.email.length > 0 || fields.password.length > 0) && (
               <LightBgDataContainer
-                className={styles.dataVerificationContainer}
+                className={`${styles.dataVerificationContainer} w-full`}
               >
                 <p style={{ color: isEmailReady() ? "green" : "red" }}>
                   {!isEmailReady() && t("notValidEmail")}
                 </p>
                 <p
+                  className="px-4 mt-2 pb-2 ml-7 md:ml-0"
                   style={{
                     color: isPasswordReady() ? "green" : "red",
                   }}

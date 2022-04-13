@@ -21,9 +21,12 @@
   font-size: 18px;
 }
 
-@media only screen and (max-width: 370px) {
-  .goals {
+@media only screen and (max-width: 768px) {
+  .goalsEn {
     font-size: 42px;
+  }
+  .goalsFa {
+    font-size: 34px;
   }
 }
 
