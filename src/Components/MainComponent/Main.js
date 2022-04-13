@@ -125,7 +125,7 @@ const Main = ({
 
   useEffect(() => {
     if (isEmailSuccess) {
-      userEmailExisted.current = emailData?.data.length !== 0 ? true : false;
+      userEmailExisted.current = emailData?.data?.length !== 0 ? true : false;
     }
   }, [isEmailFetching, isEmailRefetching]);
 
@@ -506,21 +506,25 @@ const Main = ({
             <section className="h-1/2 block lg:flex justify-center items-end mb-4">
               <NavLink to={"/main?type=personal"}>
                 <div
-                  className="md:w-96 w-72 h-44 lg:mr-12 rounded-xl flex items-center mb-10 lg:mb-0"
+                  className="md:w-96 w-56 h-48 lg:mr-12 rounded-xl flex flex-col lg:flex-row items-center mb-10 lg:mb-0"
                   style={{ backgroundColor: "#78DEC7" }}
                 >
-                  <span className="w-2/3 flex items-center ">
-                    <TiUser color="white" fontSize="144px" className="inline" />
+                  <span className="lg:w-2/3 w-full h-1/2 flex flex-col lg:flex-row items-center mt-2 lg:mt-0">
+                    <TiUser color="white" fontSize="148px" className="inline" />
                     <span className="text-4xl">Personal</span>
                   </span>
-                  <span className="w-1/3 mt-1 flex flex-col items-center">
+                  <span className="lg:w-1/3 flex flex-col mt-4 lg:mt-1 items-center">
                     <ClipLoader
                       size={25}
                       css={override}
                       loading={summaryLoading}
                     />
                     {!summaryLoading && (
-                      <p className=" text-2xl">
+                      <p
+                        className={`text-2xl ${
+                          !allData.personal.all && "mt-3 lg:mt-0"
+                        }`}
+                      >
                         {allData.personal.all > 0
                           ? `${allData.personal.completed} / ${allData.personal.all}`
                           : "Empty"}
@@ -534,25 +538,29 @@ const Main = ({
               </NavLink>
               <NavLink to="/main?type=school">
                 <div
-                  className="md:w-96 w-72 h-44 md:h-44 rounded-xl flex items-center"
+                  className="md:w-96 w-56 h-48 rounded-xl flex flex-col lg:flex-row items-center"
                   style={{ backgroundColor: "#FF95C5" }}
                 >
-                  <span className="w-2/3 flex items-center pl-8 ">
+                  <span className="lg:w-2/3 w-full h-1/2 flex flex-col lg:flex-row items-center mt-2 lg:mt-0 lg:ml-6">
                     <IoBook
                       color="white"
                       fontSize="104px"
                       className="inline pr-2"
                     />
-                    <span className="text-4xl ml-6">School</span>
+                    <span className="text-4xl lg:ml-6">School</span>
                   </span>
-                  <span className="w-1/3 mt-1 flex flex-col items-center">
+                  <span className="lg:w-1/3 flex flex-col mt-4 lg:mt-1 items-center">
                     <ClipLoader
                       size={25}
                       css={override}
                       loading={summaryLoading}
                     />
                     {!summaryLoading && (
-                      <p className=" text-2xl">
+                      <p
+                        className={`text-2xl ${
+                          !allData.school.all && "mt-3 lg:mt-0"
+                        }`}
+                      >
                         {allData.school.all > 0
                           ? `${allData.school.completed} / ${allData.school.all}`
                           : "Empty"}
@@ -568,25 +576,29 @@ const Main = ({
             <section className="h-1/2 block lg:flex justify-center items-end mb-4 mt-4">
               <NavLink to="/main?type=work">
                 <div
-                  className="md:w-96 w-72 h-44 lg:mr-12 rounded-xl flex items-center mb-10 lg:mb-0"
+                  className="md:w-96 w-56 h-48 lg:mr-12 rounded-xl flex flex-col lg:flex-row items-center mb-10 lg:mb-0"
                   style={{ backgroundColor: "#B983FF" }}
                 >
-                  <span className="w-2/3 flex items-center pl-8 ">
+                  <span className="lg:w-2/3 w-full h-1/2 flex flex-col lg:flex-row items-center mt-2 lg:mt-0">
                     <RiComputerFill
                       color="white"
                       fontSize="104px"
-                      className="inline pr-2"
+                      className="inline lg:ml-4"
                     />
-                    <span className="text-4xl ml-6">Work</span>
+                    <span className="text-4xl lg:ml-6">Work</span>
                   </span>
-                  <span className="w-1/3 mt-1 flex flex-col items-center">
+                  <span className="lg:w-1/3 flex flex-col mt-4 lg:mt-1 items-center">
                     <ClipLoader
                       size={25}
                       css={override}
                       loading={summaryLoading}
                     />
                     {!summaryLoading && (
-                      <p className=" text-2xl">
+                      <p
+                        className={`text-2xl ${
+                          !allData.personal.work && "mt-3 lg:mt-0"
+                        }`}
+                      >
                         {allData.work.all > 0
                           ? `${allData.work.completed} / ${allData.work.all}`
                           : "Empty"}
@@ -600,25 +612,29 @@ const Main = ({
               </NavLink>
               <NavLink to="/main?type=groceries">
                 <div
-                  className="md:w-96 w-72 h-44 rounded-xl flex items-center"
+                  className="md:w-96 w-56 h-48 rounded-xl flex flex-col lg:flex-row items-center"
                   style={{ backgroundColor: "#FFD523" }}
                 >
-                  <span className="w-2/3 flex items-center ml-7 ">
+                  <span className="lg:w-2/3 w-full h-1/2 flex flex-col lg:flex-row items-center mt-2 lg:mt-0 lg:ml-7 mb-3 lg:mb-0">
                     <MdShoppingCart
                       color="white"
                       fontSize="144px"
                       className="inline"
                     />
-                    <span className="text-3xl mr-7">Groceries</span>
+                    <span className="text-3xl lg:mr-7">Groceries</span>
                   </span>
-                  <span className="w-1/3 mt-1 flex flex-col items-center mr-7">
+                  <span className="w-1/3 mt-1 flex flex-col items-center lg:mr-4">
                     <ClipLoader
                       size={25}
                       css={override}
                       loading={summaryLoading}
                     />
                     {!summaryLoading && (
-                      <p className=" text-2xl">
+                      <p
+                        className={`text-2xl ${
+                          !allData.groceries.all && "mt-3 lg:mt-0"
+                        }`}
+                      >
                         {allData.groceries.all > 0
                           ? `${allData.groceries.completed} / ${allData.groceries.all}`
                           : "Empty"}
