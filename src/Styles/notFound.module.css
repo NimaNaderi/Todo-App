@@ -11,7 +11,7 @@ body {
 .notfound {
   position: relative;
   height: 100vh;
-  height: 85%;
+  /* height: 85%; */
 }
 
 .notfound .notfoundd {
@@ -50,21 +50,22 @@ body {
 }
 
 .notfoundd p {
+  padding: 0 10px;
+  margin-top: 20px;
   font-family: "Josefin Sans", sans-serif;
   font-size: 16px;
   font-weight: 400;
-  margin-top: 0px;
   margin-bottom: 15px;
 }
 
 .notfoundd a {
+  margin-top: 30px;
   font-family: "Josefin Sans", sans-serif;
   font-size: 14px;
   text-decoration: none;
   text-transform: uppercase;
   background: transparent;
-  color: #c9c9c9;
-  border: 2px solid #c9c9c9;
+  border: 2px solid;
   display: inline-block;
   padding: 10px 25px;
   font-weight: 700;

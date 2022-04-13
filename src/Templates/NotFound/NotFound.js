@@ -16,7 +16,12 @@ export default function NotFound() {
           The page you are looking for might have been removed had its name
           changed or is temporarily unavailable.
         </p>
-        <Link to={isUserAuthenticated ? "/main" : "/welcome"}>Home Page</Link>
+        <Link
+          to={isUserAuthenticated ? "/main" : "/welcome"}
+          className="bg-red-600"
+        >
+          Home Page
+        </Link>
       </div>
     </div>
   );
