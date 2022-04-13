@@ -8,25 +8,40 @@ export default function FirstPage() {
   const { t } = useLanguage();
 
   return (
+    //Todo Fix Here Responsive
     <div className={styles.container}>
       <section className={styles.welcomeSection}>
-        <p style={{ fontSize: 72 }}>{t("goals")}</p>
-        <p
+        <div
+          className=" md:w-auto"
           style={{
-            marginBottom: -2,
-            marginTop: 10,
-            fontSize: 20,
+            marginTop: 25,
           }}
         >
-          {t("mainImproveText")}
-        </p>
+          <p className={`text-5xl md:text-7xl ${styles.goals}`}>{t("goals")}</p>
+        </div>
+        <div
+          className={`w-72 md:w-auto ${styles.improveContainer}`}
+          style={{
+            marginTop: 25,
+          }}
+        >
+          <p
+            style={{
+              marginBottom: -2,
+              marginTop: 10,
+            }}
+            className={`text-base md:text-xl ml-5 md:ml-0 ${styles.improve}`}
+          >
+            {t("mainImproveText")}
+          </p>
+        </div>
         <div
           style={{
             marginTop: 25,
-            width: 370,
             display: "flex",
             justifyContent: "space-around",
           }}
+          className={styles.btnContainer}
         >
           <button
             onClick={() => processModal("Login")}

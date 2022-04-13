@@ -1,9 +1,10 @@
 .container {
-  height: 100%;
+  height: 100vh;
   display: flex;
   align-items: center;
   flex-direction: column;
 }
+
 .welcomeSection {
   display: flex;
   flex-direction: column;
@@ -13,8 +14,28 @@
   align-items: center;
   width: 100%;
 }
+
 .button {
   width: 150px;
   height: 60px;
   font-size: 18px;
+}
+
+@media only screen and (max-width: 370px) {
+  .goals {
+    font-size: 42px;
+  }
+}
+
+@media only screen and (max-width: 350px) {
+  .goals {
+    font-size: 34px;
+  }
+  .improve {
+    font-size: 14px;
+  }
+  .improveContainer {
+    width: 100%;
+    padding: 0 10px;
+  }
 }
