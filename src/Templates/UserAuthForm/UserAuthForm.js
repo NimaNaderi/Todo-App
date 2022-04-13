@@ -46,12 +46,19 @@ const useRenderByAuthType = () => {
     authUser();
   };
 
+  const btnRef = useRef();
+
   const [isCapsLockOn, setIsCapsLockOn] = useState(false);
+
+  const enterKeyHandler = (e) => {
+    const isButtonDisabled = btnRef.current.disabled;
+    if (!isButtonDisabled && readyToProcess) e.which === 13 && authUser();
+  };
 
   const renderData = () => {
     return (
       <FormContentContainer onSubmit={submitFormHandler}>
-        <div className={styles.container}>
+        <div onKeyDown={enterKeyHandler} className={styles.container}>
           <DeleteButton />
           <h1 style={{ marginTop: 20 }}>
             {typeOfAuthState === "Login" ? t("login") : t("signUp")}
@@ -105,6 +112,7 @@ const useRenderByAuthType = () => {
           />
           {serverErrorType !== null && handleAuth()}
           <Button
+            ref={btnRef}
             disabledHandler={
               !readyToProcess ||
               serverErrorType === "NoError" ||

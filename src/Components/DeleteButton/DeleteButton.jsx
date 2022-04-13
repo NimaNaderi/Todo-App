@@ -3,7 +3,7 @@ import React from "react";
 import styled from "styled-components";
 import { useOpenAndCloseModal } from "../../Hooks/UI/useOpenAndCloseModal";
 
-const Button = styled.button`
+const Button = styled.a`
         background: #E60000;,
         borderRadius: 50%;
         width: 50px;

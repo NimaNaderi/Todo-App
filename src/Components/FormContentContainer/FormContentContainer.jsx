@@ -8,11 +8,16 @@ const Container = styled.form`
   align-items: center;
 `;
 
-export default function FormContentContainer({ children, onSubmit }) {
+export default function FormContentContainer({
+  children,
+  onSubmit,
+  onKeyDown,
+}) {
   const { t, i18n } = useTranslation();
 
   return (
     <Container
+      onKeyDown={onKeyDown}
       style={i18n.dir() == "rtl" ? { direction: "rtl" } : null}
       onSubmit={onSubmit}
     >

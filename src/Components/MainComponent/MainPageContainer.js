@@ -12,6 +12,7 @@ import LeftSidBar from "../../Templates/MainPage/LeftSide/LeftSidbare";
 import Main from "./Main";
 import { selectTodoList } from "../../Services/RemoteService/Actions/selectTodoList";
 import { supabase } from "../../Services/RemoteService/Configuration/supabaseClient";
+import toast from "react-hot-toast";
 import { useCurrentLocation } from "../../Hooks/Logic/useCurrentLocation";
 import { useIsMenuOpen } from "../../Context/Providers/MenuState/MenuStateProvider";
 import { useSetModalShowingStateAndType } from "../../Context/Providers/ModalShowingState/ModalShowingStateProvider";

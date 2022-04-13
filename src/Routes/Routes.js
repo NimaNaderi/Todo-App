@@ -16,7 +16,8 @@ export default function Routes() {
     { path: "/", element: <Navigate to={"/welcome"} /> },
     {
       path: "/welcome",
-      element: isUserAuthenticated ? <Navigate to={"/main"} /> : <FirstPage />,
+      // element: isUserAuthenticated ? <Navigate to={"/main"} /> : <FirstPage />,
+      element: <FirstPage />,
     },
     { path: "/notFound", element: <NotFound /> },
     { path: "*", element: <NotFound /> },

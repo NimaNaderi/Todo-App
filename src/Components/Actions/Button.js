@@ -1,21 +1,25 @@
-import React from "react";
+import React, { forwardRef } from "react";
+
 import styles from "./../../Templates/UserAuthForm/userAuthForm.module.css";
 
-export default function Button({ disabledHandler, children, width }) {
+function Button(props, ref) {
   return (
     <button
+      ref={ref}
       className={styles.actionBtn}
-      disabled={disabledHandler}
+      disabled={props.disabledHandler}
       style={{
-        width: width,
+        width: props.width,
         marginTop: 35,
-        opacity: disabledHandler && "50%",
+        opacity: props.disabledHandler && "50%",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
       }}
     >
-      {children}
+      {props.children}
     </button>
   );
 }
+
+export default forwardRef(Button);

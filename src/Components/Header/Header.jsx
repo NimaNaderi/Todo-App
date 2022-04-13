@@ -55,10 +55,7 @@ const Header = ({
     localServiceActions.removeItem("supabase.auth.token");
     localServiceActions.removeItem("userAccessType");
     localServiceActions.removeItem("uiInfo");
-    if (!localServiceActions.getItem("uiInfo")) {
-      console.log("Not");
-      navigate("/", { replace: true });
-    }
+    navigate("/", { replace: true });
   };
 
   const renderLogout = () => {
