@@ -1,5 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
+  useDispatchUiState,
+  useUiState,
+} from "../../Context/Providers/LoadingBarState/LoadingBarStateProvider";
+import {
   useSetTypeOfAuthState,
   useTypeOfAuthState,
 } from "../../Context/Providers/TypeOfAuthState/TypeOfAuthProvider";
@@ -9,6 +13,7 @@ import ClipLoader from "react-spinners/ClipLoader";
 import DeleteButton from "../../Components/DeleteButton/DeleteButton";
 import FormContentContainer from "../../Components/FormContentContainer/FormContentContainer";
 import Modal from "../Modal/Modal";
+import { UI_STATE_TYPES } from "../../Context/uiStateReducer";
 import { getCurrentLanguage } from "../../Utilities/getCurrentLanguage";
 import styles from "./userAuthForm.module.css";
 import { t } from "i18next";
@@ -18,7 +23,6 @@ import { useHandleAuth } from "../../Hooks/Logic/useHandleAuth";
 import useLightBgDataContainer from "../../Hooks/UI/useLightBgDataContainer";
 import { useLoadingBarData } from "../../Hooks/UI/useLoadingBarData";
 import { useOpenAndCloseModal } from "../../Hooks/UI/useOpenAndCloseModal";
-import { useUiState } from "../../Context/Providers/LoadingBarState/LoadingBarStateProvider";
 import { useVerifyAndHandleForm } from "../../Hooks/Logic/useVerifyAndHandleForm";
 
 const useRenderByAuthType = () => {
@@ -33,6 +37,7 @@ const useRenderByAuthType = () => {
     email: "",
     password: "",
   });
+  const dispatchUiState = useDispatchUiState();
   const authUser = useAuthUser(typeOfAuthState, fields, setServerErrorType);
   const LightBgDataContainer = useLightBgDataContainer();
 
@@ -46,9 +51,17 @@ const useRenderByAuthType = () => {
     authUser();
   };
 
-  const btnRef = useRef();
+  useEffect(() => {
+    window.addEventListener("keydown", (e) => {
+      e.key === "CapsLock" &&
+        dispatchUiState({
+          type: UI_STATE_TYPES.capsLockStatus,
+          payload: e.getModifierState("CapsLock"),
+        });
+    });
+  }, []);
 
-  const [isCapsLockOn, setIsCapsLockOn] = useState(false);
+  const btnRef = useRef();
 
   const enterKeyHandler = (e) => {
     const isButtonDisabled = btnRef.current.disabled;
@@ -63,16 +76,23 @@ const useRenderByAuthType = () => {
           <h1 style={{ marginTop: 20 }}>
             {typeOfAuthState === "Login" ? t("login") : t("signUp")}
           </h1>
-          {(!isEmailReady() || !isPasswordReady() || isCapsLockOn) &&
-            (fields.email.length > 0 || fields.password.length > 0) && (
-              <LightBgDataContainer
-                className={`${styles.dataVerificationContainer} w-full`}
-              >
-                <p style={{ color: isEmailReady() ? "green" : "red" }}>
+          {(!isEmailReady() ||
+            !isPasswordReady() ||
+            uiState.capsLockStatus) && (
+            <LightBgDataContainer
+              className={`${styles.dataVerificationContainer} w-full`}
+            >
+              {fields.email.length > 0 && (
+                <p
+                  className="pb-2"
+                  style={{ color: isEmailReady() ? "green" : "red" }}
+                >
                   {!isEmailReady() && t("notValidEmail")}
                 </p>
+              )}
+              {fields.password.length > 0 && (
                 <p
-                  className="px-4 mt-2 pb-2 ml-7 md:ml-0"
+                  className="px-4 pb-2 ml-7 md:ml-0"
                   style={{
                     color: isPasswordReady() ? "green" : "red",
                   }}
@@ -81,16 +101,12 @@ const useRenderByAuthType = () => {
                     `${t("notValidPassword")} ${fields.password.length} /
               8`}
                 </p>
-                {isCapsLockOn && <p>{t("capsLockOn")}</p>}
-              </LightBgDataContainer>
-            )}
+              )}
+              {uiState.capsLockStatus && <p>{t("capsLockOn")}</p>}
+            </LightBgDataContainer>
+          )}
           <input
             style={{ color: "black" }}
-            onKeyDown={(e) => {
-              e.getModifierState("CapsLock")
-                ? setIsCapsLockOn(true)
-                : setIsCapsLockOn(false);
-            }}
             onChange={(e) => {
               handleChange(e);
             }}
@@ -100,11 +116,6 @@ const useRenderByAuthType = () => {
           />
           <input
             style={{ color: "black" }}
-            onKeyDown={(e) => {
-              e.getModifierState("CapsLock")
-                ? setIsCapsLockOn(true)
-                : setIsCapsLockOn(false);
-            }}
             onChange={(e) => handleChange(e)}
             name="Password"
             placeholder={t("password")}
@@ -150,6 +161,7 @@ const useRenderByAuthType = () => {
       </FormContentContainer>
     );
   };
+
   return <>{renderData()}</>;
 };
 

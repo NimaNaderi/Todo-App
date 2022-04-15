@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "react-query";
-import { useEffect, useLayoutEffect } from "react";
+import { lazy, useEffect, useLayoutEffect } from "react";
 
 import AppContainer from "./AppContainer";
 import { ReactQueryDevtools } from "react-query/devtools";

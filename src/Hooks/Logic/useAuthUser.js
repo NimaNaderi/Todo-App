@@ -23,7 +23,6 @@ export const useAuthUser = (typeOfAuthState, fields, setServerErrorType) => {
       try {
         const { user, error } = await signInUser(fields.email, fields.password);
         data = user;
-        console.log();
         data &&
           localServiceActions.setItem("uiInfo", {
             ...localServiceActions.getItem("uiInfo"),

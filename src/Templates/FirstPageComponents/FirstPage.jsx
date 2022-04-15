@@ -1,11 +1,14 @@
 import React from "react";
+import { UI_STATE_TYPES } from "../../Context/uiStateReducer";
 import styles from "./../../Styles/firstPage.module.css";
+import { useDispatchUiState } from "../../Context/Providers/LoadingBarState/LoadingBarStateProvider";
 import { useLanguage } from "../../Hooks/Logic/useLanguage";
 import { useOpenAndCloseModal } from "../../Hooks/UI/useOpenAndCloseModal";
 
 export default function FirstPage() {
   const { processModal } = useOpenAndCloseModal();
   const { t, language } = useLanguage();
+  const dispatchUiState = useDispatchUiState();
 
   return (
     <div className={styles.container}>
@@ -51,7 +54,13 @@ export default function FirstPage() {
           className={styles.btnContainer}
         >
           <button
-            onClick={() => processModal("Login")}
+            onClick={(e) => {
+              dispatchUiState({
+                type: UI_STATE_TYPES.capsLockStatus,
+                payload: e.getModifierState("CapsLock"),
+              });
+              processModal("Login");
+            }}
             style={{
               borderRadius: 10,
               color: "#fff",
